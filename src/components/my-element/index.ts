@@ -1,17 +1,16 @@
 import { LitElement, html, unsafeCSS } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
 import tailwindStyles from './index.css?inline'
 
+@customElement('my-element')
 export class MyElement extends LitElement {
   static styles = [unsafeCSS(tailwindStyles)]
 
-  static get properties() {
-    return {}
-  }
+  @property()
+  content = 'Hello world!'
 
   constructor() {
     super()
-    this.docsHint = 'Click on the Vite and Lit logos to learn more'
-    this.count = 0
   }
 
   getMod() {
@@ -21,16 +20,19 @@ export class MyElement extends LitElement {
       >
         <div>
           <div class="text-xl font-medium text-black dark:text-white">ChitChat</div>
-          <p class="text-gray-500 dark:text-gray-400">You have a new message!</p>
+          <p class="text-gray-500 dark:text-gray-400">${this.content}!</p>
         </div>
       </div>
     `
   }
 
   render() {
-    return html`<h1 class="text-3xl font-bold text-red-400 underline">Hello world!</h1>
-      ${this.getMod()} `
+    return html`<div class="">${this.getMod()}</div> `
   }
 }
 
-window.customElements.define('my-element', MyElement)
+declare global {
+  interface HTMLElementTagNameMap {
+    'my-element': MyElement
+  }
+}
