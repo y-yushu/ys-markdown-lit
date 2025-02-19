@@ -3,7 +3,7 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { customElement, property } from 'lit/decorators.js'
 import MarkdownIt, { Token } from 'markdown-it'
 import tailwindStyles from './index.css?inline'
-import { MarkdownStr4 as mstr } from './mock'
+import { MarkdownStr8 as mstr } from './mock'
 
 @customElement('my-element')
 export class MyElement extends LitElement {
@@ -188,6 +188,12 @@ export class MyElement extends LitElement {
             return this.renderEm(this.renderAst3(ast.children))
           case 's_open':
             return this.renderS(this.renderAst3(ast.children))
+          case 'ordered_list_open':
+            return this.renderOrderedList(this.renderAst3(ast.children))
+          case 'bullet_list_open':
+            return this.renderBulletList(this.renderAst3(ast.children))
+          case 'list_item_open':
+            return this.renderListItem(this.renderAst3(ast.children))
           // table相关解析
           case 'table_open':
             return this.renderTable(this.renderAst3(ast.children))
@@ -204,7 +210,9 @@ export class MyElement extends LitElement {
           // 链接解析
           case 'link_open':
             return this.renderLink(token, this.renderAst3(ast.children))
-          // 行内代码块
+          // 代码块
+          case 'fence':
+            return this.renderFence(token)
           case 'code_inline':
             return this.renderCodeInline(token)
           // 水平分隔线
@@ -269,6 +277,22 @@ export class MyElement extends LitElement {
     return html`<s>${chil}</s>`
   }
 
+  renderOrderedList(chil: TemplateResult[]): TemplateResult {
+    return html`<ol>
+      ${chil}
+    </ol>`
+  }
+
+  renderBulletList(chil: TemplateResult[]): TemplateResult {
+    return html`<ul>
+      ${chil}
+    </ul>`
+  }
+
+  renderListItem(chil: TemplateResult[]): TemplateResult {
+    return html`<li>${chil}</li>`
+  }
+
   renderTable(chil: TemplateResult[]): TemplateResult {
     return html`<table>
       ${chil}
@@ -308,7 +332,11 @@ export class MyElement extends LitElement {
     return html`<a href="${href}" target="_blank" rel="noreferrer nofollow noopener">${chil}</a>`
   }
 
-  // 渲染行内标签
+  // 渲染代码块
+  renderFence(token: Token): TemplateResult {
+    return html`<pre><code>${token.content}</code></pre>`
+  }
+
   renderCodeInline(token: Token): TemplateResult {
     return html`<code>${token.content}</code>`
   }
@@ -331,7 +359,6 @@ export class MyElement extends LitElement {
 
   render() {
     return html`<div>
-      <hr />
       <div class="prose">
         <h1>AST渲染</h1>
         ${this.getAST()}
