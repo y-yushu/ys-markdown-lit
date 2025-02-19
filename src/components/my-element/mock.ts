@@ -12,16 +12,30 @@ export const MarkdownStr6 = `|名称|属性|
 |加粗|**14**|
 `
 
-export const MarkdownStr4: string = `
+export const MarkdownStr4: string = `<span style="color:red">kkk</span>
 
-***你好***
+> 引用模块
 
-# Hello world!
+这是一个复杂的锻炼，有**加粗**，也有*倾斜*，还可以___两者都有___，然后还有~~删除线~~，\`多种格式\`，再有个百度[~~baidu~~](http://baidu.com)
+
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+
+*斜体*
+
+---
 
 |名称|属性|
 |--|--|
 |code|\`hello worde\`|
-|加粗|*12
+|加粗|*12|
+
+<thinking>
+这是半个思考内容
 `
 
 export const MarkdownStr5 = `> 这是一个块引用

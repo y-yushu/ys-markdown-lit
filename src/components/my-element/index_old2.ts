@@ -5,6 +5,11 @@ import MarkdownIt, { Token } from 'markdown-it'
 import tailwindStyles from './index.css?inline'
 import { MarkdownStr4 as mstr } from './mock'
 
+/**
+ * 这是不带老版解析
+ * 但是是通过递归解析的版本
+ */
+
 @customElement('my-element')
 export class MyElement extends LitElement {
   static styles = [unsafeCSS(tailwindStyles)]
@@ -97,17 +102,10 @@ export class MyElement extends LitElement {
 
   getAST(): unknown[] {
     const ast: Token[] = this.md.parse(this.content, {})
-    // console.log('抽象语法树\n', ast)
-    // const htmlOutput = this.md.renderer.render(ast, this.md.options, {})
-    // console.log('htmlOutput', htmlOutput)
+    console.log('抽象语法树\n', ast)
     const list3 = this.buildNestedAST2(ast)
     console.log('list3333', list3)
-    const list4 = this.renderAst3(list3)
-    console.log('list4', list4)
-    // const oldl = this.renderAst(ast).filter(e => e)
-    // console.log('oldl', oldl)
-    // return oldl
-    return list4
+    return this.renderAst(ast)
   }
 
   buildNestedAST2(flatAST: Token[]): AstToken[] {
@@ -120,16 +118,24 @@ export class MyElement extends LitElement {
     for (const node of flatAST) {
       const last = stack.length - 1
       if (node.nesting === 0) {
+        let children: AstToken[] = []
+        if (node.children?.length) {
+          children = this.buildNestedAST2(node.children)
+        }
         stack[last].children.push({
           node: node,
           end: null,
-          children: []
+          children: children
         })
       } else if (node.nesting === 1) {
+        let children: AstToken[] = []
+        if (node.children?.length) {
+          children = this.buildNestedAST2(node.children)
+        }
         const st = {
           node: node,
           end: null,
-          children: []
+          children: children
         }
         stack[last].children.push(st)
         stack.push(st)
@@ -170,53 +176,13 @@ export class MyElement extends LitElement {
   renderAst3(asts: AstToken[]): TemplateResult[] {
     const tempList: TemplateResult[] = asts
       .map(ast => {
-        const token = ast.node!
-        switch (token.type) {
-          // 行元素递归解析
-          case 'inline':
-            return html`${this.rederInline(token.children!)}`
-          // 块级元素解析
-          case 'heading_open':
-            return this.renderHeading(token, this.renderAst3(ast.children))
-          case 'paragraph_open':
-            return this.renderParagraph(this.renderAst3(ast.children))
-          case 'blockquote_open':
-            return this.renderBlockquote(this.renderAst3(ast.children))
-          case 'strong_open':
-            return this.renderStrong(this.renderAst3(ast.children))
-          case 'em_open':
-            return this.renderEm(this.renderAst3(ast.children))
-          case 's_open':
-            return this.renderS(this.renderAst3(ast.children))
-          // table相关解析
-          case 'table_open':
-            return this.renderTable(this.renderAst3(ast.children))
-          case 'thead_open':
-            return this.renderThead(this.renderAst3(ast.children))
-          case 'tbody_open':
-            return this.renderTbody(this.renderAst3(ast.children))
-          case 'tr_open':
-            return this.renderTr(this.renderAst3(ast.children))
-          case 'th_open':
-            return this.renderTh(this.renderAst3(ast.children))
-          case 'td_open':
-            return this.renderTd(this.renderAst3(ast.children))
-          // 链接解析
-          case 'link_open':
-            return this.renderLink(token, this.renderAst3(ast.children))
-          // 行内代码块
-          case 'code_inline':
-            return this.renderCodeInline(token)
-          // 水平分隔线
-          case 'hr':
-            return html`<hr />`
-          // 文字解析
-          case 'text':
-            return this.renderText(token)
-          default:
-            console.error('[未匹配类型]', token.type)
-            return html``
+        // 递归渲染内部元素
+        let chil: TemplateResult[] = []
+        if (ast.children.length) {
+          chil = this.renderAst3(ast.children)
         }
+        const token = ast.node!
+        return html``
       })
       // 过滤空字符
       .filter(e => e !== html``)
@@ -225,103 +191,12 @@ export class MyElement extends LitElement {
 
   // 渲染行元素
   rederInline(ast: Token[]): TemplateResult[] {
-    const astToken = this.buildNestedAST2(ast)
-    return this.renderAst3(astToken)
-  }
-
-  // 渲染包裹标签
-  renderHeading(token: Token, chil: TemplateResult[]): TemplateResult {
-    switch (token.tag) {
-      case 'h1':
-        return html`<h1>${chil}</h1>`
-      case 'h2':
-        return html`<h2>${chil}</h2>`
-      case 'h3':
-        return html`<h3>${chil}</h3>`
-      case 'h4':
-        return html`<h4>${chil}</h4>`
-      case 'h5':
-        return html`<h5>${chil}</h5>`
-      case 'h6':
-        return html`<h6>${chil}</h6>`
-    }
-    console.error('[heading标签解析异常]', token)
-    return html``
-  }
-
-  renderParagraph(chil: TemplateResult[]): TemplateResult {
-    return html`<p>${chil}</p>`
-  }
-
-  renderBlockquote(chil: TemplateResult[]): TemplateResult {
-    return html`<blockquote>${chil}</blockquote>`
-  }
-
-  renderStrong(chil: TemplateResult[]): TemplateResult {
-    return html`<strong>${chil}</strong>`
-  }
-
-  renderEm(chil: TemplateResult[]): TemplateResult {
-    return html`<em>${chil}</em>`
-  }
-
-  renderS(chil: TemplateResult[]): TemplateResult {
-    return html`<s>${chil}</s>`
-  }
-
-  renderTable(chil: TemplateResult[]): TemplateResult {
-    return html`<table>
-      ${chil}
-    </table>`
-  }
-
-  renderThead(chil: TemplateResult[]): TemplateResult {
-    return html`<thead>
-      ${chil}
-    </thead>`
-  }
-
-  renderTbody(chil: TemplateResult[]): TemplateResult {
-    return html`<tbody>
-      ${chil}
-    </tbody>`
-  }
-
-  renderTr(chil: TemplateResult[]): TemplateResult {
-    return html`<tr>
-      ${chil}
-    </tr>`
-  }
-
-  renderTh(chil: TemplateResult[]): TemplateResult {
-    return html`<th>${chil}</th>`
-  }
-
-  renderTd(chil: TemplateResult[]): TemplateResult {
-    return html`<td>${chil}</td>`
-  }
-
-  // 渲染链接
-  renderLink(token: Token, chil: TemplateResult[]): TemplateResult {
-    const attrs: Array<[string, string]> | null = token.attrs || []
-    const href = attrs.find(attr => attr[0] === 'href')?.[1] || ''
-    return html`<a href="${href}" target="_blank" rel="noreferrer nofollow noopener">${chil}</a>`
-  }
-
-  // 渲染行内标签
-  renderCodeInline(token: Token): TemplateResult {
-    return html`<code>${token.content}</code>`
-  }
-
-  // 渲染文本
-  renderText(token: Token): TemplateResult {
-    return html`${token.content}`
-  }
-
-  // 通过Tag渲染
-  renderByTag(token: Token, chil: TemplateResult[]): TemplateResult {
-    console.log('token.tag', token.tag)
-    return html`<${token.tag}>${chil}</${token.tag}>`
+    return ast
+      .map(node => {
+        if (node.type === 'text') return this.rederText(node)
+        return html``
+      })
+      .filter(e => e !== html``)
   }
 
   // 渲染文本标签
@@ -332,22 +207,18 @@ export class MyElement extends LitElement {
   render() {
     return html`<div>
       <hr />
-      <div class="prose">
-        <h1>AST渲染</h1>
-        ${this.getAST()}
-      </div>
+      <h1>AST渲染</h1>
+      ${this.getAST()}
       <hr />
-      <div class="prose">
-        <h1>默认渲染</h1>
-        ${this.getHtml()}
-      </div>
+      <h1>默认渲染</h1>
+      ${this.getHtml()}
     </div> `
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'my-element': MyElement
+    'my-element2': MyElement
   }
 }
 

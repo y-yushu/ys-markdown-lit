@@ -104,10 +104,10 @@ export class MyElement extends LitElement {
     console.log('list3333', list3)
     const list4 = this.renderAst3(list3)
     console.log('list4', list4)
-    // const oldl = this.renderAst(ast).filter(e => e)
-    // console.log('oldl', oldl)
-    // return oldl
+    const oldl = this.renderAst(ast).filter(e => e)
+    console.log('oldl', oldl)
     return list4
+    // return oldl
   }
 
   buildNestedAST2(flatAST: Token[]): AstToken[] {
@@ -168,16 +168,13 @@ export class MyElement extends LitElement {
 
   // 渲染AST3
   renderAst3(asts: AstToken[]): TemplateResult[] {
+    // if (asts.length) return [html``]
     const tempList: TemplateResult[] = asts
       .map(ast => {
         const token = ast.node!
         switch (token.type) {
-          // 行元素递归解析
           case 'inline':
             return html`${this.rederInline(token.children!)}`
-          // 块级元素解析
-          case 'heading_open':
-            return this.renderHeading(token, this.renderAst3(ast.children))
           case 'paragraph_open':
             return this.renderParagraph(this.renderAst3(ast.children))
           case 'blockquote_open':
@@ -188,29 +185,18 @@ export class MyElement extends LitElement {
             return this.renderEm(this.renderAst3(ast.children))
           case 's_open':
             return this.renderS(this.renderAst3(ast.children))
-          // table相关解析
-          case 'table_open':
-            return this.renderTable(this.renderAst3(ast.children))
-          case 'thead_open':
-            return this.renderThead(this.renderAst3(ast.children))
-          case 'tbody_open':
-            return this.renderTbody(this.renderAst3(ast.children))
-          case 'tr_open':
-            return this.renderTr(this.renderAst3(ast.children))
-          case 'th_open':
-            return this.renderTh(this.renderAst3(ast.children))
-          case 'td_open':
-            return this.renderTd(this.renderAst3(ast.children))
-          // 链接解析
+          // case 'heading_open':
+          // case 'table_open':
+          // case 'thead_open':
+          // case 'tbody_open':
+          // case 'tr_open':
+          // case 'th_open':
+          // case 'td_open':
+          // return this.renderByTag(ast.node!, this.renderAst3(ast.children))
           case 'link_open':
             return this.renderLink(token, this.renderAst3(ast.children))
-          // 行内代码块
           case 'code_inline':
             return this.renderCodeInline(token)
-          // 水平分隔线
-          case 'hr':
-            return html`<hr />`
-          // 文字解析
           case 'text':
             return this.renderText(token)
           default:
@@ -230,25 +216,6 @@ export class MyElement extends LitElement {
   }
 
   // 渲染包裹标签
-  renderHeading(token: Token, chil: TemplateResult[]): TemplateResult {
-    switch (token.tag) {
-      case 'h1':
-        return html`<h1>${chil}</h1>`
-      case 'h2':
-        return html`<h2>${chil}</h2>`
-      case 'h3':
-        return html`<h3>${chil}</h3>`
-      case 'h4':
-        return html`<h4>${chil}</h4>`
-      case 'h5':
-        return html`<h5>${chil}</h5>`
-      case 'h6':
-        return html`<h6>${chil}</h6>`
-    }
-    console.error('[heading标签解析异常]', token)
-    return html``
-  }
-
   renderParagraph(chil: TemplateResult[]): TemplateResult {
     return html`<p>${chil}</p>`
   }
@@ -269,43 +236,12 @@ export class MyElement extends LitElement {
     return html`<s>${chil}</s>`
   }
 
-  renderTable(chil: TemplateResult[]): TemplateResult {
-    return html`<table>
-      ${chil}
-    </table>`
-  }
-
-  renderThead(chil: TemplateResult[]): TemplateResult {
-    return html`<thead>
-      ${chil}
-    </thead>`
-  }
-
-  renderTbody(chil: TemplateResult[]): TemplateResult {
-    return html`<tbody>
-      ${chil}
-    </tbody>`
-  }
-
-  renderTr(chil: TemplateResult[]): TemplateResult {
-    return html`<tr>
-      ${chil}
-    </tr>`
-  }
-
-  renderTh(chil: TemplateResult[]): TemplateResult {
-    return html`<th>${chil}</th>`
-  }
-
-  renderTd(chil: TemplateResult[]): TemplateResult {
-    return html`<td>${chil}</td>`
-  }
-
-  // 渲染链接
   renderLink(token: Token, chil: TemplateResult[]): TemplateResult {
     const attrs: Array<[string, string]> | null = token.attrs || []
     const href = attrs.find(attr => attr[0] === 'href')?.[1] || ''
-    return html`<a href="${href}" target="_blank" rel="noreferrer nofollow noopener">${chil}</a>`
+    const target = attrs.find(attr => attr[0] === 'target')?.[1] || '_blank'
+    console.log('target---', target)
+    return html`<a href="${href}" target="${target}">${chil}</a>`
   }
 
   // 渲染行内标签
@@ -332,12 +268,12 @@ export class MyElement extends LitElement {
   render() {
     return html`<div>
       <hr />
-      <div class="prose">
+      <div class="prose lg:prose-xl">
         <h1>AST渲染</h1>
         ${this.getAST()}
       </div>
       <hr />
-      <div class="prose">
+      <div class="prose lg:prose-xl">
         <h1>默认渲染</h1>
         ${this.getHtml()}
       </div>
