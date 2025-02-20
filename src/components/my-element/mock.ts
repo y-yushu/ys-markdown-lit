@@ -1,17 +1,8 @@
-export const MarkdownStr4: string = `<span style="color:red">kkk</span>
+export const MarkdownStr0: string = `<span style="color:red">*123*</span>`
 
-> 引用模块
+export const MarkdownStr1: string = `# 测试标签123
 
-这是一个复杂的锻炼，有**加粗**，也有*倾斜*，还可以___两者都有___，然后还有~~删除线~~，\`多种格式\`，再有个百度[~~baidu~~](http://baidu.com)
-
-# 一级标题
-## 二级标题
-### 三级标题
-#### 四级标题
-##### 五级标题
-###### 六级标题
-
-*斜体*
+<span style="color:red">*123*</span>
 
 ---
 
@@ -21,7 +12,7 @@ export const MarkdownStr4: string = `<span style="color:red">kkk</span>
 |加粗|*12|
 
 <thinking>
-这是半个思考内容
+这是半个**思考**内容
 `
 
 export const MarkdownStr2: string = `
@@ -64,6 +55,8 @@ export const MarkdownStr8: string = `# 表格与图片混合测试
 
 这是一个包含表格和图片的测试内容。
 
+<img src="https://t7.baidu.com/it/u=1951548898,3927145&fm=193&f=GIF" align = "right" width="600" height="600"/>
+
 ## 表格部分
 | 表头1 | 表头2 | 表头3 |
 |-------|-------|-------|
@@ -71,11 +64,113 @@ export const MarkdownStr8: string = `# 表格与图片混合测试
 | 单元格4 | 单元格5 | 单元格6 |
 | 单元格7 | 单元格8 | 单元格9 |
 
-## 图片部分
-![示例图片](https://t7.baidu.com/it/u=1951548898,3927145&fm=193&f=GIF "图片标题")
+## 图片部分456
+![示例图片11](https://t7.baidu.com/it/u=1951548898,3927145&fm=193&f=GIF "图片标题222")
 
 ## 表格与图片混合
 | 表头1 | 表头2 | 表头3 |
 |-------|-------|-------|
-| 单元格1 | ![图片](https://t7.baidu.com/it/u=1951548898,3927145&fm=193&f=GIF "图片标题") | 单元格3 |
+| 单元格1 | ![图片22](https://t7.baidu.com/it/u=1951548898,3927145&fm=193&f=GIF "图片标题") | 单元格3 |
 | 单元格4 | 单元格5 | 单元格6 |`
+
+export const MarkdownStr9: string = `# 表格与图片混合测试
+
+这是一个包含表格和图片的测试内容。
+
+<img src="https://t7.baidu.com/it/u=1951548898,3927145&fm=193&f=GIF" align = "right" width="600" height="600"/>`
+
+export const MarkdownStr10: string = `# HTML 混合 Markdown 测试
+
+这是一个包含 HTML 和 Markdown 的测试内容。
+
+## HTML 段落
+<p style="color: red; font-size: 20px;">这是一个HTML段落，带有样式。</p>
+
+## Markdown 段落
+这是一个 Markdown 段落，带有 **加粗** 和 *斜体*。
+
+## HTML 表格
+<table border="1">
+    <tr>
+        <th>HTML 表头1</th>
+        <th>HTML 表头2</th>
+    </tr>
+    <tr>
+        <td>HTML 单元格1</td>
+        <td>HTML 单元格2</td>
+    </tr>
+</table>
+
+## Markdown 表格
+| Markdown 表头1 | Markdown 表头2 |
+|-----------------|----------------|
+| Markdown 单元格1 | Markdown 单元格2 |`
+
+export const MarkdownStr11: string = `# 多级标题与引用测试
+
+这是一个包含多级标题和引用的测试内容。
+
+## 第二级标题
+这是一个第二级标题的内容。
+
+### 第三级标题
+这是一个第三级标题的内容。
+
+#### 第四级标题
+这是一个第四级标题的内容。
+
+##### 第五级标题
+这是一个第五级标题的内容。
+
+###### 第六级标题
+这是一个第六级标题的内容。
+
+## 引用部分
+> 这是一个引用块。
+>
+> 引用块可以包含多段内容。
+>
+> 每一段都以 \` >
+  \` 开头。
+
+## 引用与列表混合
+> 这是一个引用块。
+>
+> - 引用块中包含列表项
+>   - 第二层列表项
+>     - 第三层列表项
+>
+> 这是引用块的最后一段。`
+
+export const MarkdownStr12: string = `# 特殊字符与转义测试
+
+这是一个包含特殊字符和转义的测试内容。
+
+## 特殊字符
+以下是一些特殊字符：
+- 斜杠 \`/\`
+- 反斜杠 \`\\\`
+- 星号 \`*\`
+- 下划线 \`_\`
+- 方括号 \`[]\`
+- 大括号 \`{}\`
+- 圆括号 \`()\`
+- 加号 \`+\`
+- 减号 \`-\`
+- 等号 \`=\`
+- 竖线 \`|\`
+- 反引号 \`\` \` \`\`
+
+## 转义字符
+以下是一些转义字符的示例：
+- 转义星号 \`\\*\` 显示为：\*
+- 转义下划线 \`\\_\` 显示为：\_
+- 转义方括号 \`\\[\` 和 \`\\]\` 显示为：\[
+- 转义反斜杠 \`\\\\\` 显示为：\\
+
+## 代码块中的特殊字符
+\`\`\`markdown
+# 这是一个代码块
+- 代码块中包含特殊字符：* _ [] {} () + - = | \`
+
+- 代码块中的特殊字符不会被转义。`
