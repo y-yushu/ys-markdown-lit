@@ -13,12 +13,24 @@ export const MarkdownStr1: string = `# 测试标签123
 
 <thinking>
 这是半个**思考**内容
+content-02377
 `
 
 export const MarkdownStr2: string = `
+---
+
+|名称|属性|
+|--|--|
+|code|\`hello worde\`|
+|加粗|*12|
+
 <thinking>
+暗藏灯带
 这个是思考的内容
+151515
 </thinking>
+
+## nice
 `
 
 export const MarkdownStr3: string = `
@@ -174,3 +186,32 @@ export const MarkdownStr12: string = `# 特殊字符与转义测试
 - 代码块中包含特殊字符：* _ [] {} () + - = | \`
 
 - 代码块中的特殊字符不会被转义。`
+
+export const MarkdownStr13: string = `# 代码块与特殊字符混合测试
+
+这是一个包含多级标题和引用的测试内容。
+
+<thinking>
+这个是测试啊啊啊
+</thinking>
+
+## 第二级标题
+这是一个第二级标题的内容。
+
+### 第三级标题
+这是一个第三级标题的内容。
+
+#### 第四级标题
+这是一个第四级标题的内容。
+
+##### 第五级标题
+这是一个第五级标题的内容。
+
+###### 第六级标题
+这是一个第六级标题的内容。
+
+## 引用部分
+> 这是一个引用块。
+>
+> 引用块可以包含多段内容。
+`

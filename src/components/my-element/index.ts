@@ -4,13 +4,15 @@ import { customElement, property } from 'lit/decorators.js'
 import MarkdownIt, { Token } from 'markdown-it'
 import tailwindStyles from './index.css?inline'
 import { MarkdownStr1 as mstr } from './mock'
+// 组件引入
+import '../widgets/think'
 
 @customElement('my-element')
 export class MyElement extends LitElement {
   static styles = [unsafeCSS(tailwindStyles)]
 
   @property({ type: String })
-  content = mstr
+  content = ''
 
   // 渲染工具
   md: MarkdownIt
@@ -36,74 +38,53 @@ export class MyElement extends LitElement {
       const startTag = '<thinking>'
       const endTag = '</thinking>'
 
-      // 检查开始标签
+      // 检查是否以 <thinking> 开始
       if (!state.src.startsWith(startTag, startPos)) {
         return false // 如果没有开始标签，直接返回 false
       }
 
-      // 查找结束标签
+      // 查找结束标签 </thinking>
       let nextLine = startLine
-      let found = false
+      let endPos = -1
       while (nextLine < endLine) {
         const lineText = state.getLines(nextLine, nextLine + 1, state.tShift[nextLine], false)
-        if (lineText.includes(endTag)) {
-          found = true
+        const tagEndIndex = lineText.indexOf(endTag)
+        if (tagEndIndex >= 0) {
+          endPos = state.bMarks[nextLine] + state.tShift[nextLine] + tagEndIndex
           break
         }
         nextLine++
       }
 
-      if (silent) {
-        return true // 在 silent 模式下返回 true，表示可以匹配
-      }
+      // 如果是 silent 模式，直接返回 true，表示可以匹配
+      if (silent) return true
 
-      // 创建 thinking_open token
+      // 创建 thinking_open Token
       let token = state.push('thinking_open', 'div', 1)
       token.markup = startTag
       token.block = true
 
-      // 添加内容
-      let content = ''
-      if (found) {
-        // 如果找到结束标签，提取内容
-        content = state.src.slice(state.bMarks[startLine] + startTag.length, state.bMarks[nextLine] + state.tShift[nextLine]).replace(/^\n+/, '')
-        state.md.inline.parse(content, state.md, state.env, state.tokens)
-        // 创建 thinking_close token
-        token = state.push('thinking_close', 'div', -1)
-        token.markup = endTag
-        token.block = true
-        // 正常结束
-        token.meta = {
-          ...token.meta,
-          isNormalClose: true
-        }
-        state.line = nextLine + 1 // 更新当前行
-      } else {
-        // 如果没有找到结束标签，提取剩余内容
-        content = state.src.slice(state.bMarks[startLine] + startTag.length).replace(/^\n+/, '')
-        state.md.inline.parse(content, state.md, state.env, state.tokens)
-        // 可选：创建一个默认的 thinking_close token
-        token = state.push('thinking_close', 'div', -1)
-        token.markup = endTag
-        token.block = true
-        // 异常结束
-        token.meta = {
-          ...token.meta,
-          isNormalClose: false
-        }
-        state.line = endLine // 更新当前行到文档末尾
-      }
+      // 提取内容（不调用 inline.parse，直接作为纯文本处理）
+      const content = state.src.slice(startPos + startTag.length, endPos).trim()
+      token.content = content
+
+      // 创建 thinking_close Token
+      token = state.push('thinking_close', 'div', -1)
+      token.markup = endTag
+      token.block = true
+
+      state.line = nextLine + 1
       return true
     }
   }
 
   getAST(): unknown[] {
     const ast: Token[] = this.md.parse(this.content, {})
-    console.log('抽象语法树\n', ast)
+    // console.log('抽象语法树\n', ast)
     const list3 = this.buildNestedAST2(ast)
-    console.log('渲染结构', list3)
+    // console.log('渲染结构', list3)
     const list4 = this.renderAst3(list3)
-    console.log('渲染结果', list4)
+    // console.log('渲染结果', list4)
     return list4
   }
 
@@ -214,6 +195,9 @@ export class MyElement extends LitElement {
           // 水平分隔线
           case 'hr':
             return html`<hr />`
+          // 换行
+          case 'softbreak':
+            return html`<br />`
           // 图片
           case 'image':
             return this.renderImage(token)
@@ -225,6 +209,8 @@ export class MyElement extends LitElement {
             return this.renderHtmlBlock(token)
           case 'html_inline':
             return this.renderHtmlInline(token, ast.end!, this.renderAst3(ast.children))
+          case 'thinking_open':
+            return html`<widget-think></widget-think>`
           default:
             console.error('[未匹配类型]', token.type)
             return html``
@@ -374,20 +360,21 @@ export class MyElement extends LitElement {
     const container = document.createElement('div')
     render(middleContent, container)
     const middleContentHTML = container.innerHTML
-    return html`${unsafeHTML(token.content + middleContentHTML + end.content)}`
+    return html`${unsafeHTML(token.content + middleContentHTML + end?.content)}`
   }
 
   render() {
     return html`<div class="grid grid-cols-2 space-x-4">
-      <div class="prose">
-        <h1>AST渲染</h1>
-        ${this.getAST()}
+        <div class="prose">
+          <h1>AST渲染</h1>
+          ${this.getAST()}
+        </div>
+        <div class="prose">
+          <h1>默认渲染</h1>
+          ${this.getHtml()}
+        </div>
       </div>
-      <div class="prose">
-        <h1>默认渲染</h1>
-        ${this.getHtml()}
-      </div>
-    </div>`
+      <widget-think></widget-think>`
   }
 }
 
