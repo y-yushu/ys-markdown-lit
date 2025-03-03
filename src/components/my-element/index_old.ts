@@ -13,7 +13,9 @@ export class MyElement extends LitElement {
 
   // 通过参数构建组件
   static createWithData({ widgets }: { widgets: WidgetConfig[] }) {
-    return new MyElement(widgets) // 通过构造函数传递值
+    const element = document.createElement('my-element') as MyElement
+    element.widgets = widgets
+    return element
   }
 
   @property({ type: String })
@@ -26,17 +28,21 @@ export class MyElement extends LitElement {
   // 渲染工具
   md: MarkdownIt
 
-  constructor(widgets: WidgetConfig[] = []) {
+  // registerWidget(cls: WidgetConfig) {
+  //   console.log('cls', cls)
+  //   if (cls) {
+  //     this.widgets.push(cls)
+  //   }
+  // }
+
+  constructor() {
     super()
     // 初始化渲染器
     this.md = new MarkdownIt({
       html: true
     })
-    this.widgets = widgets
-    // 注册md解析渲染规则
-    this.widgets.forEach(widget => {
-      widget.rule(this.md)
-    })
+    this.md.block.ruler.before('fence', 'thinking', this.createThinkRule())
+    console.log('this.widgets', this.widgets)
   }
 
   getHtml() {
@@ -396,7 +402,7 @@ export class MyElement extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'my-element': MyElement
+    'my-element-old': MyElement
   }
 }
 
