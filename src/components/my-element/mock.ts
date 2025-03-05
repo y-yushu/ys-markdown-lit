@@ -1,36 +1,23 @@
 export const MarkdownStr0: string = `<span style="color:red">*123*</span>`
 
-export const MarkdownStr1: string = `# 测试标签123
-
-<span style="color:red">*123*</span>
-
----
-
-|名称|属性|
-|--|--|
-|code|\`hello worde\`|
-|加粗|*12|
+export const MarkdownStr1: string = `# 测试标1
 
 <thinking>
 这是半个**思考**内容
 content-02377
 `
 
-export const MarkdownStr2: string = `
----
+export const MarkdownStr2: string = `# 测试标2
 
-|名称|属性|
-|--|--|
-|code|\`hello worde\`|
-|加粗|*12|
+这个=是思=考的内容
 
 <thinking>
 暗藏灯带
-这个是思考的内容
+这个==是思==考的内容
 151515
 </thinking>
 
-## nice
+> nice
 `
 
 export const MarkdownStr3: string = `

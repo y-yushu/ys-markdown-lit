@@ -1,11 +1,12 @@
 import { html } from 'lit'
 import MarkdownIt from 'markdown-it'
-import getRule from '../utils/getRule'
+import getRule from '../../utils/getRule'
 import './render'
 
 const config: WidgetConfig = {
   name: 'thinking',
   version: '0.0.1',
+  logotype: 'thinking_open',
   startTag: '<thinking>',
   endTag: '</thinking>',
   startToken: 'thinking_open',
@@ -17,7 +18,8 @@ const config: WidgetConfig = {
       startTag: config.startTag,
       endTag: config.endTag,
       startToken: config.startToken,
-      endToken: config.endTag
+      endToken: config.endToken,
+      isClosed: false
     })
     md.block.ruler.before('fence', 'thinking', _rule)
   },

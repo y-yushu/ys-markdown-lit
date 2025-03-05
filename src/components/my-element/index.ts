@@ -1,19 +1,22 @@
 import { LitElement, html, render, unsafeCSS, TemplateResult } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { customElement, property } from 'lit/decorators.js'
-import MarkdownIt, { Token } from 'markdown-it'
+import MarkdownIt, { Token, Options } from 'markdown-it'
 import tailwindStyles from './index.css?inline'
-// import { MarkdownStr1 as mstr } from './mock'
-// 组件引入
-// import '../../widgets/think'
+
+interface MdConfig {
+  widgets: WidgetConfig[]
+  content: string
+  mdConfig?: Options
+}
 
 @customElement('my-element')
 export class MyElement extends LitElement {
   static styles = [unsafeCSS(tailwindStyles)]
 
   // 通过参数构建组件
-  static createWithData({ widgets }: { widgets: WidgetConfig[] }) {
-    return new MyElement(widgets) // 通过构造函数传递值
+  static createWithData({ widgets, content = '', mdConfig }: MdConfig) {
+    return new MyElement({ widgets, content, mdConfig }) // 通过构造函数传递值
   }
 
   @property({ type: String })
@@ -26,17 +29,32 @@ export class MyElement extends LitElement {
   // 渲染工具
   md: MarkdownIt
 
-  constructor(widgets: WidgetConfig[] = []) {
+  // 自定义渲染规则
+  customRules: Record<string, () => TemplateResult> = {}
+
+  constructor({ widgets = [], content = '', mdConfig }: MdConfig) {
     super()
+
     // 初始化渲染器
-    this.md = new MarkdownIt({
-      html: true
-    })
+    if (mdConfig) {
+      this.md = new MarkdownIt(mdConfig)
+    } else {
+      this.md = new MarkdownIt({
+        html: true
+      })
+    }
+
+    // 自定义插件
     this.widgets = widgets
-    // 注册md解析渲染规则
     this.widgets.forEach(widget => {
+      // 注册md解析渲染规则
       widget.rule(this.md)
+      // 注册自定义组件渲染
+      this.customRules[widget.logotype] = widget.render
     })
+
+    // 渲染内容
+    this.content = content
   }
 
   getHtml() {
@@ -44,60 +62,12 @@ export class MyElement extends LitElement {
     return html`${unsafeHTML(_html)}`
   }
 
-  // 创建自定义模板
-  createThinkRule() {
-    return (state: MarkdownIt.StateBlock, startLine: number, endLine: number, silent: boolean) => {
-      const startPos = state.bMarks[startLine] + state.tShift[startLine]
-      const startTag = '<thinking>'
-      const endTag = '</thinking>'
-
-      // 检查是否以 <thinking> 开始
-      if (!state.src.startsWith(startTag, startPos)) {
-        return false // 如果没有开始标签，直接返回 false
-      }
-
-      // 查找结束标签 </thinking>
-      let nextLine = startLine
-      let endPos = -1
-      while (nextLine < endLine) {
-        const lineText = state.getLines(nextLine, nextLine + 1, state.tShift[nextLine], false)
-        const tagEndIndex = lineText.indexOf(endTag)
-        if (tagEndIndex >= 0) {
-          endPos = state.bMarks[nextLine] + state.tShift[nextLine] + tagEndIndex
-          break
-        }
-        nextLine++
-      }
-
-      // 如果是 silent 模式，直接返回 true，表示可以匹配
-      if (silent) return true
-
-      // 创建 thinking_open Token
-      let token = state.push('thinking_open', 'div', 1)
-      token.markup = startTag
-      token.block = true
-
-      // 提取内容（不调用 inline.parse，直接作为纯文本处理）
-      const content = state.src.slice(startPos + startTag.length, endPos).trim()
-      token.content = content
-
-      // 创建 thinking_close Token
-      token = state.push('thinking_close', 'div', -1)
-      token.markup = endTag
-      token.block = true
-
-      state.line = nextLine + 1
-      return true
-    }
-  }
-
   getAST(): unknown[] {
     const ast: Token[] = this.md.parse(this.content, {})
-    // console.log('抽象语法树\n', ast)
+    console.log('抽象树\n', ast)
     const list3 = this.buildNestedAST2(ast)
-    // console.log('渲染结构', list3)
+    console.log('渲染树\n', list3)
     const list4 = this.renderAst3(list3)
-    // console.log('渲染结果', list4)
     return list4
   }
 
@@ -222,11 +192,17 @@ export class MyElement extends LitElement {
             return this.renderHtmlBlock(token)
           case 'html_inline':
             return this.renderHtmlInline(token, ast.end!, this.renderAst3(ast.children))
-          case 'thinking_open':
-            return html`<widget-think></widget-think>`
+          // case 'thinking_open':
+          //   return html`<widget-think></widget-think>`
           default:
-            console.error('[未匹配类型]', token.type)
-            return html``
+            // 判断自定义解析方式
+            const _render = this.customRules[token.type]
+            if (_render) {
+              return _render()
+            } else {
+              console.error('[未匹配类型]', token.type)
+              return html``
+            }
         }
       })
       // 过滤空字符
@@ -379,16 +355,15 @@ export class MyElement extends LitElement {
   render() {
     console.log('this.widgets[0]', this.widgets[0].render())
     return html`<div class="grid grid-cols-2 space-x-4">
-        <div class="prose">
-          <h1>AST渲染</h1>
-          ${this.getAST()}
-        </div>
-        <div class="prose">
-          <h1>默认渲染</h1>
-          ${this.getHtml()}
-        </div>
+      <div class="prose">
+        <h1>AST渲染</h1>
+        ${this.getAST()}
       </div>
-      ${this.widgets[0].render()} `
+      <div class="prose">
+        <h1>默认渲染</h1>
+        ${this.getHtml()}
+      </div>
+    </div> `
     // <widget-think></widget-think>
     // <div class="children-container">${this.childComponents.map(child => html`${child}`)}</div>
   }

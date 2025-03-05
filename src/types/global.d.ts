@@ -2,6 +2,7 @@
 interface WidgetConfig {
   name: string
   version: string
+  logotype: string
   startTag: string
   endTag: string
   startToken: string
@@ -16,6 +17,6 @@ interface RuleOptions {
   endTag: string
   startToken: string
   endToken: string
-  hasChildren?: boolean
-  isClosed?: boolean
+  isClosed?: boolean // 是否需要闭合标签
+  hasChildren?: boolean // 是否内部进行md解析
 }

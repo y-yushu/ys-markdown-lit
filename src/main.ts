@@ -1,5 +1,5 @@
 // 公共部分头
-import { MarkdownStr13 as mock } from './components/my-element/mock'
+import { MarkdownStr2 as mock } from './components/my-element/mock'
 const button = document.createElement('button')
 button.textContent = '测试'
 document.body.appendChild(button)
@@ -15,13 +15,13 @@ import Think from './widgets/think/config'
 
 // 注册组件方式 2
 import { MyElement } from './components/my-element'
-const myElement = MyElement.createWithData({ widgets: [Think] })
+console.log('mock', mock)
+const myElement = MyElement.createWithData({ widgets: [Think], content: mock })
 document.body.appendChild(myElement)
 
 button.addEventListener('click', () => {
   let ind = 0
   const timer = setInterval(() => {
-    console.log('12123')
     const str = mock.substring(0, ind)
     myElement.content = str
     ind++

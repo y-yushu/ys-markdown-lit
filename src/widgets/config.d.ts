@@ -1,3 +1,0 @@
-interface Config {
-  render(): TemplateResult
-}

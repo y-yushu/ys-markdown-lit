@@ -23,7 +23,7 @@ export class WidgetThink extends LitElement {
 
   render() {
     return html`<div class="min-h-12 min-w-12 bg-blue-500 p-4">
-      <button @click=${this.addIndex}>测试${this.index}</button>
+      <button @click=${this.addIndex}>测试====${this.index}</button>
     </div>`
   }
 }
