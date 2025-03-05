@@ -1,3 +1,11 @@
+// 基于markdown-it的token封装
+interface AstToken {
+  node: Token | null
+  end: Token | null
+  children: AstToken[]
+  meta?: unknown
+}
+
 // 组件配置
 interface WidgetConfig {
   name: string
@@ -8,7 +16,7 @@ interface WidgetConfig {
   startToken: string
   endToken: string
   rule: (MarkdownIt) => void
-  render: () => TemplateResult
+  render: (token: AstToken) => TemplateResult
 }
 
 // 规则配置

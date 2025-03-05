@@ -9,7 +9,7 @@ content-02377
 
 export const MarkdownStr2: string = `# 测试标2
 
-这个=是思=考的内容
+<span style="color:red">这个考的内容</span>
 
 <thinking>
 暗藏灯带

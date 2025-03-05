@@ -30,7 +30,7 @@ export class MyElement extends LitElement {
   md: MarkdownIt
 
   // 自定义渲染规则
-  customRules: Record<string, () => TemplateResult> = {}
+  customRules: Record<string, (t: AstToken) => TemplateResult> = {}
 
   constructor({ widgets = [], content = '', mdConfig }: MdConfig) {
     super()
@@ -50,6 +50,9 @@ export class MyElement extends LitElement {
       // 注册md解析渲染规则
       widget.rule(this.md)
       // 注册自定义组件渲染
+      if (this.customRules[widget.logotype]) {
+        throw new Error(`[自定义组件渲染规则重复] ${widget.logotype}`)
+      }
       this.customRules[widget.logotype] = widget.render
     })
 
@@ -192,13 +195,11 @@ export class MyElement extends LitElement {
             return this.renderHtmlBlock(token)
           case 'html_inline':
             return this.renderHtmlInline(token, ast.end!, this.renderAst3(ast.children))
-          // case 'thinking_open':
-          //   return html`<widget-think></widget-think>`
           default:
             // 判断自定义解析方式
             const _render = this.customRules[token.type]
             if (_render) {
-              return _render()
+              return _render(ast)
             } else {
               console.error('[未匹配类型]', token.type)
               return html``
@@ -353,7 +354,7 @@ export class MyElement extends LitElement {
   }
 
   render() {
-    console.log('this.widgets[0]', this.widgets[0].render())
+    // console.log('this.widgets[0]', this.widgets[0].render())
     return html`<div class="grid grid-cols-2 space-x-4">
       <div class="prose">
         <h1>AST渲染</h1>
@@ -373,11 +374,4 @@ declare global {
   interface HTMLElementTagNameMap {
     'my-element': MyElement
   }
-}
-
-interface AstToken {
-  node: Token | null
-  end: Token | null
-  children: AstToken[]
-  meta?: any
 }

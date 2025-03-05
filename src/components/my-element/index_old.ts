@@ -13,9 +13,9 @@ export class MyElement extends LitElement {
 
   // 通过参数构建组件
   static createWithData({ widgets }: { widgets: WidgetConfig[] }) {
-    const element = document.createElement('my-element') as MyElement
-    element.widgets = widgets
-    return element
+    // const element = document.createElement('my-element') as MyElement
+    // element.widgets = widgets
+    // return element
   }
 
   @property({ type: String })
@@ -383,18 +383,18 @@ export class MyElement extends LitElement {
   }
 
   render() {
-    console.log('this.widgets[0]', this.widgets[0].render())
+    // console.log('this.widgets[0]', this.widgets[0].render())
     return html`<div class="grid grid-cols-2 space-x-4">
-        <div class="prose">
-          <h1>AST渲染</h1>
-          ${this.getAST()}
-        </div>
-        <div class="prose">
-          <h1>默认渲染</h1>
-          ${this.getHtml()}
-        </div>
+      <div class="prose">
+        <h1>AST渲染</h1>
+        ${this.getAST()}
       </div>
-      ${this.widgets[0].render()} `
+      <div class="prose">
+        <h1>默认渲染</h1>
+        ${this.getHtml()}
+      </div>
+    </div> `
+    // ${this.widgets[0].render()}
     // <widget-think></widget-think>
     // <div class="children-container">${this.childComponents.map(child => html`${child}`)}</div>
   }
@@ -404,11 +404,4 @@ declare global {
   interface HTMLElementTagNameMap {
     'my-element-old': MyElement
   }
-}
-
-interface AstToken {
-  node: Token | null
-  end: Token | null
-  children: AstToken[]
-  meta?: any
 }

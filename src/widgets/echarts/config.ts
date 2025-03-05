@@ -1,16 +1,16 @@
 import { html } from 'lit'
-import MarkdownIt from 'markdown-it'
+import MarkdownIt, { Token } from 'markdown-it'
 import getRule from '../../utils/getRule'
 import './render'
 
 const config: WidgetConfig = {
-  name: 'thinking',
+  name: 'echarts',
   version: '0.0.1',
   logotype: 'thinking_open',
-  startTag: '<thinking>',
-  endTag: '</thinking>',
-  startToken: 'thinking_open',
-  endToken: 'thinking_close',
+  startTag: '<echarts>',
+  endTag: '</echarts>',
+  startToken: 'echarts_open',
+  endToken: 'echarts_close',
 
   // 渲染规则
   rule: (md: MarkdownIt) => {
@@ -26,11 +26,7 @@ const config: WidgetConfig = {
 
   // 渲染函数
   render: (token: AstToken) => {
-    console.log('render')
-    const renderSue = () => {
-      console.log('123123123')
-    }
-    return html`<widget-think .rendesue=${renderSue}></widget-think>`
+    return html`<widget-think></widget-think>`
   }
 }
 

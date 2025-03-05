@@ -7,15 +7,9 @@ document.body.appendChild(button)
 // 注册子组件
 import Think from './widgets/think/config'
 
-// // 注册组件方式 1
-// import './components/my-element'
-// const myElement = document.createElement('my-element') as any
-// myElement.registerWidget(Think)
-// document.body.appendChild(myElement)
-
 // 注册组件方式 2
 import { MyElement } from './components/my-element'
-console.log('mock', mock)
+console.log('渲染数据', mock)
 const myElement = MyElement.createWithData({ widgets: [Think], content: mock })
 document.body.appendChild(myElement)
 
