@@ -2,10 +2,13 @@ export const MarkdownStr0: string = `<span style="color:red">*123*</span>`
 
 export const MarkdownStr1: string = `# 测试标1
 
-<thinking>
-这是半个**思考**内容
-content-02377
+<echarts>
+{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}
+</echarts>
+
+> 渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了
 `
+// </echar
 
 export const MarkdownStr2: string = `# 测试标2
 

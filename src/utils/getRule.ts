@@ -10,7 +10,7 @@ import MarkdownIt from 'markdown-it'
  * @param hasChildren 是否内部进行md解析 默认为 false
  * @returns {Function} 规则函数
  */
-const getRule = ({ startTag, endTag, startToken, endToken, isClosed = true, hasChildren = false }: RuleOptions) => {
+const getBlockRule = ({ startTag, endTag, startToken, endToken, isClosed = true, hasChildren = false }: RuleOptions) => {
   return (state: MarkdownIt.StateBlock, startLine: number, endLine: number, silent: boolean) => {
     const startPos = state.bMarks[startLine] + state.tShift[startLine]
 
@@ -48,9 +48,11 @@ const getRule = ({ startTag, endTag, startToken, endToken, isClosed = true, hasC
     token.block = true
 
     let content = ''
+    let isClose = false
     if (found) {
       // 如果找到结束标签，提取内容
       content = state.src.slice(startPos + startTag.length, endPos).trim()
+      isClose = true
     } else {
       // 如果没有找到结束标签，提取剩余内容
       content = state.src.slice(startPos + startTag.length).trim()
@@ -69,10 +71,14 @@ const getRule = ({ startTag, endTag, startToken, endToken, isClosed = true, hasC
     token.markup = endTag
     token.block = true
 
+    // 补充额外参数
+    if (!token.meta) token.meta = {}
+    token.meta.isClose = isClose
+
     // 更新当前行
     state.line = found ? nextLine + 1 : endLine
     return true
   }
 }
 
-export default getRule
+export default getBlockRule

@@ -1,16 +1,16 @@
 // 公共部分头
-import { MarkdownStr2 as mock } from './components/my-element/mock'
+import { MarkdownStr1 as mock } from './components/my-element/mock'
 const button = document.createElement('button')
 button.textContent = '测试'
 document.body.appendChild(button)
 
 // 注册子组件
 import Think from './widgets/think/config'
+import Echarts from './widgets/echarts/config'
 
 // 注册组件方式 2
 import { MyElement } from './components/my-element'
-console.log('渲染数据', mock)
-const myElement = MyElement.createWithData({ widgets: [Think], content: mock })
+const myElement = MyElement.createWithData({ widgets: [Think, Echarts], content: mock })
 document.body.appendChild(myElement)
 
 button.addEventListener('click', () => {
@@ -22,5 +22,5 @@ button.addEventListener('click', () => {
     if (ind > mock.length) {
       clearInterval(timer)
     }
-  }, 200)
+  }, 60)
 })

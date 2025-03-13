@@ -3,6 +3,7 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { customElement, property } from 'lit/decorators.js'
 import MarkdownIt, { Token, Options } from 'markdown-it'
 import tailwindStyles from './index.css?inline'
+import { nanoid } from 'nanoid'
 
 interface MdConfig {
   widgets: WidgetConfig[]
@@ -13,6 +14,9 @@ interface MdConfig {
 @customElement('my-element')
 export class MyElement extends LitElement {
   static styles = [unsafeCSS(tailwindStyles)]
+
+  // 组件公用key
+  key: String = ''
 
   // 通过参数构建组件
   static createWithData({ widgets, content = '', mdConfig }: MdConfig) {
@@ -34,6 +38,9 @@ export class MyElement extends LitElement {
 
   constructor({ widgets = [], content = '', mdConfig }: MdConfig) {
     super()
+
+    // 每次创建都会有一个自己的key
+    this.key = nanoid(9)
 
     // 初始化渲染器
     if (mdConfig) {
@@ -67,14 +74,20 @@ export class MyElement extends LitElement {
 
   getAST(): unknown[] {
     const ast: Token[] = this.md.parse(this.content, {})
-    console.log('抽象树\n', ast)
-    const list3 = this.buildNestedAST2(ast)
+    // console.log('抽象树\n', ast)
+    const list3 = this.buildNestedAST2(ast, this.key)
     console.log('渲染树\n', list3)
     const list4 = this.renderAst3(list3)
     return list4
   }
 
-  buildNestedAST2(flatAST: Token[]): AstToken[] {
+  /**
+   * 一维结构转树状结构
+   * @param flatAST 抽象树
+   * @param prefix_id id前缀
+   * @returns 渲染树
+   */
+  buildNestedAST2(flatAST: Token[], prefix_key: String = ''): AstToken[] {
     const root = {
       node: null,
       end: null,
@@ -82,20 +95,24 @@ export class MyElement extends LitElement {
     }
     const stack: AstToken[] = [root]
     let htmlInline = true // 行标签解析
-    for (const node of flatAST) {
+    for (const [index, node] of flatAST.entries()) {
+      console.log('index', index)
       const last = stack.length - 1
       // 行元素特殊处理
       if (node.type === 'inline') {
+        const key = `${prefix_key}_${index}`
         stack[last].children.push({
+          key: key,
           node: node,
           end: null,
-          children: this.buildNestedAST2(node.children || [])
+          children: this.buildNestedAST2(node.children || [], key)
         })
       } else if (node.type === 'html_inline') {
         // 单行html特殊解析
         if (htmlInline) {
           htmlInline = false
           const st = {
+            key: `${prefix_key}_${index}`,
             node: node,
             end: null,
             children: []
@@ -109,12 +126,14 @@ export class MyElement extends LitElement {
         }
       } else if (node.nesting === 0) {
         stack[last].children.push({
+          key: `${prefix_key}_${index}`,
           node: node,
           end: null,
           children: []
         })
       } else if (node.nesting === 1) {
         const st = {
+          key: `${prefix_key}_${index}`,
           node: node,
           end: null,
           children: []
