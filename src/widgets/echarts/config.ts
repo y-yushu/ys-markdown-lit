@@ -1,5 +1,5 @@
 import MarkdownIt from 'markdown-it'
-import getBlockRule from '../../utils/getRule'
+import { getBlockRule } from '../../utils/getRule'
 import { WidgetEcharts } from './render'
 
 const widgetCache = new Map<string, WidgetEcharts>()
@@ -29,7 +29,7 @@ const config: WidgetConfig = {
 
   // 渲染函数
   render: (token: AstToken) => {
-    const key = 'token.key'
+    const key = token.key
     if (widgetCache.has(key)) {
       const cachedWidget = widgetCache.get(key)
       if (cachedWidget) {

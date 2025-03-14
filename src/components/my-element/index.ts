@@ -1,9 +1,15 @@
 import { LitElement, html, render, unsafeCSS, TemplateResult } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
-import { customElement, property } from 'lit/decorators.js'
+import { until } from 'lit/directives/until.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import MarkdownIt, { Token, Options } from 'markdown-it'
-import tailwindStyles from './index.css?inline'
 import { nanoid } from 'nanoid'
+import tailwindStyles from './index.css?inline'
+// 异步渲染code
+import RegisteredLanguage from '../../utils/RegisteredLanguage'
+
+// 代码高亮
+import highlightcss from 'highlight.js/styles/github-dark.css?inline'
 
 interface MdConfig {
   widgets: WidgetConfig[]
@@ -13,15 +19,13 @@ interface MdConfig {
 
 @customElement('my-element')
 export class MyElement extends LitElement {
-  static styles = [unsafeCSS(tailwindStyles)]
+  static styles = [unsafeCSS(tailwindStyles), unsafeCSS(highlightcss)]
 
   // 组件公用key
   key: String = ''
 
-  // 通过参数构建组件
-  static createWithData({ widgets, content = '', mdConfig }: MdConfig) {
-    return new MyElement({ widgets, content, mdConfig }) // 通过构造函数传递值
-  }
+  @state()
+  copysuccess: Record<string, boolean> = {}
 
   @property({ type: String })
   content = ''
@@ -76,7 +80,7 @@ export class MyElement extends LitElement {
     const ast: Token[] = this.md.parse(this.content, {})
     // console.log('抽象树\n', ast)
     const list3 = this.buildNestedAST2(ast, this.key)
-    console.log('渲染树\n', list3)
+    // console.log('渲染树\n', list3)
     const list4 = this.renderAst3(list3)
     return list4
   }
@@ -89,6 +93,7 @@ export class MyElement extends LitElement {
    */
   buildNestedAST2(flatAST: Token[], prefix_key: String = ''): AstToken[] {
     const root = {
+      key: 'root',
       node: null,
       end: null,
       children: []
@@ -96,7 +101,6 @@ export class MyElement extends LitElement {
     const stack: AstToken[] = [root]
     let htmlInline = true // 行标签解析
     for (const [index, node] of flatAST.entries()) {
-      console.log('index', index)
       const last = stack.length - 1
       // 行元素特殊处理
       if (node.type === 'inline') {
@@ -194,7 +198,7 @@ export class MyElement extends LitElement {
             return this.renderLink(token, this.renderAst3(ast.children))
           // 代码块
           case 'fence':
-            return this.renderFence(token)
+            return this.renderFence(token, ast.key)
           case 'code_inline':
             return this.renderCodeInline(token)
           // 水平分隔线
@@ -334,13 +338,49 @@ export class MyElement extends LitElement {
     return html`<a href="${href}" target="_blank" rel="noreferrer nofollow noopener">${chil}</a>`
   }
 
-  // 渲染代码块
-  renderFence(token: Token): TemplateResult {
-    return html`<pre><code>${token.content}</code></pre>`
+  // 渲染 块代码
+  renderFence(token: Token, key: string): TemplateResult {
+    // 如果不存在，则创建
+    if (!this.copysuccess.hasOwnProperty(key)) {
+      this.copysuccess = { ...this.copysuccess, [key]: false }
+    }
+    // 复制方法
+    const copy = () => {
+      if (navigator?.clipboard) {
+        navigator.clipboard
+          .writeText(token.content)
+          .then(() => {
+            this.copysuccess = { ...this.copysuccess, [key]: true }
+            setTimeout(() => {
+              this.copysuccess = { ...this.copysuccess, [key]: false }
+            }, 1500)
+          })
+          .catch(err => {
+            console.error('复制失败', err)
+          })
+      } else {
+        console.error('[navigator.clipboard.writeText 未匹配]')
+      }
+    }
+
+    // 3.0
+    const language = token.info || 'plaintext'
+    return html`
+      <div class="rounded-md">
+        <div class="sticky top-0 flex h-8 select-none items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs">
+          <span class="font-bold text-gray-400">${language}</span>
+          ${this.copysuccess[key]
+            ? html`<span class="cursor-pointer text-white">复制成功</span>`
+            : html`<span class="cursor-pointer text-blue-400 active:text-blue-300" @click=${copy}>复制</span>`}
+        </div>
+        <div>${until(RegisteredLanguage(language, token.content), html`<pre><code class="language-${token.info}">${token.content}</code></pre>`)}</div>
+      </div>
+    `
   }
 
+  // 渲染 行代码
   renderCodeInline(token: Token): TemplateResult {
-    return html`<code>${token.content}</code>`
+    return html`<span class="mx-1 rounded-md bg-gray-700 px-2 py-0.5 text-white">${token.content}</span>`
   }
 
   // 渲染图片
@@ -373,7 +413,6 @@ export class MyElement extends LitElement {
   }
 
   render() {
-    // console.log('this.widgets[0]', this.widgets[0].render())
     return html`<div class="grid grid-cols-2 space-x-4">
       <div class="prose">
         <h1>AST渲染</h1>
@@ -386,6 +425,11 @@ export class MyElement extends LitElement {
     </div> `
     // <widget-think></widget-think>
     // <div class="children-container">${this.childComponents.map(child => html`${child}`)}</div>
+  }
+
+  // 组件首次渲染完成
+  protected firstUpdated() {
+    console.log('触发firstUpdated')
   }
 }
 

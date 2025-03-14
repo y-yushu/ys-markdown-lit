@@ -1,5 +1,5 @@
 // 公共部分头
-import { MarkdownStr1 as mock } from './components/my-element/mock'
+import { MarkdownStr_think as mock } from './mock'
 const button = document.createElement('button')
 button.textContent = '测试'
 document.body.appendChild(button)
@@ -7,10 +7,11 @@ document.body.appendChild(button)
 // 注册子组件
 import Think from './widgets/think/config'
 import Echarts from './widgets/echarts/config'
+import Katex from './widgets/katex/config'
 
 // 注册组件方式 2
 import { MyElement } from './components/my-element'
-const myElement = MyElement.createWithData({ widgets: [Think, Echarts], content: mock })
+const myElement = new MyElement({ widgets: [Think, Echarts, Katex], content: mock })
 document.body.appendChild(myElement)
 
 button.addEventListener('click', () => {

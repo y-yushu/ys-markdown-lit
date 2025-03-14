@@ -1,6 +1,6 @@
 // 基于markdown-it的token封装
 interface AstToken {
-  key?: String
+  key: string
   node: Token | null
   end: Token | null
   children: AstToken[]
@@ -24,4 +24,5 @@ interface RuleOptions {
   endToken: string
   isClosed?: boolean // 是否需要闭合标签
   hasChildren?: boolean // 是否内部进行md解析
+  meta?: unknown // 额外携带参数
 }

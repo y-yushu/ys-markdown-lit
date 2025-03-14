@@ -8,7 +8,6 @@ export const MarkdownStr1: string = `# 测试标1
 
 > 渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了渲染完成了
 `
-// </echar
 
 export const MarkdownStr2: string = `# 测试标2
 
@@ -31,26 +30,28 @@ export const MarkdownStr3: string = `
 // 嵌套列表与代码块
 export const MarkdownStr7: string = `# 复杂的嵌套列表与代码块测试
 
-这是一个包含嵌套列表和代码块的测试内容。
+\`\`\`python
+def hello_world():
+    print("Hello, world!")
+def hello_world():
+    print("Hello, world!")
+def hello_world():
+    print("Hello, world!")
+\`\`\`
 
-## 列表部分
-1. 第一层列表项
-    - 第二层列表项
-        - 第三层列表项
-            * 第四层列表项
-              * 第五层列表项
-2. 第一层列表项
-    - 第二层列表项
-      \`\`\`python
-      def hello_world():
-          print("Hello, world!")
-      \`\`\`
+先输入\`const arr = []\`然后打印
+
 3. 第一层列表项
     - 第二层列表项
         - 第三层列表项
           \`\`\`bash
           echo "这是一个bash代码块"
-          \`\`\``
+          \`\`\`
+1. 第一层列表项
+    - 第二层列表项
+
+> 渲染结束
+`
 
 // 表格与图片混合
 export const MarkdownStr8: string = `# 表格与图片混合测试
@@ -204,4 +205,59 @@ export const MarkdownStr13: string = `# 代码块与特殊字符混合测试
 > 这是一个引用块。
 >
 > 引用块可以包含多段内容。
+`
+
+export const MarkdownStr_echart: string = `# 测试echarts
+
+<echarts>
+{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}
+</echarts>
+
+<echarts>
+{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}
+</echarts>
+
+> 渲染完成了
+`
+
+export const MarkdownStr_katex: string = `# 测试Katex
+
+- 单行
+
+$$\\sqrt{a^2 + b^2} = c$$
+
+- 多行
+
+$$
+\\begin{equation}
+  x = a_0 + \\cfrac{1}{a_1 
+          + \\cfrac{1}{a_2 
+          + \\cfrac{1}{a_3 + \\cfrac{1}{a_4} } } }
+\\end{equation}
+$$
+
+- 单标签
+
+这个是$\\Pi$符号，这个是\\( 
+\\tanh^{-3} 
+\\)符号，这个是\\[
+\\tanh^{-4}
+\\]符号
+`
+
+export const MarkdownStr_think: string = `# 测试Think
+
+<thinking>
+暗藏灯带
+这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容
+151515
+</thinking>
+
+> 你好啊
+
+<think>
+暗藏灯带，这个。
+</think>
+
+这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容
 `

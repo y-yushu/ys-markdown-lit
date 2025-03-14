@@ -60,7 +60,6 @@ export class WidgetEcharts extends LitElement {
     const content = this.token.node?.content || '{}'
     const json = JSON.parse(content)
     this.myChart.setOption(json)
-    console.log('首次渲染')
 
     // 创建完成监听
     const finished = () => {

@@ -1,7 +1,6 @@
-import { html } from 'lit'
 import MarkdownIt from 'markdown-it'
-import getBlockRule from '../../utils/getRule'
-import './render'
+import { getBlockRule } from '../../utils/getRule'
+import { WidgetThink } from './render'
 
 const config: WidgetConfig = {
   name: 'thinking',
@@ -10,29 +9,36 @@ const config: WidgetConfig = {
 
   // 渲染规则
   rule: (md: MarkdownIt) => {
-    const startTag = '<thinking>'
-    const endTag = '</thinking>'
-    const startToken = config.logotype
-    const endToken = 'thinking_close'
+    // 创建块规则 1
+    md.block.ruler.before(
+      'fence',
+      'thinking',
+      getBlockRule({
+        startTag: '<thinking>',
+        endTag: '</thinking>',
+        startToken: config.logotype,
+        endToken: 'thinking_close',
+        isClosed: false
+      })
+    )
 
-    // 创建块规则
-    const _rule = getBlockRule({
-      startTag: startTag,
-      endTag: endTag,
-      startToken: startToken,
-      endToken: endToken,
-      isClosed: false
-    })
-    md.block.ruler.before('fence', 'thinking', _rule)
+    // 创建块规则 2
+    md.block.ruler.before(
+      'fence',
+      'thinking',
+      getBlockRule({
+        startTag: '<think>',
+        endTag: '</think>',
+        startToken: config.logotype,
+        endToken: 'thinking_close',
+        isClosed: false
+      })
+    )
   },
 
   // 渲染函数
   render: (token: AstToken) => {
-    console.log('render', token)
-    const renderSue = () => {
-      console.log('123123123')
-    }
-    return html`<widget-think .rendesue=${renderSue}></widget-think>`
+    return new WidgetThink(token)
   }
 }
 
