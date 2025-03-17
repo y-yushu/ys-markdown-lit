@@ -4,11 +4,11 @@ import { until } from 'lit/directives/until.js'
 import { customElement, property, state } from 'lit/decorators.js'
 import MarkdownIt, { Token, Options } from 'markdown-it'
 import { nanoid } from 'nanoid'
-import tailwindStyles from './index.css?inline'
 // 异步渲染code
 import RegisteredLanguage from '../../utils/RegisteredLanguage'
 
-// 代码高亮
+// 样式
+import tailwindStyles from './index.css?inline'
 import highlightcss from 'highlight.js/styles/github-dark.css?inline'
 
 interface MdConfig {

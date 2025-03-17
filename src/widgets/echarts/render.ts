@@ -32,7 +32,7 @@ export class WidgetEcharts extends LitElement {
   }
 
   render() {
-    const classNames = 'aspect-video min-h-40 rounded-lg border border-green-300 drop-shadow'
+    const classNames = 'aspect-video min-h-40 rounded-lg border drop-shadow my-2'
 
     const show = this.token?.end?.meta?.isClose
 
