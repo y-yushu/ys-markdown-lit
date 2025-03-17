@@ -43,6 +43,8 @@ export class MyElement extends LitElement {
   constructor({ widgets = [], content = '', mdConfig }: MdConfig) {
     super()
 
+    // this.attachShadow({ mode: 'open' })
+
     // 每次创建都会有一个自己的key
     this.key = nanoid(9)
 
@@ -69,6 +71,58 @@ export class MyElement extends LitElement {
 
     // 渲染内容
     this.content = content
+  }
+
+  // 组件首次渲染完成
+  protected firstUpdated() {
+    console.log('触发firstUpdated')
+  }
+
+  // 添加到 connectedCallback 生命周期方法中
+  connectedCallback() {
+    super.connectedCallback()
+
+    if (this.shadowRoot) {
+      ;(this.shadowRoot as EventTarget).addEventListener('click', this.handleLinkClick.bind(this))
+    }
+  }
+
+  // 添加到 disconnectedCallback 生命周期方法中清理事件监听
+  disconnectedCallback() {
+    if (this.shadowRoot) {
+      ;(this.shadowRoot as EventTarget).removeEventListener('click', this.handleLinkClick.bind(this))
+    }
+    super.disconnectedCallback()
+  }
+
+  // 添加链接点击处理方法
+  private handleLinkClick(e: Event) {
+    // 使用类型断言将Event转换为MouseEvent
+    const mouseEvent = e as MouseEvent
+
+    // 获取事件路径
+    const path = mouseEvent.composedPath()
+    const linkElement = path.find(
+      element => element instanceof HTMLAnchorElement || (element instanceof HTMLElement && element.tagName === 'A')
+    ) as HTMLAnchorElement | null
+
+    if (linkElement) {
+      const href = linkElement.getAttribute('href') || ''
+      const text = linkElement.textContent || ''
+
+      this.dispatchEvent(
+        new CustomEvent('link-click', {
+          detail: {
+            href,
+            text,
+            linkElement,
+            originalEvent: mouseEvent
+          },
+          bubbles: true,
+          composed: true
+        })
+      )
+    }
   }
 
   getHtml() {
@@ -335,7 +389,8 @@ export class MyElement extends LitElement {
   renderLink(token: Token, chil: TemplateResult[]): TemplateResult {
     const attrs: Array<[string, string]> | null = token.attrs || []
     const href = attrs.find(attr => attr[0] === 'href')?.[1] || ''
-    return html`<a href="${href}" target="_blank" rel="noreferrer nofollow noopener">${chil}</a>`
+
+    return html`<a class="text-blue-500 no-underline active:text-blue-400" href="${href}" target="_blank" rel="noreferrer nofollow noopener">${chil}</a>`
   }
 
   // 渲染 块代码
@@ -426,15 +481,11 @@ export class MyElement extends LitElement {
     // <widget-think></widget-think>
     // <div class="children-container">${this.childComponents.map(child => html`${child}`)}</div>
   }
-
-  // 组件首次渲染完成
-  protected firstUpdated() {
-    console.log('触发firstUpdated')
-  }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
     'my-element': MyElement
+    'link-click': CustomEvent<LinkClickEventDetail>
   }
 }

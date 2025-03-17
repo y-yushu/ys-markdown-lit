@@ -26,3 +26,13 @@ interface RuleOptions {
   hasChildren?: boolean // 是否内部进行md解析
   meta?: unknown // 额外携带参数
 }
+
+// 链接点击事件的详情接口
+interface LinkClickEventDetail {
+  // 链接的href属性
+  href: string
+  // 链接的文本内容（这里是TemplateResult类型，因为chil是TemplateResult[]）
+  text: TemplateResult[] | any
+  // 原始事件对象
+  originalEvent: MouseEvent
+}
