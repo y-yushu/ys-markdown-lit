@@ -1,6 +1,6 @@
 import { LitElement, html, css, unsafeCSS, PropertyValues } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import tailwindStyles from '../tailwind.css?inline'
+import tailwindStyles from './tailwind.css?inline'
 import * as echarts from 'echarts'
 
 @customElement('widget-echarts')

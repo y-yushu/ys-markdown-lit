@@ -33,8 +33,6 @@ export const MarkdownStr12: string = `# 特殊字符与转义测试
 
 export const MarkdownStr_echart: string = `# 测试echarts
 
-[doccano](https://github.com/doccano/doccano/tree/v1.8.4/frontend)
-
 <echarts>
 {"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}
 </echarts>

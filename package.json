@@ -21,6 +21,7 @@
     "@types/katex": "^0.16.7",
     "@types/markdown-it": "^14.1.2",
     "autoprefixer": "^10.4.20",
+    "glob": "^11.0.1",
     "postcss": "^8.5.2",
     "prettier": "^3.5.0",
     "prettier-plugin-tailwindcss": "^0.6.11",

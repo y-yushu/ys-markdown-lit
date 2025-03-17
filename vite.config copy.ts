@@ -4,13 +4,10 @@ import { glob } from 'glob'
 
 // 修改 widgetEntries 的构建方式，确保键名不包含 src/widgets/ 前缀
 const widgetEntries = glob.sync('src/widgets/**/*.ts').reduce((entries, path) => {
-  // 标准化路径分隔符，确保在 Windows 上也能正确处理
-  const normalizedPath = path.replace(/\\/g, '/')
   // 提取 widget 名称，移除 src/widgets/ 前缀和 .ts 后缀
-  const name = normalizedPath.replace(/^src\/widgets\//, '').replace(/\.ts$/, '')
+  const name = path.replace(/^src\/widgets\//, '').replace(/\.ts$/, '')
   // 使用 widgets/ 作为前缀，确保输出到正确的目录
   entries[`widgets/${name}`] = resolve(__dirname, path)
-  console.log(`Widget entry: widgets/${name} -> ${path}`)
   return entries
 }, {})
 
@@ -33,7 +30,6 @@ export default defineConfig({
           }
           return '[name].js'
         },
-        // 修改 chunkFileNames 配置，确保正确处理路径
         chunkFileNames: chunkInfo => {
           // 检查 chunk 名称是否包含特定 widget 的标识
           const widgetMatch = chunkInfo.name.match(/^widget-([^-]+)-vendor/)

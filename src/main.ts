@@ -11,7 +11,7 @@ import Katex from './widgets/katex/config'
 
 // 注册组件方式 2
 import { MyElement } from './components/my-element'
-const myElement = new MyElement({ widgets: [Think, Echarts, Katex], content: mock })
+const myElement = new MyElement({ widgets: [Think, Echarts, Katex], content: 'mock' })
 
 // 阻止默认点击事件
 myElement.addEventListener('link-click', e => {
