@@ -10,7 +10,6 @@ const widgetEntries = glob.sync('src/widgets/**/*.ts').reduce((entries, path) =>
   const name = normalizedPath.replace(/^src\/widgets\//, '').replace(/\.ts$/, '')
   // 使用 widgets/ 作为前缀，确保输出到正确的目录
   entries[`widgets/${name}`] = resolve(__dirname, path)
-  console.log(`Widget entry: widgets/${name} -> ${path}`)
   return entries
 }, {})
 
@@ -21,7 +20,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+        index: resolve(__dirname, 'src/index.ts'), // 添加主功能组件入口
         ...widgetEntries
       },
       output: {
@@ -33,20 +32,15 @@ export default defineConfig({
           }
           return '[name].js'
         },
-        // 修改 chunkFileNames 配置，确保正确处理路径
         chunkFileNames: chunkInfo => {
-          // 检查 chunk 名称是否包含特定 widget 的标识
           const widgetMatch = chunkInfo.name.match(/^widget-([^-]+)-vendor/)
           if (widgetMatch) {
             const widgetName = widgetMatch[1]
-            // 将依赖放到对应的 widget 文件夹下
             return `widgets/${widgetName}/vendor-[hash].js`
           } else if (chunkInfo.name === 'widgets-common-vendor') {
-            // widgets 共享的依赖放到 widgets 文件夹下
-            return 'widgets/common-vendor-[hash].js'
+            return 'common-vendor-[hash].js'
           }
-          // 其他 chunk 保持原样
-          return '[name]-[hash].js'
+          return 'assets/[name]-[hash].js' // 主功能组件的chunk文件
         },
         manualChunks: (id, { getModuleInfo }) => {
           // 检查是否是 node_modules 中的模块
@@ -102,8 +96,10 @@ export default defineConfig({
     },
     // 确保 widgets 和主应用分开构建
     lib: {
-      entry: resolve(__dirname, 'src/main.ts'),
-      formats: ['es']
+      entry: resolve(__dirname, 'src/index.ts'), // 修改入口文件
+      name: 'YsMdRendering', // 添加库名称
+      formats: ['es'], // 确保输出格式为es
+      fileName: 'ys-md-rendering' // 自定义输出文件名
     }
   }
 })

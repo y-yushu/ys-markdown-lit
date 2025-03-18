@@ -85,3 +85,22 @@ export const MarkdownStr_think: string = `# 测试Think
 
 这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容
 `
+
+export const MarkdownStr_url: string = `健全[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=0)(https://pct.3xmt.com/detail/1892113718783881218?index=0)[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=1)(https://pct.3xmt.com/detail/1892119971606147073?index=1)。
+
+###2. **资助内容及具体条件**
+ #### （一）鼓励产业链协同联动 - **支持IP购买**：企业在2023年1月1日至2023年12月31日期间购买IP开发高端芯片产品，且拥有相关产品布图登记证书或发明专利[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=0)(https://pct.3xmt.com/detail/1892113718783881218?index=1)[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=1)(https://pct.3xmt.com/detail/1892119971606147073?index=1)。
+ - **支持首轮流片**：企业需要在2023年1月1日至2023年12月31日期间首次实现工程产品流片，集成电路制造企业承接首轮流片项目，同时拥有相关产品布图登记证书或发明专利[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=0)(https://pct.3xmt.com/detail/1892113718783881218?index=1)[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=1)(https://pct.3xmt.com/detail/1892119971606147073?index=1)。
+ - **支持多项目晶圆（MPW）**：企业在2023年1月1日至2023年12月31日期间开展MPW项目，且拥有相关产品布图登记证书或发明专利[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=0)(https://pct.3xmt.com/detail/1892113718783881218?index=1)[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=1)(https://pct.3xmt.com/detail/1892119971606147073?index=1)。
+ - **支持EDA软件购买**：企业在2023年1月1日至2023年12月31日期间购买EDA设计工具软件（含软件升级费用）[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=0)(https://pct.3xmt.com/detail/1892113718783881218?index=1)[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=1)(https://pct.3xmt.com/detail/1892119971606147073?index=1)。 #### （二）支持首次示范推广应用 - **集成电路领域**：企业通过自主开发或合作开发实现功能或性能重大突破的高端产品，在首次流片后两年内销售额达到500万元以上，且销售发票开票时间为2023年1月1日至2024年6月30日[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=0)(https://pct.3xmt.com/detail/1892113718783881218?index=2)[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=1)(https://pct.3xmt.com/detail/1892119971606147073?index=1)。
+
+ #### （三）配套支持 -对获得上海市级政策支持的集成电路项目，企业需在项目验收完成后申请配套奖励，奖励金额不超过市级项目扶持资金的50%[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=0)(https://pct.3xmt.com/detail/1892113718783881218?index=2)[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=1)(https://pct.3xmt.com/detail/1892119971606147073?index=1)。
+
+###3. **申报流程**
+ -企业需通过浦东新区财政投入专项综合服务平台进行网上申报，提交相关附件材料，由各片区管理局、镇进行审核和推荐[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=0)(https://pct.3xmt.com/detail/1892113718783881218?index=4)[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=1)(https://pct.3xmt.com/detail/1892119971606147073?index=4)。
+
+###4. **其他要求**
+ -企业在生产经营过程中需符合安全生产要求[[1]](https://pct.3xmt.com/detail/1892120060802215937?index=0)(https://pct.3xmt.com/detail/1892113718783881218?index=0)。
+
+### **总结**
+企业要获得补贴，需首先满足注册地和税务户管地均在浦东新区的基本条件。其次，根据具体的资助内容（如IP购买、首轮流片、MPW等），企业需在2023年1月1日至2023年12月31日期间完成相关项目，并拥有相应的知识产权或专利。最后，企业需通过网上平台提交申报材料，经过审核后即可获得资助。`

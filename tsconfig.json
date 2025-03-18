@@ -23,8 +23,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
-    "types": ["vite", "node"]
+    "noUncheckedSideEffectImports": true
   },
   "include": ["src"]
 }

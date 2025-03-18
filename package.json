@@ -1,7 +1,7 @@
 {
-  "name": "ys-markdown-lit",
+  "name": "ys-md-rendering",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

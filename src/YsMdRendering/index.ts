@@ -5,20 +5,20 @@ import { customElement, property, state } from 'lit/decorators.js'
 import MarkdownIt, { Token, Options } from 'markdown-it'
 import { nanoid } from 'nanoid'
 // 异步渲染code
-import RegisteredLanguage from '../../utils/RegisteredLanguage'
+import RegisteredLanguage from '../utils/RegisteredLanguage'
 
 // 样式
 import tailwindStyles from './index.css?inline'
 import highlightcss from 'highlight.js/styles/github-dark.css?inline'
 
 interface MdConfig {
-  widgets: WidgetConfig[]
-  content: string
-  mdConfig?: Options
+  widgets?: WidgetConfig[]
+  content?: string
+  mdConfig?: Options | null
 }
 
-@customElement('my-element')
-export class MyElement extends LitElement {
+@customElement('ys-md-rendering')
+export class YsMdRendering extends LitElement {
   static styles = [unsafeCSS(tailwindStyles), unsafeCSS(highlightcss)]
 
   // 组件公用key
@@ -40,25 +40,42 @@ export class MyElement extends LitElement {
   // 自定义渲染规则
   customRules: Record<string, (t: AstToken) => TemplateResult> = {}
 
-  constructor({ widgets = [], content = '', mdConfig }: MdConfig) {
+  constructor() {
     super()
-
-    // this.attachShadow({ mode: 'open' })
 
     // 每次创建都会有一个自己的key
     this.key = nanoid(9)
 
-    // 初始化渲染器
+    // 初始化渲染器（使用默认配置）
+    this.md = new MarkdownIt({
+      html: true,
+      linkify: true,
+      typographer: true
+    })
+
+    // 清空其他属性
+    this.widgets = []
+    this.content = ''
+    this.customRules = {}
+  }
+
+  // 添加初始化方法
+  initialize({ widgets = [], content = '', mdConfig = null }: MdConfig): void {
+    // 如果提供了mdConfig，则重新初始化渲染器
     if (mdConfig) {
       this.md = new MarkdownIt(mdConfig)
-    } else {
-      this.md = new MarkdownIt({
-        html: true
-      })
     }
 
-    // 自定义插件
+    // 设置内容
+    this.content = content
+
+    // 设置widgets并注册渲染规则
     this.widgets = widgets
+    this.setupWidgets()
+  }
+
+  // 设置widgets的辅助方法
+  private setupWidgets(): void {
     this.widgets.forEach(widget => {
       // 注册md解析渲染规则
       widget.rule(this.md)
@@ -68,14 +85,6 @@ export class MyElement extends LitElement {
       }
       this.customRules[widget.logotype] = widget.render
     })
-
-    // 渲染内容
-    this.content = content
-  }
-
-  // 组件首次渲染完成
-  protected firstUpdated() {
-    console.log('触发firstUpdated')
   }
 
   // 添加到 connectedCallback 生命周期方法中
@@ -468,24 +477,35 @@ export class MyElement extends LitElement {
   }
 
   render() {
-    return html`<div class="grid grid-cols-2 space-x-4">
-      <div class="prose">
-        <h1>AST渲染</h1>
-        ${this.getAST()}
-      </div>
-      <div class="prose">
-        <h1>默认渲染</h1>
-        ${this.getHtml()}
-      </div>
-    </div> `
-    // <widget-think></widget-think>
-    // <div class="children-container">${this.childComponents.map(child => html`${child}`)}</div>
+    return html`<div class="prose">${this.getAST()}</div>`
+    // return html`<div class="grid grid-cols-2 space-x-4">
+    //   <div class="prose">
+    //     <h1>AST渲染</h1>
+    //     ${this.getAST()}
+    //   </div>
+    //   <div class="prose">
+    //     <h1>默认渲染</h1>
+    //     ${this.getHtml()}
+    //   </div>
+    // </div> `
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'my-element': MyElement
+    'ys-md-rendering': YsMdRendering
     'link-click': CustomEvent<LinkClickEventDetail>
   }
+}
+
+// 添加工厂函数，用于创建并初始化 YsMdRendering 实例
+export function createMdRendering(config: MdConfig): YsMdRendering {
+  // 创建元素实例
+  const element = document.createElement('ys-md-rendering') as YsMdRendering
+
+  // 初始化配置
+  element.initialize(config)
+
+  // 返回初始化后的实例
+  return element
 }
