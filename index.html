@@ -5,6 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + Lit</title>
     <script type="module" src="/src/main.ts"></script>
+    <style>
+      .grid {
+        display: grid;
+      }
+      .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <button id="test-but">测试</button>
+    <div class="grid grid-cols-2">
+      <div>
+        <h1>AST渲染</h1>
+        <div id="box-left"></div>
+      </div>
+      <div>
+        <h1>默认渲染</h1>
+        <div id="box-right"></div>
+      </div>
+    </div>
+  </body>
 </html>

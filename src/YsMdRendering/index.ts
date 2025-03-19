@@ -143,7 +143,7 @@ export class YsMdRendering extends LitElement {
     const ast: Token[] = this.md.parse(this.content, {})
     // console.log('抽象树\n', ast)
     const list3 = this.buildNestedAST2(ast, this.key)
-    // console.log('渲染树\n', list3)
+    console.log('渲染树\n', list3)
     const list4 = this.renderAst3(list3)
     return list4
   }
@@ -267,8 +267,12 @@ export class YsMdRendering extends LitElement {
           // 水平分隔线
           case 'hr':
             return html`<hr />`
-          // 换行
+          // 软换行
           case 'softbreak':
+            console.log('11111',token);
+            return html` `
+          // 硬换行
+          case 'hardbreak':
             return html`<br />`
           // 图片
           case 'image':
