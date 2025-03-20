@@ -49,7 +49,7 @@ export class YsMdRendering extends LitElement {
     // 初始化渲染器（使用默认配置）
     this.md = new MarkdownIt({
       html: true,
-      linkify: true,
+      linkify: false,
       typographer: true
     })
 

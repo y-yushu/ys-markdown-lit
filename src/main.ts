@@ -1,5 +1,5 @@
 // 公共部分头
-import { MarkdownStr_hardbreak as mock } from './mock'
+import { MarkdownStr_url2 as mock } from './mock'
 
 // 注册子组件
 // import Think from './widgets/think'
