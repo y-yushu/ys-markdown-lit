@@ -18,7 +18,7 @@ interface MdConfig {
 }
 
 @customElement('ys-md-rendering')
-export class YsMdRendering extends LitElement {
+export class YsMdRendering2 extends LitElement {
   static styles = [unsafeCSS(tailwindStyles), unsafeCSS(highlightcss)]
 
   // 组件公用key
@@ -215,31 +215,11 @@ export class YsMdRendering extends LitElement {
     return root.children
   }
 
-  // 静态方法注册表，存储所有自定义方法
-  private static customMethods: Map<MethodType, Function> = new Map()
-
-  /**
-   * 注册自定义方法
-   * @param methodName 方法名称
-   * @param customFn 自定义方法实现
-   */
-  public static registerMethod<T extends any[], R>(methodName: MethodType, customFn: CustomMethodFn<T, R>): void {
-    YsMdRendering.customMethods.set(methodName, customFn)
-  }
-
-  protected getMethodImplementation<T extends Function>(methodName: MethodType): T | null {
-    return (YsMdRendering.customMethods.get(methodName) as T) || null
-  }
-
   // 渲染AST3
   renderAst3(asts: AstToken[]): TemplateResult[] {
     const tempList: TemplateResult[] = asts
       .map(ast => {
-        const token = ast.node
-        const customMethod = this.getMethodImplementation(token.type)
-        if (customMethod) {
-          return customMethod(ast)
-        }
+        const token = ast.node!
         switch (token.type) {
           // 行元素递归解析
           case 'inline':
@@ -516,15 +496,15 @@ export class YsMdRendering extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ys-md-rendering': YsMdRendering
+    'ys-md-rendering2': YsMdRendering2
     'link-click': CustomEvent<LinkClickEventDetail>
   }
 }
 
 // 添加工厂函数，用于创建并初始化 YsMdRendering 实例
-export function createMdRendering(config: MdConfig): YsMdRendering {
+export function createMdRendering(config: MdConfig): YsMdRendering2 {
   // 创建元素实例
-  const element = document.createElement('ys-md-rendering') as YsMdRendering
+  const element = document.createElement('ys-md-rendering2') as YsMdRendering2
 
   // 初始化配置
   element.initialize(config)

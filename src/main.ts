@@ -1,5 +1,8 @@
 // 公共部分头
-import { MarkdownStr_url2 as mock } from './mock'
+import { MarkdownStr_fence as mock } from './mock'
+import registerCustomFenceRenderers from './customRenderers/customRenderFence'
+
+registerCustomFenceRenderers()
 
 // 注册子组件
 // import Think from './widgets/think'

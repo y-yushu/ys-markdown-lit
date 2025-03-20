@@ -70,14 +70,6 @@ export default defineConfig({
                     return `widget-${widgetName}-vendor`
                   }
                 }
-
-                // 检查该模块是否只被这个 widget 使用
-                const isOnlyUsedByThisWidget = importers.every(imp => imp.includes(`src/widgets/${widgetName}`) || imp.includes('node_modules'))
-
-                if (isOnlyUsedByThisWidget) {
-                  // 如果只被这个 widget 使用，打包到对应的 widget 中
-                  return `widget-${widgetName}-vendor`
-                }
               }
             }
 

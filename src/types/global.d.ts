@@ -36,3 +36,9 @@ interface LinkClickEventDetail {
   // 原始事件对象
   originalEvent: MouseEvent
 }
+
+// 自定义渲染
+type MethodType = 'heading_open' | 'fence'
+
+// 自定义渲染方法
+type CustomMethodFn<T extends any[], R> = (...args: T) => R
