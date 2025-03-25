@@ -37,8 +37,34 @@ interface LinkClickEventDetail {
   originalEvent: MouseEvent
 }
 
-// 自定义渲染
-type MethodType = 'heading_open' | 'fence'
+// md渲染可支持的token
+type MethodType =
+  | 'inline'
+  | 'heading_open'
+  | 'paragraph_open'
+  | 'blockquote_open'
+  | 'strong_open'
+  | 'em_open'
+  | 's_open'
+  | 'ordered_list_open'
+  | 'bullet_list_open'
+  | 'list_item_open'
+  | 'table_open'
+  | 'thead_open'
+  | 'tbody_open'
+  | 'tr_open'
+  | 'th_open'
+  | 'td_open'
+  | 'link_open'
+  | 'fence'
+  | 'code_inline'
+  | 'hr'
+  | 'softbreak'
+  | 'hardbreak'
+  | 'image'
+  | 'text'
+  | 'html_block'
+  | 'html_inline'
 
 // 自定义渲染方法
 type CustomMethodFn<T extends any[], R> = (...args: T) => R
