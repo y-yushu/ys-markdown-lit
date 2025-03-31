@@ -1,45 +1,15 @@
-import { html, TemplateResult } from 'lit'
+import { html, render, TemplateResult } from 'lit'
+import { unsafeHTML } from 'lit/directives/unsafe-html.js'
+import { Token } from 'markdown-it'
 import { YsMdRendering } from './index'
 
-const registerAllCustomRenderers = () => {
-  YsMdRendering.registerMethod('heading_open', renderHeading)
-  YsMdRendering.registerMethod('paragraph_open', renderParagraph)
-  YsMdRendering.registerMethod('blockquote_open', renderBlockquote)
-  YsMdRendering.registerMethod('strong_open', renderStrong)
-  YsMdRendering.registerMethod('em_open', renderEm)
-  YsMdRendering.registerMethod('s_open', renderS)
-  YsMdRendering.registerMethod('ordered_list_open', renderOrderedList)
-  YsMdRendering.registerMethod('bullet_list_open', renderBulletList)
-  YsMdRendering.registerMethod('list_item_open', renderListItem)
-  // table相关解析
-  YsMdRendering.registerMethod('table_open', renderTable)
-  YsMdRendering.registerMethod('thead_open', renderThead)
-  YsMdRendering.registerMethod('tbody_open', renderTbody)
-  YsMdRendering.registerMethod('tr_open', renderTr)
-  YsMdRendering.registerMethod('th_open', renderTh)
-  YsMdRendering.registerMethod('td_open', renderTd)
-  // 链接解析
-  YsMdRendering.registerMethod('link_open', renderLink)
-  // 代码块
-  YsMdRendering.registerMethod('fence', renderFence)
-  YsMdRendering.registerMethod('code_inline', renderCodeInline)
-  // 分割线
-  YsMdRendering.registerMethod('hr', renderHr)
-  // 换行
-  YsMdRendering.registerMethod('softbreak', renderSoftbreak)
-  YsMdRendering.registerMethod('hardbreak', renderHardbreak)
-  // 图片
-  YsMdRendering.registerMethod('image', renderImage)
-  // 文字解析
-  YsMdRendering.registerMethod('text', renderText)
-  // 解析 html 代码
-  YsMdRendering.registerMethod('html_block', renderHtmlBlock)
-  YsMdRendering.registerMethod('html_inline', renderHtmlInline)
+const rederInline = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+  return html`${chil}`
 }
 
 // 注册`H标题`渲染
 const renderHeading = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
-  const token = ask.node
+  const token: Token = ask.node
   switch (token.tag) {
     case 'h1':
       return html`<h1>${chil}</h1>`
@@ -60,7 +30,7 @@ const renderHeading = (ask: AstToken, chil: TemplateResult[]): TemplateResult =>
 
 // 注册`p`标签渲染
 const renderParagraph = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
-  const token = ask.node
+  const token: Token = ask.node
   if (token.hidden) {
     return html`${chil}`
   } else {
@@ -138,7 +108,7 @@ const renderTd = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
 }
 
 const renderLink = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
-  const token = ask.node
+  const token: Token = ask.node
   const attrs: Array<[string, string]> | null = token.attrs || []
   const href = attrs!.find(attr => attr[0] === 'href')?.[1] || ''
 
@@ -146,8 +116,84 @@ const renderLink = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
 }
 
 const renderFence = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
-  const token = ask.node
+  const token: Token = ask.node
   return html`<pre><code class="language-${token.info}">${token.content}</code></pre>`
 }
 
-export default registerAllCustomRenderers
+const renderCodeInline = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+  const token: Token = ask.node
+  return html`<span class="mx-1 rounded-md bg-gray-700 px-2 py-0.5 text-white">${token.content}</span>`
+}
+
+const renderHr = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+  return html`<hr />`
+}
+
+const renderSoftbreak = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+  return html`${' '}`
+}
+
+const renderHardbreak = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+  return html`<br />`
+}
+
+const renderImage = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+  const token: Token = ask.node
+  const attrs: Array<[string, string]> | null = token.attrs || []
+  const src = attrs.find(attr => attr[0] === 'src')?.[1] || ''
+  const alt = attrs.find(attr => attr[0] === 'alt')?.[1] || ''
+  const title = attrs.find(attr => attr[0] === 'title')?.[1] || ''
+
+  // 返回图片的 HTML 模板
+  return html`<img src="${src}" alt="${alt}" title="${title}" />`
+}
+
+const renderText = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+  const token: Token = ask.node
+  return html`${token.content}`
+}
+
+const renderHtmlBlock = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+  const token: Token = ask.node
+  return html`${unsafeHTML(token.content)}`
+}
+
+const renderHtmlInline = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+  const token: Token = ask.node
+  const end = ask.end
+  const middleContent = html`${chil}`
+  const container = document.createElement('div')
+  render(middleContent, container)
+  const middleContentHTML = container.innerHTML
+  return html`${unsafeHTML(token.content + middleContentHTML + end?.content)}`
+}
+
+// 定义渲染方法的类型
+export const renderMethods: RenderMethods = {
+  inline: rederInline,
+  heading_open: renderHeading,
+  paragraph_open: renderParagraph,
+  blockquote_open: renderBlockquote,
+  strong_open: renderStrong,
+  em_open: renderEm,
+  s_open: renderS,
+  ordered_list_open: renderOrderedList,
+  bullet_list_open: renderBulletList,
+  list_item_open: renderListItem,
+  table_open: renderTable,
+  thead_open: renderThead,
+  tbody_open: renderTbody,
+  tr_open: renderTr,
+  th_open: renderTh,
+  td_open: renderTd,
+  link_open: renderLink,
+  fence: renderFence,
+  code_inline: renderCodeInline,
+  hr: renderHr,
+  softbreak: renderSoftbreak,
+  hardbreak: renderHardbreak,
+  image: renderImage,
+  text: renderText,
+  html_block: renderHtmlBlock,
+  html_inline: renderHtmlInline
+}

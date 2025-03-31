@@ -10,6 +10,7 @@ import RegisteredLanguage from '../utils/RegisteredLanguage'
 // 样式
 import tailwindStyles from './index.css?inline'
 import highlightcss from 'highlight.js/styles/github-dark.css?inline'
+import { renderMethods } from './registerAllCustomRenderers'
 
 interface MdConfig {
   widgets?: WidgetConfig[]
@@ -57,6 +58,12 @@ export class YsMdRendering extends LitElement {
     this.widgets = []
     this.content = ''
     this.customRules = {}
+  }
+
+  // 引用规则函数
+  use(ruleFn: (instance: YsMdRendering) => void) {
+    ruleFn(this)
+    return this
   }
 
   // 添加初始化方法
@@ -134,17 +141,12 @@ export class YsMdRendering extends LitElement {
     }
   }
 
-  getHtml() {
-    const _html = this.md.render(this.content)
-    return html`${unsafeHTML(_html)}`
-  }
-
   getAST(): unknown[] {
     const ast: Token[] = this.md.parse(this.content, {})
     // console.log('抽象树\n', ast)
     const list3 = this.buildNestedAST2(ast, this.key)
     // console.log('渲染树\n', list3)
-    const list4 = this.renderAst3(list3)
+    const list4 = this.renderAst4(list3)
     return list4
   }
 
@@ -215,214 +217,53 @@ export class YsMdRendering extends LitElement {
     return root.children
   }
 
-  // 静态方法注册表，存储所有自定义方法
-  private static customMethods: Map<MethodType, Function> = new Map()
+  // 存储前置解析方法
+  frontMethods: Map<string, RenderFunction> = new Map()
 
-  /**
-   * 注册自定义方法
-   * @param methodName 方法名称
-   * @param customFn 自定义方法实现
-   */
-  public static registerMethod<T extends any[], R>(methodName: MethodType, customFn: CustomMethodFn<T, R>): void {
-    YsMdRendering.customMethods.set(methodName, customFn)
-  }
+  // 存储默认解析方法
+  renderMethods: Map<string, RenderFunction> = new Map(Object.entries(renderMethods))
 
-  protected getMethodImplementation<T extends Function>(methodName: MethodType): T | null {
-    return (YsMdRendering.customMethods.get(methodName) as T) || null
-  }
+  // 储存自定义解析方法
+  customMethods: Map<string, RenderFunction> = new Map()
 
   // 渲染AST3
-  renderAst3(asts: AstToken[]): TemplateResult[] {
+  renderAst4(asts: AstToken[]): TemplateResult[] {
     const tempList: TemplateResult[] = asts
       .map(ast => {
         const token = ast.node
-        const customMethod = this.getMethodImplementation(token.type)
+        // 前置渲染步骤
+        const frontMethod = this.frontMethods.get(token.type)
+        if (frontMethod) {
+          return frontMethod(ast, this.renderAst4(ast.children))
+        }
+
+        // 标准渲染步骤
+        const renderMethod = this.renderMethods.get(token.type)
+        if (renderMethod) {
+          return renderMethod(ast, this.renderAst4(ast.children))
+        }
+
+        // 自定义渲染步骤
+        const customMethod = this.customMethods.get(token.type)
         if (customMethod) {
-          return customMethod(ast)
+          return customMethod(ast, this.renderAst4(ast.children))
         }
-        switch (token.type) {
-          // 行元素递归解析
-          case 'inline':
-            return this.rederInline(this.renderAst3(ast.children))
-          // 块级元素解析
-          case 'heading_open':
-            return this.renderHeading(token, this.renderAst3(ast.children))
-          case 'paragraph_open':
-            return this.renderParagraph(token, this.renderAst3(ast.children))
-          case 'blockquote_open':
-            return this.renderBlockquote(this.renderAst3(ast.children))
-          case 'strong_open':
-            return this.renderStrong(this.renderAst3(ast.children))
-          case 'em_open':
-            return this.renderEm(this.renderAst3(ast.children))
-          case 's_open':
-            return this.renderS(this.renderAst3(ast.children))
-          case 'ordered_list_open':
-            return this.renderOrderedList(this.renderAst3(ast.children))
-          case 'bullet_list_open':
-            return this.renderBulletList(this.renderAst3(ast.children))
-          case 'list_item_open':
-            return this.renderListItem(this.renderAst3(ast.children))
-          // table相关解析
-          case 'table_open':
-            return this.renderTable(this.renderAst3(ast.children))
-          case 'thead_open':
-            return this.renderThead(this.renderAst3(ast.children))
-          case 'tbody_open':
-            return this.renderTbody(this.renderAst3(ast.children))
-          case 'tr_open':
-            return this.renderTr(this.renderAst3(ast.children))
-          case 'th_open':
-            return this.renderTh(this.renderAst3(ast.children))
-          case 'td_open':
-            return this.renderTd(this.renderAst3(ast.children))
-          // 链接解析
-          case 'link_open':
-            return this.renderLink(token, this.renderAst3(ast.children))
-          // 代码块
-          case 'fence':
-            return this.renderFence(token, ast.key)
-          case 'code_inline':
-            return this.renderCodeInline(token)
-          // 水平分隔线
-          case 'hr':
-            return html`<hr />`
-          // 软换行
-          case 'softbreak':
-            return html`${' '}`
-          // 硬换行
-          case 'hardbreak':
-            return html`<br />`
-          // 图片
-          case 'image':
-            return this.renderImage(token)
-          // 文字解析
-          case 'text':
-            return this.renderText(token)
-          // 解析html代码
-          case 'html_block':
-            return this.renderHtmlBlock(token)
-          case 'html_inline':
-            return this.renderHtmlInline(token, ast.end!, this.renderAst3(ast.children))
-          default:
-            // 判断自定义解析方式
-            const _render = this.customRules[token.type]
-            if (_render) {
-              return _render(ast)
-            } else {
-              console.error('[未匹配类型]', token.type)
-              return html``
-            }
-        }
+
+        // switch (token.type) {
+        //   default:
+        //     // 判断自定义解析方式
+        //     const _render = this.customRules[token.type]
+        //     if (_render) {
+        //       return _render(ast)
+        //     } else {
+        //       console.error('[未匹配类型]', token.type)
+        //       return html``
+        //     }
+        // }
       })
       // 过滤空字符
       .filter(e => e !== html``)
     return tempList
-  }
-
-  // 渲染行元素
-  rederInline(chil: TemplateResult[]): TemplateResult {
-    return html`${chil}`
-  }
-
-  // 渲染包裹标签
-  renderHeading(token: Token, chil: TemplateResult[]): TemplateResult {
-    switch (token.tag) {
-      case 'h1':
-        return html`<h1>${chil}</h1>`
-      case 'h2':
-        return html`<h2>${chil}</h2>`
-      case 'h3':
-        return html`<h3>${chil}</h3>`
-      case 'h4':
-        return html`<h4>${chil}</h4>`
-      case 'h5':
-        return html`<h5>${chil}</h5>`
-      case 'h6':
-        return html`<h6>${chil}</h6>`
-    }
-    console.error('[heading标签解析异常]', token)
-    return html``
-  }
-
-  renderParagraph(token: Token, chil: TemplateResult[]): TemplateResult {
-    if (token.hidden) {
-      return html`${chil}`
-    } else {
-      return html`<p>${chil}</p>`
-    }
-  }
-
-  renderBlockquote(chil: TemplateResult[]): TemplateResult {
-    return html`<blockquote>${chil}</blockquote>`
-  }
-
-  renderStrong(chil: TemplateResult[]): TemplateResult {
-    return html`<strong>${chil}</strong>`
-  }
-
-  renderEm(chil: TemplateResult[]): TemplateResult {
-    return html`<em>${chil}</em>`
-  }
-
-  renderS(chil: TemplateResult[]): TemplateResult {
-    return html`<s>${chil}</s>`
-  }
-
-  renderOrderedList(chil: TemplateResult[]): TemplateResult {
-    return html`<ol>
-      ${chil}
-    </ol>`
-  }
-
-  renderBulletList(chil: TemplateResult[]): TemplateResult {
-    return html`<ul>
-      ${chil}
-    </ul>`
-  }
-
-  renderListItem(chil: TemplateResult[]): TemplateResult {
-    return html`<li>${chil}</li>`
-  }
-
-  renderTable(chil: TemplateResult[]): TemplateResult {
-    return html`<table>
-      ${chil}
-    </table>`
-  }
-
-  renderThead(chil: TemplateResult[]): TemplateResult {
-    return html`<thead>
-      ${chil}
-    </thead>`
-  }
-
-  renderTbody(chil: TemplateResult[]): TemplateResult {
-    return html`<tbody>
-      ${chil}
-    </tbody>`
-  }
-
-  renderTr(chil: TemplateResult[]): TemplateResult {
-    return html`<tr>
-      ${chil}
-    </tr>`
-  }
-
-  renderTh(chil: TemplateResult[]): TemplateResult {
-    return html`<th>${chil}</th>`
-  }
-
-  renderTd(chil: TemplateResult[]): TemplateResult {
-    return html`<td>${chil}</td>`
-  }
-
-  // 渲染链接
-  renderLink(token: Token, chil: TemplateResult[]): TemplateResult {
-    const attrs: Array<[string, string]> | null = token.attrs || []
-    const href = attrs.find(attr => attr[0] === 'href')?.[1] || ''
-
-    return html`<a class="text-blue-500 no-underline active:text-blue-400" href="${href}" target="_blank" rel="noreferrer nofollow noopener">${chil}</a>`
   }
 
   // 渲染 块代码
@@ -465,52 +306,8 @@ export class YsMdRendering extends LitElement {
     `
   }
 
-  // 渲染 行代码
-  renderCodeInline(token: Token): TemplateResult {
-    return html`<span class="mx-1 rounded-md bg-gray-700 px-2 py-0.5 text-white">${token.content}</span>`
-  }
-
-  // 渲染图片
-  renderImage(token: Token): TemplateResult {
-    const attrs: Array<[string, string]> | null = token.attrs || []
-    const src = attrs.find(attr => attr[0] === 'src')?.[1] || ''
-    const alt = attrs.find(attr => attr[0] === 'alt')?.[1] || ''
-    const title = attrs.find(attr => attr[0] === 'title')?.[1] || ''
-
-    // 返回图片的 HTML 模板
-    return html`<img src="${src}" alt="${alt}" title="${title}" />`
-  }
-
-  // 渲染文本
-  renderText(token: Token): TemplateResult {
-    return html`${token.content}`
-  }
-
-  // 解析html本身
-  renderHtmlBlock(token: Token): TemplateResult {
-    return html`${unsafeHTML(token.content)}`
-  }
-
-  renderHtmlInline(token: Token, end: Token, chil: TemplateResult[]): TemplateResult {
-    const middleContent = html`${chil}`
-    const container = document.createElement('div')
-    render(middleContent, container)
-    const middleContentHTML = container.innerHTML
-    return html`${unsafeHTML(token.content + middleContentHTML + end?.content)}`
-  }
-
   render() {
     return html`<div class="prose">${this.getAST()}</div>`
-    // return html`<div class="grid grid-cols-2 space-x-4">
-    //   <div class="prose">
-    //     <h1>AST渲染</h1>
-    //     ${this.getAST()}
-    //   </div>
-    //   <div class="prose">
-    //     <h1>默认渲染</h1>
-    //     ${this.getHtml()}
-    //   </div>
-    // </div> `
   }
 }
 

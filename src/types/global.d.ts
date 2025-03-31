@@ -68,3 +68,7 @@ type MethodType =
 
 // 自定义渲染方法
 type CustomMethodFn<T extends any[], R> = (...args: T) => R
+
+type RenderFunction = (ask: AstToken, chil: TemplateResult[]) => TemplateResult
+
+type RenderMethods = Partial<Record<MethodType, RenderFunction>>;
