@@ -1,8 +1,6 @@
 // 公共部分头
-import { MarkdownStr_fence as mock } from './mock'
-import registerCustomFenceRenderers from './customRenderers/customRenderFence'
-
-registerCustomFenceRenderers()
+import { MarkdownStr_code as mock } from './mock'
+import codeHighlighting from './widgets/code-highlighting/index.ts'
 
 // 注册子组件
 // import Think from './widgets/think'
@@ -14,8 +12,10 @@ import { createMdRendering } from './YsMdRendering'
 // 创建并初始化 YsMdRendering 实例
 const myElement = createMdRendering({
   widgets: [],
-  content: mock
+  content: ''
 })
+
+myElement.use(codeHighlighting())
 
 // 阻止默认点击事件
 myElement.addEventListener('link-click', e => {

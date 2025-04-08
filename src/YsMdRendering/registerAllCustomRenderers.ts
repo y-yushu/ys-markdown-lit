@@ -1,9 +1,8 @@
 import { html, render, TemplateResult } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { Token } from 'markdown-it'
-import { YsMdRendering } from './index'
 
-const rederInline = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const rederInline = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`${chil}`
 }
 
@@ -39,71 +38,71 @@ const renderParagraph = (ask: AstToken, chil: TemplateResult[]): TemplateResult 
 }
 
 // 注册`blockquote`渲染
-const renderBlockquote = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderBlockquote = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<blockquote>${chil}</blockquote>`
 }
 
 // 注册 strong 渲染
-const renderStrong = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderStrong = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<strong>${chil}</strong>`
 }
 
 // 注册 em 渲染
-const renderEm = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderEm = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<em>${chil}</em>`
 }
 
 // 注册 s 渲染
-const renderS = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderS = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<s>${chil}</s>`
 }
 
 // 注册 s 渲染
-const renderOrderedList = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderOrderedList = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<ol>
     ${chil}
   </ol>`
 }
 
-const renderBulletList = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderBulletList = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<ul>
     ${chil}
   </ul>`
 }
 
-const renderListItem = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderListItem = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<li>${chil}</li>`
 }
 
-const renderTable = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderTable = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<table>
     ${chil}
   </table>`
 }
 
-const renderThead = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderThead = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<thead>
     ${chil}
   </thead>`
 }
 
-const renderTbody = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderTbody = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<tbody>
     ${chil}
   </tbody>`
 }
 
-const renderTr = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderTr = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<tr>
     ${chil}
   </tr>`
 }
 
-const renderTh = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderTh = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<th>${chil}</th>`
 }
 
-const renderTd = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderTd = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<td>${chil}</td>`
 }
 
@@ -115,29 +114,29 @@ const renderLink = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<a class="text-blue-500 no-underline active:text-blue-400" href="${href}" target="_blank" rel="noreferrer nofollow noopener">${chil}</a>`
 }
 
-const renderFence = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderFence = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   const token: Token = ask.node
   return html`<pre><code class="language-${token.info}">${token.content}</code></pre>`
 }
 
-const renderCodeInline = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderCodeInline = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   const token: Token = ask.node
   return html`<span class="mx-1 rounded-md bg-gray-700 px-2 py-0.5 text-white">${token.content}</span>`
 }
 
-const renderHr = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderHr = (_ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   return html`<hr />`
 }
 
-const renderSoftbreak = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderSoftbreak = (_ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   return html`${' '}`
 }
 
-const renderHardbreak = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderHardbreak = (_ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   return html`<br />`
 }
 
-const renderImage = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderImage = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   const token: Token = ask.node
   const attrs: Array<[string, string]> | null = token.attrs || []
   const src = attrs.find(attr => attr[0] === 'src')?.[1] || ''
@@ -148,12 +147,12 @@ const renderImage = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`<img src="${src}" alt="${alt}" title="${title}" />`
 }
 
-const renderText = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderText = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   const token: Token = ask.node
   return html`${token.content}`
 }
 
-const renderHtmlBlock = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
+const renderHtmlBlock = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   const token: Token = ask.node
   return html`${unsafeHTML(token.content)}`
 }

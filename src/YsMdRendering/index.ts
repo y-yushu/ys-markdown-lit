@@ -1,16 +1,15 @@
-import { LitElement, html, render, unsafeCSS, TemplateResult } from 'lit'
-import { unsafeHTML } from 'lit/directives/unsafe-html.js'
-import { until } from 'lit/directives/until.js'
+import { LitElement, html, unsafeCSS, TemplateResult } from 'lit'
+// import { until } from 'lit/directives/until.js'
 import { customElement, property, state } from 'lit/decorators.js'
 import MarkdownIt, { Token, Options } from 'markdown-it'
 import { nanoid } from 'nanoid'
-// 异步渲染code
-import RegisteredLanguage from '../utils/RegisteredLanguage'
+// // 异步渲染code
+// import RegisteredLanguage from '../utils/RegisteredLanguage'
 
 // 样式
 import tailwindStyles from './index.css?inline'
-import highlightcss from 'highlight.js/styles/github-dark.css?inline'
-import { renderMethods } from './registerAllCustomRenderers'
+// import highlightcss from 'highlight.js/styles/github-dark.css?inline'
+import { renderMethods as RenderMethods } from './registerAllCustomRenderers'
 
 interface MdConfig {
   widgets?: WidgetConfig[]
@@ -20,7 +19,8 @@ interface MdConfig {
 
 @customElement('ys-md-rendering')
 export class YsMdRendering extends LitElement {
-  static styles = [unsafeCSS(tailwindStyles), unsafeCSS(highlightcss)]
+  // static styles = [unsafeCSS(tailwindStyles), unsafeCSS(highlightcss)]
+  static styles = [unsafeCSS(tailwindStyles)]
 
   // 组件公用key
   key: String = ''
@@ -65,6 +65,15 @@ export class YsMdRendering extends LitElement {
     ruleFn(this)
     return this
   }
+
+  // 储存自定义解析方法
+  customMethods: Map<string, RenderFunction> = new Map()
+
+  // 存储前置解析方法
+  frontMethods: Map<string, RenderFunction> = new Map()
+
+  // 存储默认解析方法
+  renderMethods: Map<string, RenderFunction> = new Map(Object.entries(RenderMethods))
 
   // 添加初始化方法
   initialize({ widgets = [], content = '', mdConfig = null }: MdConfig): void {
@@ -217,20 +226,18 @@ export class YsMdRendering extends LitElement {
     return root.children
   }
 
-  // 存储前置解析方法
-  frontMethods: Map<string, RenderFunction> = new Map()
-
-  // 存储默认解析方法
-  renderMethods: Map<string, RenderFunction> = new Map(Object.entries(renderMethods))
-
-  // 储存自定义解析方法
-  customMethods: Map<string, RenderFunction> = new Map()
-
-  // 渲染AST3
+  // 渲染AST v4
   renderAst4(asts: AstToken[]): TemplateResult[] {
     const tempList: TemplateResult[] = asts
       .map(ast => {
         const token = ast.node
+
+        // 自定义渲染步骤
+        const customMethod = this.customMethods.get(token.type)
+        if (customMethod) {
+          return customMethod(ast, this.renderAst4(ast.children))
+        }
+
         // 前置渲染步骤
         const frontMethod = this.frontMethods.get(token.type)
         if (frontMethod) {
@@ -242,24 +249,6 @@ export class YsMdRendering extends LitElement {
         if (renderMethod) {
           return renderMethod(ast, this.renderAst4(ast.children))
         }
-
-        // 自定义渲染步骤
-        const customMethod = this.customMethods.get(token.type)
-        if (customMethod) {
-          return customMethod(ast, this.renderAst4(ast.children))
-        }
-
-        // switch (token.type) {
-        //   default:
-        //     // 判断自定义解析方式
-        //     const _render = this.customRules[token.type]
-        //     if (_render) {
-        //       return _render(ast)
-        //     } else {
-        //       console.error('[未匹配类型]', token.type)
-        //       return html``
-        //     }
-        // }
       })
       // 过滤空字符
       .filter(e => e !== html``)
@@ -267,44 +256,44 @@ export class YsMdRendering extends LitElement {
   }
 
   // 渲染 块代码
-  renderFence(token: Token, key: string): TemplateResult {
-    // 如果不存在，则创建
-    if (!this.copysuccess.hasOwnProperty(key)) {
-      this.copysuccess = { ...this.copysuccess, [key]: false }
-    }
-    // 复制方法
-    const copy = () => {
-      if (navigator?.clipboard) {
-        navigator.clipboard
-          .writeText(token.content)
-          .then(() => {
-            this.copysuccess = { ...this.copysuccess, [key]: true }
-            setTimeout(() => {
-              this.copysuccess = { ...this.copysuccess, [key]: false }
-            }, 1500)
-          })
-          .catch(err => {
-            console.error('复制失败', err)
-          })
-      } else {
-        console.error('[navigator.clipboard.writeText 未匹配]')
-      }
-    }
+  // renderFence(token: Token, key: string): TemplateResult {
+  //   // 如果不存在，则创建
+  //   if (!this.copysuccess.hasOwnProperty(key)) {
+  //     this.copysuccess = { ...this.copysuccess, [key]: false }
+  //   }
+  //   // 复制方法
+  //   const copy = () => {
+  //     if (navigator?.clipboard) {
+  //       navigator.clipboard
+  //         .writeText(token.content)
+  //         .then(() => {
+  //           this.copysuccess = { ...this.copysuccess, [key]: true }
+  //           setTimeout(() => {
+  //             this.copysuccess = { ...this.copysuccess, [key]: false }
+  //           }, 1500)
+  //         })
+  //         .catch(err => {
+  //           console.error('复制失败', err)
+  //         })
+  //     } else {
+  //       console.error('[navigator.clipboard.writeText 未匹配]')
+  //     }
+  //   }
 
-    // 3.0
-    const language = token.info || 'plaintext'
-    return html`
-      <div class="rounded-md">
-        <div class="sticky top-0 flex h-8 select-none items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs">
-          <span class="font-bold text-gray-400">${language}</span>
-          ${this.copysuccess[key]
-            ? html`<span class="cursor-pointer text-white">复制成功</span>`
-            : html`<span class="cursor-pointer text-blue-400 active:text-blue-300" @click=${copy}>复制</span>`}
-        </div>
-        <div>${until(RegisteredLanguage(language, token.content), html`<pre><code class="language-${token.info}">${token.content}</code></pre>`)}</div>
-      </div>
-    `
-  }
+  //   // 3.0
+  //   const language = token.info || 'plaintext'
+  //   return html`
+  //     <div class="rounded-md">
+  //       <div class="sticky top-0 flex h-8 select-none items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs">
+  //         <span class="font-bold text-gray-400">${language}</span>
+  //         ${this.copysuccess[key]
+  //           ? html`<span class="cursor-pointer text-white">复制成功</span>`
+  //           : html`<span class="cursor-pointer text-blue-400 active:text-blue-300" @click=${copy}>复制</span>`}
+  //       </div>
+  //       <div>${until(RegisteredLanguage(language, token.content), html`<pre><code class="language-${token.info}">${token.content}</code></pre>`)}</div>
+  //     </div>
+  //   `
+  // }
 
   render() {
     return html`<div class="prose">${this.getAST()}</div>`
