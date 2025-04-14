@@ -14,9 +14,9 @@ const widgetEntries = glob.sync('src/widgets/**/*.ts').reduce((entries, path) =>
 }, {})
 
 export default defineConfig({
-  // define: {
-  //   'process.env': process.env
-  // },
+  define: {
+    'process.env': process.env
+  },
   build: {
     rollupOptions: {
       input: {

@@ -47,6 +47,7 @@ export class renderFence extends LitElement {
         <div>${until(RegisteredLanguage(language, token.content), html`<pre><code class="language-${token.info}">${token.content}</code></pre>`)}</div>
       </div>
     `
+    // <div>${html`<pre><code class="language-${token.info}">${token.content}</code></pre>`}</div>
   }
 }
 
@@ -55,9 +56,9 @@ const Registration = () => {
     console.log('Code widget is running', instance)
     // 注册前置渲染步骤 - 代码高亮组件
     instance.frontMethods.set('fence', (ask: AstToken, _chil: TemplateResult[]) => {
-      console.log('ask.key', ask.key)
-      const token = ask.node
-      console.log('token', token)
+      // console.log('ask.key', ask.key)
+      // const token = ask.node
+      // console.log('token', token)
       return html`<ys-md-rendering-code-highlighting .ask=${ask}></ys-md-rendering-code-highlighting>`
     })
   }

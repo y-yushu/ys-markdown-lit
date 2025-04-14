@@ -36,5 +36,5 @@ TestBut.addEventListener('click', () => {
     if (ind > mock.length) {
       clearInterval(timer)
     }
-  }, 60)
+  }, 30)
 })
