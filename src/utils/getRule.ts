@@ -1,4 +1,15 @@
-import MarkdownIt from 'markdown-it'
+import MarkdownIt from 'markdown-it/index.js'
+
+// 规则配置
+type RuleOptions = {
+  startTag: string
+  endTag: string
+  startToken: string
+  endToken: string
+  isClosed?: boolean // 是否需要闭合标签
+  hasChildren?: boolean // 是否内部进行md解析
+  meta?: unknown // 额外携带参数
+}
 
 /**
  * 规则配置

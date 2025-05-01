@@ -12,18 +12,38 @@
       .grid-cols-2 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+      .box_left {
+        border: 1px solid red;
+      }
     </style>
+
+    <script type="module">
+      import { MarkdownStr_katex as mock } from './src/mock.ts'
+
+      window.onload = () => {
+        const doms = document.querySelectorAll('ys-md-rendering')
+        doms.forEach(dom => {
+          dom.content = mock
+        })
+      }
+    </script>
   </head>
+
   <body>
     <button id="test-but">测试</button>
     <div class="grid grid-cols-2">
       <div>
         <h1>AST渲染</h1>
-        <div id="box-left"></div>
+        <div class="box_left">
+          <ys-md-rendering>
+            <ys-code-highlight></ys-code-highlight>
+            <ys-katex></ys-katex>
+          </ys-md-rendering>
+        </div>
       </div>
       <div>
         <h1>默认渲染</h1>
-        <div id="box-right"></div>
+        <div></div>
       </div>
     </div>
   </body>

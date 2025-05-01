@@ -1,6 +1,18 @@
 import { html, render, TemplateResult } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
-import { Token } from 'markdown-it'
+import Token from 'markdown-it/lib/token.mjs'
+
+export type AstToken = {
+  key: string
+  node: Token
+  end: Token | null
+  children: AstToken[]
+  meta?: unknown
+}
+
+export type RenderFunction = (ask: AstToken, chil: TemplateResult[]) => TemplateResult
+
+export type RenderMethods = Record<string, RenderFunction>
 
 const rederInline = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
   return html`${chil}`

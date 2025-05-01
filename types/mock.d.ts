@@ -1,0 +1,9 @@
+export declare const MarkdownStr12: string;
+export declare const MarkdownStr_echart: string;
+export declare const MarkdownStr_katex: string;
+export declare const MarkdownStr_think: string;
+export declare const MarkdownStr_url: string;
+export declare const MarkdownStr_hardbreak: string;
+export declare const MarkdownStr_url2: string;
+export declare const MarkdownStr_fence: string;
+export declare const MarkdownStr_code: string;
