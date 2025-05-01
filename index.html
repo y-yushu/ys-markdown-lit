@@ -18,12 +18,14 @@
     </style>
 
     <script type="module">
-      import { MarkdownStr_katex as mock } from './src/mock.ts'
+      import { MarkdownStr_katex as mock, MarkdownStr_code } from './src/mock.ts'
+
+      const mock2 = MarkdownStr_code + '\n\n' + mock
 
       window.onload = () => {
         const doms = document.querySelectorAll('ys-md-rendering')
         doms.forEach(dom => {
-          dom.content = mock
+          dom.content = mock2
         })
       }
     </script>

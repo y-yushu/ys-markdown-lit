@@ -12,7 +12,7 @@ export default defineConfig({
         'plugin/ys-code-highlight': path.resolve(__dirname, 'src/plugin/code-highlight/index.ts'),
         'plugin/ys-katex': path.resolve(__dirname, 'src/plugin/katex/index.ts')
       },
-      name: 'MyCounter',
+      name: 'YsMdRendering',
       formats: ['es'],
       fileName: (format, entryName) => `${entryName}.${format}.js`
     },
