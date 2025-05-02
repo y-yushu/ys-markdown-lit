@@ -7,6 +7,7 @@ import tailwindcss from './index.css?inline'
 
 import { AstToken, RenderFunction, renderMethods } from './registerAllCustomRenderers'
 import Token from 'markdown-it/lib/token.mjs'
+import { generateUUID } from '../utils/generateUUID'
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
@@ -145,7 +146,7 @@ export default class YsMdRendering extends LitElement {
     return tempList
   }
 
-  key = '123456'
+  key = generateUUID()
   // 渲染工具
   md: MarkdownIt
 
