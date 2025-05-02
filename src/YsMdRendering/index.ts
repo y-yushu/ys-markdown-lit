@@ -13,8 +13,7 @@ import { generateUUID } from '../utils/generateUUID'
 export default class YsMdRendering extends LitElement {
   static styles = [unsafeCSS(tailwindcss)]
 
-  @property({ type: String })
-  content = ''
+  @property({ type: String }) content = ''
 
   connectedCallback() {
     super.connectedCallback()
@@ -26,9 +25,6 @@ export default class YsMdRendering extends LitElement {
     super.disconnectedCallback()
     this.removeEventListener('child-register', this._handleChildRegister)
   }
-
-  // 存储前置解析方法
-  frontMethods: Record<string, RenderFunction> = {}
 
   // 存储默认解析方法
   renderMethods: Record<string, RenderFunction> = renderMethods
@@ -127,12 +123,6 @@ export default class YsMdRendering extends LitElement {
         const customMethod = this.customMethods[token.type]
         if (customMethod) {
           return customMethod(ast, this.renderAst4(ast.children))
-        }
-
-        // 前置渲染步骤
-        const frontMethod = this.frontMethods[token.type]
-        if (frontMethod) {
-          return frontMethod(ast, this.renderAst4(ast.children))
         }
 
         // 标准渲染步骤

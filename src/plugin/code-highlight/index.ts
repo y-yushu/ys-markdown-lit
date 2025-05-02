@@ -1,6 +1,8 @@
+// import { LitElement, TemplateResult, css, html, unsafeCSS } from 'lit'
 import { LitElement, TemplateResult, html } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
-import { customElement, state } from 'lit/decorators.js'
+// import { customElement, property, state } from 'lit/decorators.js'
+import { customElement, property } from 'lit/decorators.js'
 import hljs from 'highlight.js/lib/core'
 import highlightcss from 'highlight.js/styles/atom-one-dark.css?inline'
 
@@ -50,21 +52,20 @@ const LanguageDict: Record<string, string> = {
 
 @customElement('ys-code-highlight')
 export default class YsCodeHighlight extends LitElement {
-  @state()
-  isComplete = false
+  // @state() isComplete = false
 
-  private waitForCompletion(): Promise<void> {
-    return new Promise(resolve => {
-      const checkStatus = () => {
-        if (this.isComplete) {
-          resolve()
-        } else {
-          setTimeout(checkStatus, 50)
-        }
-      }
-      checkStatus()
-    })
-  }
+  // private waitForCompletion(): Promise<void> {
+  //   return new Promise(resolve => {
+  //     const checkStatus = () => {
+  //       if (this.isComplete) {
+  //         resolve()
+  //       } else {
+  //         setTimeout(checkStatus, 50)
+  //       }
+  //     }
+  //     checkStatus()
+  //   })
+  // }
 
   connectedCallback() {
     super.connectedCallback()
@@ -73,41 +74,12 @@ export default class YsCodeHighlight extends LitElement {
       new CustomEvent('child-register', {
         detail: {
           apply: (instance: YsMdRendering) => {
-            instance.frontMethods['fence'] = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
-              console.log('ask', ask)
+            instance.renderMethods['fence'] = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
               const token = (ask as AstToken).node
-              const info1 = LanguageDict[token.info] || token.info
-              const language = info1 || 'plaintext'
+              const info = LanguageDict[token.info] || token.info
+              const language = info || 'plaintext'
 
-              // <!-- ${boo
-              //   ? html`<span class="cursor-pointer text-white">复制成功</span>`
-              //   : html`<span class="cursor-pointer text-blue-400 active:text-blue-300" @click=${copy}>复制</span>`} -->
-
-              const getHtmlByLanguage = (lang: string) => {
-                const highlightedCode = hljs.highlight(token.content, { language: lang })?.value
-                return html`<div class="rounded-md">
-                  <div class="sticky top-0 flex h-8 items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs select-none">
-                    <span class="font-bold text-gray-400">${token.info || '未知语言'}</span>
-                    <span class="cursor-pointer text-blue-400 active:text-blue-300">复制</span>
-                  </div>
-                  <div>
-                    <pre class="!m-0 rounded-t-none p-0"><code class="hljs language-${lang}">${unsafeHTML(highlightedCode)}</code></pre>
-                  </div>
-                </div>`
-              }
-
-              return html`${until(
-                this.waitForCompletion().then(() => {
-                  if (hljs.getLanguage(language)) {
-                    return getHtmlByLanguage(language)
-                  } else {
-                    return getHtmlByLanguage('plaintext')
-                  }
-                }),
-                () => {
-                  return getHtmlByLanguage('plaintext')
-                }
-              )}`
+              return html`<ys-code-highlight-render .language=${language} .info=${info} .content=${token.content}></ys-code-highlight-render> `
             }
           },
           feature: '代码高亮',
@@ -119,9 +91,11 @@ export default class YsCodeHighlight extends LitElement {
     )
   }
 
-  firstUpdated() {
-    this.isComplete = true
-  }
+  // firstUpdated() {
+  //   setTimeout(() => {
+  //     this.isComplete = true
+  //   }, 0)
+  // }
 
   render() {
     return html`<slot name="default-language">
@@ -155,8 +129,33 @@ export default class YsCodeHighlight extends LitElement {
   }
 }
 
+@customElement('ys-code-highlight-render')
+export class YsCodeHighlightRender extends LitElement {
+  createRenderRoot() {
+    return this
+  }
+
+  @property({ type: String }) language = 'plaintext'
+  @property({ type: String }) info = ''
+  @property({ type: String }) content = ''
+
+  render() {
+    const highlightedCode = hljs.getLanguage(this.language) ? hljs.highlight(this.content, { language: this.language }).value : this.content
+
+    return html`
+      <div class="rounded-lg">
+        <div class="sticky top-0 flex h-8 items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs select-none">
+          <span class="font-bold text-gray-400">${this.info || '未知语言'}</span>
+          <span class="cursor-pointer text-blue-400 active:text-blue-300">复制</span>
+        </div>
+        <pre class="!m-0 rounded-t-none p-0"><code class="hljs language-${this.language} !bg-gray-800">${unsafeHTML(highlightedCode)}</code></pre>
+      </div>
+    `
+  }
+}
 declare global {
   interface HTMLElementTagNameMap {
     'ys-code-highlight': YsCodeHighlight
+    'ys-code-highlight-render': YsCodeHighlightRender
   }
 }

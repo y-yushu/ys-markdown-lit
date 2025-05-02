@@ -10,32 +10,51 @@
         display: grid;
       }
       .grid-cols-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 3fr 2fr;
       }
       .box_left {
+        padding-right: 1rem;
         border-right: 1px solid red;
       }
     </style>
 
     <script type="module">
-      // import { MarkdownStr_echart as mock } from './src/mock.ts'
-      import { MarkdownStr_think as mock } from './src/mock.ts'
+      import { MarkdownStr_svg } from './src/mock.ts'
+      // import { MarkdownStr_code } from './src/mock.ts'
+
+      const mock = MarkdownStr_svg
+      // const mock = MarkdownStr_code
+      // const mock = MarkdownStr_svg + '\n\n' + MarkdownStr_code
 
       window.onload = () => {
         // 添加
         const button = document.getElementById('test_but_1')
         button.addEventListener('click', () => {
+          // ---- 全量添加
           const dom = document.getElementById('left-rendering')
-          let index = 0
-          const updateContent = () => {
-            if (index < mock.length) {
-              dom.content = mock.slice(0, index + 1) // 增量更新内容
-              index++
-              setTimeout(updateContent, 20) // 每 59ms 更新一个字符
-            }
-          }
-          updateContent()
+          dom.content = mock
+          // // ---- 增量添加
+          // const dom = document.getElementById('left-rendering')
+          // let index = 0
+          // const updateContent = () => {
+          //   if (index < mock.length) {
+          //     dom.content = mock.slice(0, index + 1) // 增量更新内容
+          //     index++
+          //     // setTimeout(updateContent, 20) // 每 59ms 更新一个字符
+          //     setTimeout(updateContent, 20) // 每 59ms 更新一个字符
+          //   }
+          // }
+          // updateContent()
+          // // ---- 不间断添加
+          // const ysMdRendering = document.createElement('ys-md-rendering')
+          // ysMdRendering.content = mock
+          // const ysCodeHighlight = document.createElement('ys-code-highlight')
+          // ysMdRendering.appendChild(ysCodeHighlight)
+          // const box = document.getElementById('left_box')
+          // box.appendChild(ysMdRendering)
         })
+
+        button.click()
 
         // 销毁
         const button2 = document.getElementById('test_but_2')
@@ -53,12 +72,13 @@
     <div id="all_box" class="grid grid-cols-2">
       <div>
         <h1>AST渲染</h1>
-        <div class="box_left">
+        <div id="left_box" class="box_left">
           <ys-md-rendering id="left-rendering">
             <ys-code-highlight></ys-code-highlight>
             <ys-katex></ys-katex>
             <ys-echarts></ys-echarts>
             <ys-think></ys-think>
+            <ys-svg></ys-svg>
           </ys-md-rendering>
         </div>
       </div>

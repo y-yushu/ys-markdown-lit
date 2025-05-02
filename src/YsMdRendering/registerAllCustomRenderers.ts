@@ -133,7 +133,7 @@ const renderFence = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => 
 
 const renderCodeInline = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   const token: Token = ask.node
-  return html`<span class="mx-1 rounded-md bg-gray-700 px-2 py-0.5 text-white">${token.content}</span>`
+  return html`<span class="mx-1 rounded-lg bg-gray-700 px-2 py-0.5 text-white">${token.content}</span>`
 }
 
 const renderHr = (_ask: AstToken, _chil: TemplateResult[]): TemplateResult => {

@@ -11,7 +11,9 @@ export default defineConfig({
         'ys-md-rendering': path.resolve(__dirname, 'src/YsMdRendering/index.ts'),
         'plugin/ys-code-highlight': path.resolve(__dirname, 'src/plugin/code-highlight/index.ts'),
         'plugin/ys-katex': path.resolve(__dirname, 'src/plugin/katex/index.ts'),
-        'plugin/ys-echarts': path.resolve(__dirname, 'src/plugin/echarts/index.ts')
+        'plugin/ys-echarts': path.resolve(__dirname, 'src/plugin/echarts/index.ts'),
+        'plugin/ys-think': path.resolve(__dirname, 'src/plugin/think/index.ts'),
+        'plugin/ys-svg': path.resolve(__dirname, 'src/plugin/svg/index.ts')
       },
       name: 'YsMdRendering',
       formats: ['es'],
