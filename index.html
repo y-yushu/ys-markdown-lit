@@ -18,28 +18,45 @@
     </style>
 
     <script type="module">
-      import { MarkdownStr_katex as mock, MarkdownStr_code } from './src/mock.ts'
-
-      const mock2 = MarkdownStr_code + '\n\n' + mock
+      import { MarkdownStr_echart as mock } from './src/mock.ts'
 
       window.onload = () => {
-        const doms = document.querySelectorAll('ys-md-rendering')
-        doms.forEach(dom => {
-          dom.content = mock2
+        // 添加
+        const button = document.getElementById('test_but_1')
+        button.addEventListener('click', () => {
+          const dom = document.getElementById('left-rendering')
+          let index = 0
+          const updateContent = () => {
+            if (index < mock.length) {
+              dom.content = mock.slice(0, index + 1) // 增量更新内容
+              index++
+              setTimeout(updateContent, 20) // 每 59ms 更新一个字符
+            }
+          }
+          updateContent()
+        })
+
+        // 销毁
+        const button2 = document.getElementById('test_but_2')
+        button2.addEventListener('click', () => {
+          const domall = document.getElementById('all_box')
+          domall.innerHTML = ''
         })
       }
     </script>
   </head>
 
   <body>
-    <button id="test-but">测试</button>
-    <div class="grid grid-cols-2">
+    <button id="test_but_1">测试</button>
+    <button id="test_but_2">销毁</button>
+    <div id="all_box" class="grid grid-cols-2">
       <div>
         <h1>AST渲染</h1>
         <div class="box_left">
-          <ys-md-rendering>
+          <ys-md-rendering id="left-rendering">
             <ys-code-highlight></ys-code-highlight>
             <ys-katex></ys-katex>
+            <ys-echarts></ys-echarts>
           </ys-md-rendering>
         </div>
       </div>

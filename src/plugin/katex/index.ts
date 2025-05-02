@@ -1,4 +1,4 @@
-import { html, LitElement, TemplateResult } from 'lit'
+import { css, html, LitElement, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators.js'
 import YsMdRendering from '../../YsMdRendering'
 import { AstToken } from '../../YsMdRendering/registerAllCustomRenderers'
@@ -169,8 +169,13 @@ export default class YsKatex extends LitElement {
             }
           },
           feature: '数学公式',
-          styles: `${katexcss}
-            .katex .tag {display: none; }`
+          styles:
+            katexcss +
+            css`
+              .katex .tag {
+                display: none;
+              }
+            `.cssText
         },
         bubbles: true,
         composed: true
