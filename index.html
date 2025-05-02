@@ -19,11 +19,11 @@
     </style>
 
     <script type="module">
-      import { MarkdownStr_svg } from './src/mock.ts'
-      // import { MarkdownStr_code } from './src/mock.ts'
+      // import { MarkdownStr_svg } from './src/mock.ts'
+      import { MarkdownStr_code } from './src/mock.ts'
 
-      const mock = MarkdownStr_svg
-      // const mock = MarkdownStr_code
+      // const mock = MarkdownStr_svg
+      const mock = MarkdownStr_code
       // const mock = MarkdownStr_svg + '\n\n' + MarkdownStr_code
 
       window.onload = () => {
@@ -74,7 +74,7 @@
         <h1>AST渲染</h1>
         <div id="left_box" class="box_left">
           <ys-md-rendering id="left-rendering">
-            <ys-code-highlight></ys-code-highlight>
+            <!-- <ys-code-highlight></ys-code-highlight> -->
             <ys-katex></ys-katex>
             <ys-echarts></ys-echarts>
             <ys-think></ys-think>

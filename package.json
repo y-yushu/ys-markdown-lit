@@ -1,10 +1,44 @@
 {
   "name": "ys-md-rendering",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/y-yushu/ys-markdown-lit.git"
+  },
   "type": "module",
+  "main": "./dist/ys-md-rendering.es.js",
+  "module": "./dist/ys-md-rendering.es.js",
+  "types": "./dist/ys-md-rendering.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/ys-md-rendering.es.js",
+      "types": "./types/YsMdRendering/index.d.ts"
+    },
+    "./plugin/ys-code-highlight": {
+      "import": "./dist/plugin/ys-code-highlight.es.js",
+      "types": "./types/plugin/code-highlight/index.d.ts"
+    },
+    "./plugin/ys-echarts": {
+      "import": "./dist/plugin/ys-echarts.es.js",
+      "types": "./types/plugin/echarts/index.d.ts"
+    },
+    "./plugin/ys-katex": {
+      "import": "./dist/plugin/ys-katex.es.js",
+      "types": "./types/plugin/katex/index.d.ts"
+    },
+    "./plugin/ys-svg": {
+      "import": "./dist/plugin/ys-svg.es.js",
+      "types": "./types/plugin/svg/index.d.ts"
+    },
+    "./plugin/ys-think": {
+      "import": "./dist/plugin/ys-think.es.js",
+      "types": "./types/plugin/think/index.d.ts"
+    }
+  },
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "scripts": {
     "dev": "vite",

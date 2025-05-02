@@ -7,7 +7,6 @@ export default class YsMdRendering extends LitElement {
     content: string;
     connectedCallback(): void;
     disconnectedCallback(): void;
-    frontMethods: Record<string, RenderFunction>;
     renderMethods: Record<string, RenderFunction>;
     customMethods: Record<string, RenderFunction>;
     private _handleChildRegister;

@@ -38,7 +38,7 @@ export default class YsEcharts extends LitElement {
 
             // 注册渲染方法
             instance.customMethods[this.config.logotype] = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
-              const classNames = 'aspect-video min-h-40 rounded-lg border drop-shadow my-2 border border-dashed border-red-500'
+              const classNames = 'aspect-video min-h-40 rounded-lg border drop-shadow my-2 border border-dashed border-gray-500'
               const show = ask.end?.meta?.isClose
 
               return html`<div class="${classNames} flex items-center justify-center">

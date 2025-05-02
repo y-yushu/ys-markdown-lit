@@ -5,10 +5,8 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { customElement, property } from 'lit/decorators.js'
 import hljs from 'highlight.js/lib/core'
 import highlightcss from 'highlight.js/styles/atom-one-dark.css?inline'
-
 // 不执行任何语法高亮
 import plaintext from 'highlight.js/lib/languages/plaintext'
-hljs.registerLanguage('plaintext', plaintext)
 // 默认语法支持
 import './languages/bash'
 import './languages/cpp'
@@ -35,9 +33,10 @@ import './languages/swift'
 import './languages/typescript'
 import './languages/xml'
 import './languages/yaml'
-import { until } from 'lit/directives/until.js'
 import YsMdRendering from '../../YsMdRendering'
 import { AstToken } from '../../YsMdRendering/registerAllCustomRenderers'
+
+hljs.registerLanguage('plaintext', plaintext)
 
 // 额外语言字典
 const LanguageDict: Record<string, string> = {

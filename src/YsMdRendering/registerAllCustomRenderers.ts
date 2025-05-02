@@ -128,7 +128,16 @@ const renderLink = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {
 
 const renderFence = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
   const token: Token = ask.node
-  return html`<pre><code class="language-${token.info}">${token.content}</code></pre>`
+  // return html`<pre><code class="language-${token.info}">${token.content}</code></pre>`
+  return html`
+    <div class="rounded-lg">
+      <div class="sticky top-0 flex h-8 items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs select-none">
+        <span class="font-bold text-gray-400">${token.info}</span>
+        <!-- <span class="cursor-pointer text-blue-400 active:text-blue-300">复制</span> -->
+      </div>
+      <pre class="!m-0 rounded-t-none"><code>${token.content}</code></pre>
+    </div>
+  `
 }
 
 const renderCodeInline = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {

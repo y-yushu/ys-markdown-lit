@@ -25,14 +25,19 @@ import './languages/typescript';
 import './languages/xml';
 import './languages/yaml';
 export default class YsCodeHighlight extends LitElement {
-    isComplete: boolean;
-    private waitForCompletion;
     connectedCallback(): void;
-    firstUpdated(): void;
+    render(): TemplateResult<1>;
+}
+export declare class YsCodeHighlightRender extends LitElement {
+    createRenderRoot(): this;
+    language: string;
+    info: string;
+    content: string;
     render(): TemplateResult<1>;
 }
 declare global {
     interface HTMLElementTagNameMap {
         'ys-code-highlight': YsCodeHighlight;
+        'ys-code-highlight-render': YsCodeHighlightRender;
     }
 }
