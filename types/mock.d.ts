@@ -8,3 +8,4 @@ export declare const MarkdownStr_url2: string;
 export declare const MarkdownStr_fence: string;
 export declare const MarkdownStr_code: string;
 export declare const MarkdownStr_svg: string;
+export declare const MarkdownStr_echarts2: string;

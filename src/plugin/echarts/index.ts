@@ -21,20 +21,33 @@ export default class YsEcharts extends LitElement {
       new CustomEvent('child-register', {
         detail: {
           apply: (instance: YsMdRendering) => {
-            const startTag = '<echarts>'
-            const endTag = '</echarts>'
             const startToken = this.config.logotype
             const endToken = 'echarts_close'
 
+            
+            const startTag1 = '<echarts>'
+            const endTag1 = '</echarts>'
             // 创建块规则
             const _rule = getBlockRule({
-              startTag: startTag,
-              endTag: endTag,
+              startTag: startTag1,
+              endTag: endTag1,
               startToken: startToken,
               endToken: endToken,
               isClosed: false
             })
             instance.md.block.ruler.before('fence', 'echarts', _rule)
+
+            const startTag2 = '@hisw_echarts_start'
+            const endTag2 = '@hisw_echarts_end'
+            // 创建块规则
+            const _rule2 = getBlockRule({
+              startTag: startTag2,
+              endTag: endTag2,
+              startToken: startToken,
+              endToken: endToken,
+              isClosed: false
+            })
+            instance.md.block.ruler.before('fence', 'echarts', _rule2)
 
             // 注册渲染方法
             instance.customMethods[this.config.logotype] = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {

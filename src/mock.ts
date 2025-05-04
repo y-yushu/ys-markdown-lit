@@ -131,7 +131,7 @@ export const MarkdownStr_url2: string = `"申请小微企业提升自主创新�
    - 知识产权、所获奖励、荣誉、资质等相关材料[[1]](https://pct.3xmt.com/detail/1892144796829638657?index=4)[[2]](https://pct.3xmt.com/detail/1892119631775248386?index=5)。
 \n通过以上流程和材料准备，企业可以顺利完成小微企业提升自主创新能力的资助奖励申请。"`
 
-export const MarkdownStr_fence:string = `# 测试代码块
+export const MarkdownStr_fence: string = `# 测试代码块
 
 \`\`\`javascript
 const app = new App()
@@ -227,3 +227,209 @@ repeatCount="indefinite"
 </svg>
 \`\`\`
 `
+
+export const MarkdownStr_echarts2: string = `
+\`\`\`python
+import json
+from pyecharts import options as opts
+from pyecharts.charts import Pie
+
+# 文件读取
+with open('/tmp/json_temporary_number.json', 'r', encoding='utf-8') as file:
+    data = json.load(file)
+
+# 数据处理
+route_types = [item['线路类型'] for item in data]
+route_counts = [item['线路数量'] for item data data]
+
+# 图表option生成
+pie = Pie()
+pie.add(
+    "",
+    [list(z) for z in zip(route_types, route_counts)],
+    radius=["40%", "75%"],
+)
+pie.set_global_opts(
+ legend legend_opts=opts.LegendOpts(pos_left="left", pos_bottom="bottom"),
+    title_opts=opts.TitleOpts(title="线路类型统计"),
+)
+pie.set_series_opts(
+    label_opts=opts.LabelOpts(formatter="{b}: {c} ({d}%)"),
+)
+
+# 保存
+with open('/tmp/result_temporary_number.txt', 'w', encoding='utf-8') as file:
+    file.write(pie.dump_options())
+\`\`\`
+
+@hisw_echarts_start{
+    "animation": true,
+    "animationThreshold": 2000,
+    "animationDuration": 1000,
+    "animationEasing": "cubicOut",
+    "animationDelay": 0,
+    "animationDurationUpdate": 300,
+    "animationEasingUpdate": "cubicOut",
+    "animationDelayUpdate": 0,
+    "aria": {
+        "enabled": false
+    },
+    "color": [
+        "#5470c6",
+        "#91cc75",
+        "#fac858",
+        "#ee6666",
+        "#73c0de",
+        "#3ba272",
+        "#fc8452",
+        "#9a60b4",
+        "#ea7ccc"
+    ],
+    "series": [
+        {
+            "type": "pie",
+            "colorBy": "data",
+            "legendHoverLink": true,
+            "selectedMode": false,
+            "selectedOffset": 10,
+            "clockwise": true,
+            "startAngle": 90,
+            "minAngle": 0,
+            "minShowLabelAngle": 0,
+            "avoidLabelOverlap": true,
+            "stillShowZeroSum": true,
+            "percentPrecision": 2,
+            "showEmptyCircle": true,
+            "emptyCircleStyle": {
+                "color": "lightgray",
+                "borderColor": "#000",
+                "borderWidth": 0,
+                "borderType": "solid",
+                "borderDashOffset": 0,
+                "borderCap": "butt",
+                "borderJoin": "bevel",
+                "borderMiterLimit": 10,
+                "opacity": 1
+            },
+            "data": [
+                {
+                    "name": "\u5e38\u89c4\u516c\u4ea4",
+                    "value": 12
+                },
+                {
+                    "name": "\u5b9a\u5236\u5316\u73ed\u7ebf",
+                    "value": 11
+                },
+                {
+                    "name": "\u54cd\u5e94\u5f0f\u516c\u4ea4",
+                    "value": 9
+                },
+                {
+                    "name": "\u667a\u80fd\u7f51\u8054\u516c\u4ea4",
+                    "value": 9
+                },
+                {
+                    "name": "\u4e13\u7ebf",
+                    "value": 9
+                }
+            ],
+            "radius": [
+                "40%",
+                "75%"
+            ],
+            "center": [
+                "50%",
+                "50%"
+            ],
+            "label": {
+                "show": true,
+                "margin": 8,
+                "formatter": "{b}: {c} ({d}%)"
+            },
+            "labelLine": {
+                "show": true,
+                "showAbove": false,
+                "length": 15,
+                "length2": 15,
+                "smooth": false,
+                "minTurnAngle": 90,
+                "maxSurfaceAngle": 90
+            },
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 2.5,
+                "period": 4
+            }
+        }
+    ],
+    "legend": [
+        {
+            "data": [
+                "\u5e38\u89c4\u516c\u4ea4",
+                "\u5b9a\u5236\u5316\u73ed\u7ebf",
+                "\u54cd\u5e94\u5f0f\u516c\u4ea4",
+                "\u667a\u80fd\u7f51\u8054\u516c\u4ea4",
+                "\u4e13\u7ebf"
+            ],
+            "selected": {},
+            "show": true,
+            "left": "left",
+            "bottom": "bottom",
+            "padding": 5,
+            "itemGap": 10,
+            "itemWidth": 25,
+            "itemHeight": 14,
+            "backgroundColor": "transparent",
+            "borderColor": "#ccc",
+            "borderWidth": 1,
+            "borderRadius": 0,
+            "pageButtonItemGap": 5,
+            "pageButtonPosition": "end",
+            "pageFormatter": "{current}/{total}",
+            "pageIconColor": "#2f4554",
+            "pageIconInactiveColor": "#aaa",
+            "pageIconSize": 15,
+            "animationDurationUpdate": 800,
+            "selector": false,
+            "selectorPosition": "auto",
+            "selectorItemGap": 7,
+            "selectorButtonGap": 10
+        }
+    ],
+    "tooltip": {
+        "show": true,
+        "trigger": "item",
+        "triggerOn": "mousemove|click",
+        "axisPointer": {
+            "type": "line"
+        },
+        "showContent": true,
+        "alwaysShowContent": false,
+        "showDelay": 0,
+        "hideDelay": 100,
+        "enterable": false,
+        "confine": false,
+        "appendToBody": false,
+        "transitionDuration": 0.4,
+        "textStyle": {
+            "fontSize": 14
+        },
+        "borderWidth": 0,
+        "padding": 5,
+        "order": "seriesAsc"
+    },
+    "title": [
+        {
+            "show": true,
+            "text": "\u7ebf\u8def\u7c7b\u578b\u7edf\u8ba1",
+            "target": "blank",
+            "subtarget": "blank",
+            "padding": 5,
+            "itemGap": 10,
+            "textAlign": "auto",
+            "textVerticalAlign": "auto",
+            "triggerEvent": false
+        }
+    ]
+}@hisw_echarts_end`

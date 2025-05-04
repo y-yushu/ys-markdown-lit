@@ -9,9 +9,9 @@
       .grid {
         display: grid;
       }
-      .grid-cols-2 {
+      /* .grid-cols-2 {
         grid-template-columns: 3fr 2fr;
-      }
+      } */
       .box_left {
         padding-right: 1rem;
         border-right: 1px solid red;
@@ -20,11 +20,10 @@
 
     <script type="module">
       // import { MarkdownStr_svg } from './src/mock.ts'
-      import { MarkdownStr_code } from './src/mock.ts'
+      // import { MarkdownStr_code } from './src/mock.ts'
+      import { MarkdownStr_echarts2 } from './src/mock.ts'
 
-      // const mock = MarkdownStr_svg
-      const mock = MarkdownStr_code
-      // const mock = MarkdownStr_svg + '\n\n' + MarkdownStr_code
+      const mock = MarkdownStr_echarts2
 
       window.onload = () => {
         // 添加
@@ -82,10 +81,10 @@
           </ys-md-rendering>
         </div>
       </div>
-      <div>
+      <!-- <div>
         <h1>默认渲染</h1>
         <div></div>
-      </div>
+      </div> -->
     </div>
   </body>
 </html>
