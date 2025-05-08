@@ -4,9 +4,13 @@ import { AstToken, RenderFunction } from './registerAllCustomRenderers';
 import Token from 'markdown-it/lib/token.mjs';
 export default class YsMdRendering extends LitElement {
     static styles: import("lit").CSSResult[];
+    key: string;
+    md: MarkdownIt;
+    constructor();
     content: string;
     connectedCallback(): void;
     disconnectedCallback(): void;
+    setMarkdownIt(): void;
     renderMethods: Record<string, RenderFunction>;
     customMethods: Record<string, RenderFunction>;
     private _handleChildRegister;
@@ -18,9 +22,6 @@ export default class YsMdRendering extends LitElement {
      */
     buildNestedAST2(flatAST: Token[], prefix_key?: String): AstToken[];
     renderAst4(asts: AstToken[]): TemplateResult[];
-    key: string;
-    md: MarkdownIt;
-    constructor();
     getAST(): unknown[];
     render(): TemplateResult<1>;
 }
