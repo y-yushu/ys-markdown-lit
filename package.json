@@ -1,7 +1,7 @@
 {
   "name": "ys-md-rendering",
   "private": false,
-  "version": "0.1.2",
+  "version": "0.1.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/y-yushu/ys-markdown-lit.git"
