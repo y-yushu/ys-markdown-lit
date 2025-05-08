@@ -1,4 +1,4 @@
-import { LitElement, PropertyValues, TemplateResult, html, unsafeCSS } from 'lit'
+import { LitElement, TemplateResult, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import MarkdownIt from 'markdown-it'
 import tailwindcss from './index.css?inline'
