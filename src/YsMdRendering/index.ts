@@ -1,4 +1,4 @@
-import { LitElement, TemplateResult, html, unsafeCSS } from 'lit'
+import { LitElement, TemplateResult, css, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import MarkdownIt from 'markdown-it'
 import tailwindcss from './index.css?inline'
@@ -9,7 +9,17 @@ import { generateUUID } from '../utils/generateUUID'
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
-  static styles = [unsafeCSS(tailwindcss)]
+  static styles = [
+    unsafeCSS(tailwindcss),
+    css`
+      :host {
+        --rem-size: 1rem;
+      }
+      .prose {
+        font-size: var(--rem-size);
+      }
+    `
+  ]
 
   key = generateUUID()
   // 渲染工具

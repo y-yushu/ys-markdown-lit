@@ -37,6 +37,9 @@
         width: 100%;
         overflow-y: auto;
       }
+      /* .left-rendering-1 {
+        --rem-size: 0.85rem;
+      } */
     </style>
     <script type="module">
       import MarkdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
@@ -102,7 +105,7 @@
         <div>
           <h1>AST渲染</h1>
           <div id="left_box">
-            <ys-md-rendering id="left-rendering">
+            <ys-md-rendering id="left-rendering" class="left-rendering-1">
               <ys-code-highlight></ys-code-highlight>
               <!-- <ys-katex></ys-katex>
             <ys-echarts></ys-echarts>
