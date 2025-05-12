@@ -142,12 +142,13 @@ export class YsCodeHighlightRender extends LitElement {
     const highlightedCode = hljs.getLanguage(this.language) ? hljs.highlight(this.content, { language: this.language }).value : this.content
 
     return html`
-      <div class="rounded-lg">
+      <div class="mb-4 rounded-lg">
         <div class="sticky top-0 flex h-8 items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs select-none">
           <span class="font-bold text-gray-400">${this.info || '未知语言'}</span>
           <span class="cursor-pointer text-blue-400 active:text-blue-300">复制</span>
         </div>
-        <pre class="!m-0 rounded-t-none p-0"><code class="hljs language-${this.language} !bg-gray-800" style="white-space: pre-wrap; word-wrap: break-word;">${unsafeHTML(highlightedCode)}</code></pre>
+        <pre class="!m-0 rounded-t-none p-0"><code class="hljs language-${this
+          .language} !bg-gray-800" style="white-space: pre-wrap; word-wrap: break-word;">${unsafeHTML(highlightedCode)}</code></pre>
       </div>
     `
   }

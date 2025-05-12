@@ -42,29 +42,29 @@
       } */
     </style>
     <script type="module">
-      import MarkdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
-      import { MarkdownStr_code as mock } from './src/mock.ts'
+      // import MarkdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
+      import { MarkdownStr_mermaid as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
         // 添加
         const button = document.getElementById('test_but_1')
         button.addEventListener('click', () => {
-          // ---- 全量添加
-          const dom1 = document.getElementById('left-rendering')
-          dom1.content = mock
-          // // ---- 增量添加
-          // const dom = document.getElementById('left-rendering')
-          // let index = 0
-          // const updateContent = () => {
-          //   if (index < mock.length) {
-          //     dom.content = mock.slice(0, index + 1) // 增量更新内容
-          //     index++
-          //     // setTimeout(updateContent, 20) // 每 59ms 更新一个字符
-          //     setTimeout(updateContent, 20) // 每 59ms 更新一个字符
-          //   }
-          // }
-          // updateContent()
+          // // ---- 全量添加
+          // const dom1 = document.getElementById('left-rendering')
+          // dom1.content = mock
+          // ---- 增量添加
+          const dom = document.getElementById('left-rendering')
+          let index = 0
+          const updateContent = () => {
+            if (index < mock.length) {
+              dom.content = mock.slice(0, index + 1) // 增量更新内容
+              index++
+              // setTimeout(updateContent, 20) // 每 59ms 更新一个字符
+              setTimeout(updateContent, 20) // 每 59ms 更新一个字符
+            }
+          }
+          updateContent()
           // // ---- 不间断添加
           // const ysMdRendering = document.createElement('ys-md-rendering')
           // ysMdRendering.content = mock
@@ -83,16 +83,15 @@
           domall.innerHTML = ''
         })
 
-        // 右侧加载
-        const md = new MarkdownIt({
-          html: true,
-          linkify: false,
-          typographer: true
-        })
-        const html = md.render(mock)
-        const dom = document.getElementById('right_box')
-        dom.innerHTML = html
-        // dom.appendChild(html)
+        // // 右侧加载
+        // const md = new MarkdownIt({
+        //   html: true,
+        //   linkify: false,
+        //   typographer: true
+        // })
+        // const html = md.render(mock)
+        // const dom = document.getElementById('right_box')
+        // dom.innerHTML = html
       }
     </script>
   </head>
@@ -111,6 +110,7 @@
             <ys-echarts></ys-echarts>
             <ys-think></ys-think>
             <ys-svg></ys-svg> -->
+              <ys-mermaid></ys-mermaid>
             </ys-md-rendering>
           </div>
         </div>
