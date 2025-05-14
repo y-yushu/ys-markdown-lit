@@ -4,3 +4,4 @@ import './plugin/katex';
 import './plugin/echarts';
 import './plugin/think';
 import './plugin/svg';
+import './plugin/mermaid';
