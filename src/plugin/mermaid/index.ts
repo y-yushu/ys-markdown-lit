@@ -90,7 +90,7 @@ export class YsMermaidRender extends LitElement {
 
   render() {
     return html`
-      <div class="mx-auto mb-4 max-w-4xl">
+      <div class="mb-4">
         <!-- 甘特图卡片 -->
         <div class="overflow-hidden border border-solid border-gray-300 shadow-xl">
           <!-- 顶部工具栏 -->

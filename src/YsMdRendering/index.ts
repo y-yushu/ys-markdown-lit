@@ -1,4 +1,4 @@
-import { LitElement, TemplateResult, css, html, unsafeCSS } from 'lit'
+import { LitElement, ReactiveElement, TemplateResult, css, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import MarkdownIt from 'markdown-it'
 import tailwindcss from './index.css?inline'
@@ -82,8 +82,11 @@ export default class YsMdRendering extends LitElement {
   customMethods: Record<string, RenderFunction> = {}
 
   private _handleChildRegister(e: CustomEvent) {
-    const feature = e.detail.feature
-    console.log('注册功能:', feature)
+    const isDevMode = !!ReactiveElement.disableWarning
+    if (isDevMode) {
+      const feature = e.detail.feature
+      console.log('注册功能:', feature)
+    }
     const styles = e.detail.styles
     if (styles) {
       const styleElement = document.createElement('style')

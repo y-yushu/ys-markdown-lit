@@ -1,39 +1,42 @@
 {
   "name": "ys-md-rendering",
   "private": false,
-  "version": "0.1.4",
+  "version": "0.1.10",
   "repository": {
     "type": "git",
     "url": "https://github.com/y-yushu/ys-markdown-lit.git"
   },
   "type": "module",
-  "main": "./dist/ys-md-rendering.es.js",
+  "types": "./types/YsMdRendering/index.d.ts",
   "module": "./dist/ys-md-rendering.es.js",
-  "types": "./dist/ys-md-rendering.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/ys-md-rendering.es.js",
-      "types": "./types/YsMdRendering/index.d.ts"
+      "types": "./types/YsMdRendering/index.d.ts",
+      "import": "./dist/ys-md-rendering.es.js"
     },
     "./plugin/ys-code-highlight": {
-      "import": "./dist/plugin/ys-code-highlight.es.js",
-      "types": "./types/plugin/code-highlight/index.d.ts"
+      "types": "./types/plugin/code-highlight/index.d.ts",
+      "import": "./dist/plugin/ys-code-highlight.es.js"
     },
     "./plugin/ys-echarts": {
-      "import": "./dist/plugin/ys-echarts.es.js",
-      "types": "./types/plugin/echarts/index.d.ts"
+      "types": "./types/plugin/echarts/index.d.ts",
+      "import": "./dist/plugin/ys-echarts.es.js"
     },
     "./plugin/ys-katex": {
-      "import": "./dist/plugin/ys-katex.es.js",
-      "types": "./types/plugin/katex/index.d.ts"
-    },
-    "./plugin/ys-svg": {
-      "import": "./dist/plugin/ys-svg.es.js",
-      "types": "./types/plugin/svg/index.d.ts"
+      "types": "./types/plugin/katex/index.d.ts",
+      "import": "./dist/plugin/ys-katex.es.js"
     },
     "./plugin/ys-think": {
-      "import": "./dist/plugin/ys-think.es.js",
-      "types": "./types/plugin/think/index.d.ts"
+      "types": "./types/plugin/think/index.d.ts",
+      "import": "./dist/plugin/ys-think.es.js"
+    },
+    "./plugin/ys-svg": {
+      "types": "./types/plugin/svg/index.d.ts",
+      "import": "./dist/plugin/ys-svg.es.js"
+    },
+    "./plugin/ys-mermaid": {
+      "types": "./types/plugin/mermaid/index.d.ts",
+      "import": "./dist/plugin/ys-mermaid.es.js"
     }
   },
   "files": [
@@ -47,12 +50,12 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.5",
-    "echarts": "^5.6.0",
-    "highlight.js": "^11.11.1",
-    "katex": "^0.16.21",
     "lit": "^3.2.1",
+    "katex": "^0.16.21",
+    "echarts": "^5.6.0",
     "markdown-it": "^14.1.0",
     "mermaid": "^11.6.0",
+    "highlight.js": "^11.10.0",
     "tailwindcss": "^4.1.5"
   },
   "devDependencies": {

@@ -20,9 +20,9 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.${format}.js`
     },
     rollupOptions: {
-      external: [],
+      // external: ['lit', 'katex', 'echarts', 'markdown-it', 'mermaid', 'highlight.js'],
       output: {
-        globals: {}
+        chunkFileNames: `chunks/[name]-[hash].js`
       }
     }
   }
