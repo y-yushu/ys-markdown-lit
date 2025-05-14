@@ -1,7 +1,5 @@
-import { LitElement, TemplateResult, html, unsafeCSS } from 'lit'
-// import { customElement, property, state } from 'lit/decorators.js'
+import { LitElement, ReactiveElement, TemplateResult, css, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-// import MarkdownIt, { Options } from 'markdown-it'
 import MarkdownIt from 'markdown-it'
 import tailwindcss from './index.css?inline'
 
@@ -11,12 +9,36 @@ import { generateUUID } from '../utils/generateUUID'
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
-  static styles = [unsafeCSS(tailwindcss)]
+  static styles = [
+    unsafeCSS(tailwindcss),
+    css`
+      :host {
+        --rem-size: 1rem;
+      }
+      .prose {
+        font-size: var(--rem-size);
+      }
+    `
+  ]
+
+  key = generateUUID()
+  // 渲染工具
+  md: MarkdownIt
+
+  constructor() {
+    super()
+    this.md = new MarkdownIt({
+      html: true,
+      linkify: false,
+      typographer: true
+    })
+  }
 
   @property({ type: String }) content = ''
 
   connectedCallback() {
     super.connectedCallback()
+    this.setMarkdownIt()
     // 监听 child-register 事件
     this.addEventListener('child-register', this._handleChildRegister)
   }
@@ -26,6 +48,33 @@ export default class YsMdRendering extends LitElement {
     this.removeEventListener('child-register', this._handleChildRegister)
   }
 
+  // 修改markdown-it渲染器的配置
+  setMarkdownIt() {
+    Array.from(this.attributes as ArrayLike<Attr>).forEach((attr: Attr) => {
+      if (attr.name.startsWith('md-')) {
+        // 移除 md- 前缀并转换为配置键
+        const key: string = attr.name.substring(3)
+
+        // 获取原始值
+        let value: string | boolean | number = attr.value
+
+        // 首先检查是否为布尔值
+        if (value === 'true') {
+          value = true
+        } else if (value === 'false') {
+          value = false
+        }
+        // 只有当值不是布尔值时才尝试转换为数字
+        else if (!isNaN(Number(value)) && value !== '') {
+          value = Number(value)
+        }
+
+        // 改变markdown的渲染属性
+        this.md.set({ [key]: value })
+      }
+    })
+  }
+
   // 存储默认解析方法
   renderMethods: Record<string, RenderFunction> = renderMethods
 
@@ -33,8 +82,11 @@ export default class YsMdRendering extends LitElement {
   customMethods: Record<string, RenderFunction> = {}
 
   private _handleChildRegister(e: CustomEvent) {
-    const feature = e.detail.feature
-    console.log('注册功能:', feature)
+    const isDevMode = !!ReactiveElement.disableWarning
+    if (isDevMode) {
+      const feature = e.detail.feature
+      console.log('注册功能:', feature)
+    }
     const styles = e.detail.styles
     if (styles) {
       const styleElement = document.createElement('style')
@@ -136,19 +188,6 @@ export default class YsMdRendering extends LitElement {
     return tempList
   }
 
-  key = generateUUID()
-  // 渲染工具
-  md: MarkdownIt
-
-  constructor() {
-    super()
-    this.md = new MarkdownIt({
-      html: true,
-      linkify: false,
-      typographer: true
-    })
-  }
-
   getAST(): unknown[] {
     const ast: Token[] = this.md.parse(this.content, {})
     const list3 = this.buildNestedAST2(ast, this.key)
@@ -162,10 +201,6 @@ export default class YsMdRendering extends LitElement {
       <slot></slot>
     `
   }
-
-  //   updated() {
-  //     console.log('触发更新')
-  //   }
 }
 
 declare global {

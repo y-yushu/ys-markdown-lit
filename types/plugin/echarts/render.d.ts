@@ -2,6 +2,7 @@ import { LitElement, PropertyValues } from 'lit';
 export default class YsEchartsRender extends LitElement {
     static styles: import("lit").CSSResult[];
     content: string;
+    isError: Boolean;
     resizeObserver: ResizeObserver | null;
     protected firstUpdated(_changedProperties: PropertyValues): void;
     disconnectedCallback(): void;
