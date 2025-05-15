@@ -11,7 +11,7 @@ export default class YsMdRendering extends LitElement {
     connectedCallback(): void;
     disconnectedCallback(): void;
     setMarkdownIt(): void;
-    renderMethods: Record<string, RenderFunction>;
+    renderMethods: import("./registerAllCustomRenderers").RenderMethods;
     customMethods: Record<string, RenderFunction>;
     private _handleChildRegister;
     /**

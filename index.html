@@ -23,100 +23,70 @@
       .grid {
         width: 100%;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         gap: 1rem;
       }
-      #left_box {
-        /* padding-right: 1rem; */
-        border-right: 1px solid red;
+      .grid > div {
+        border: 1px solid #ccc; /* 添加边框 */
+        padding: 1rem; /* 添加内边距，使内容不紧贴边框 */
+        background-color: #fff; /* 背景颜色 */
+        border-radius: 8px; /* 可选：添加圆角 */
       }
-      #right_box {
-        width: 100%;
-      }
-      #right_box pre {
-        width: 100%;
-        overflow-y: auto;
-      }
-      /* .left-rendering-1 {
-        --rem-size: 0.85rem;
-      } */
     </style>
     <script type="module">
-      // import MarkdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
       import { MarkdownStr_mermaid as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
-        // 添加
         const button = document.getElementById('test_but_1')
         button.addEventListener('click', () => {
-          // // ---- 全量添加
-          // const dom1 = document.getElementById('left-rendering')
-          // dom1.content = mock
           // ---- 增量添加
-          const dom = document.getElementById('left-rendering')
+          const render_1 = document.getElementById('render_1')
+          const render_2 = document.getElementById('render_2')
+          const render_3 = document.getElementById('render_3')
           let index = 0
           const updateContent = () => {
             if (index < mock.length) {
-              dom.content = mock.slice(0, index + 1) // 增量更新内容
+              render_1.content = mock.slice(0, index + 1) // 增量更新内容
+              render_2.content = mock.slice(0, index + 1) // 增量更新内容
+              render_3.content = mock.slice(0, index + 1) // 增量更新内容
               index++
-              // setTimeout(updateContent, 20) // 每 59ms 更新一个字符
               setTimeout(updateContent, 20) // 每 59ms 更新一个字符
             }
           }
           updateContent()
-          // // ---- 不间断添加
-          // const ysMdRendering = document.createElement('ys-md-rendering')
-          // ysMdRendering.content = mock
-          // const ysCodeHighlight = document.createElement('ys-code-highlight')
-          // ysMdRendering.appendChild(ysCodeHighlight)
-          // const box = document.getElementById('left_box')
-          // box.appendChild(ysMdRendering)
         })
-
-        button.click()
-
-        // 销毁
-        const button2 = document.getElementById('test_but_2')
-        button2.addEventListener('click', () => {
-          const domall = document.getElementById('all_box')
-          domall.innerHTML = ''
-        })
-
-        // // 右侧加载
-        // const md = new MarkdownIt({
-        //   html: true,
-        //   linkify: false,
-        //   typographer: true
-        // })
-        // const html = md.render(mock)
-        // const dom = document.getElementById('right_box')
-        // dom.innerHTML = html
       }
     </script>
   </head>
 
   <body>
     <div class="page">
-      <button id="test_but_1">测试</button>
-      <button id="test_but_2">销毁</button>
-      <div id="all_box" class="grid">
+      <button id="test_but_1">开始更新</button>
+      <div class="grid">
         <div>
-          <h1>AST渲染</h1>
-          <div id="left_box">
-            <ys-md-rendering id="left-rendering" class="left-rendering-1">
-              <ys-code-highlight></ys-code-highlight>
-              <!-- <ys-katex></ys-katex>
-              <ys-echarts></ys-echarts>
-              <ys-think></ys-think>
-              <ys-svg></ys-svg> -->
+          <h3>非实时渲染</h3>
+          <div>
+            <ys-md-rendering id="render_1" class="left-rendering-1">
               <ys-mermaid></ys-mermaid>
             </ys-md-rendering>
           </div>
         </div>
-        <div style="width: 640px">
-          <h1>默认渲染</h1>
-          <div id="right_box"></div>
+        <div>
+          <h3>实时渲染，异常报错</h3>
+          <div>
+            <ys-md-rendering id="render_2" class="left-rendering-1">
+              <ys-mermaid initial-status="view"></ys-mermaid>
+            </ys-md-rendering>
+          </div>
+        </div>
+        <div>
+          <h3>实时渲染，异常忽略</h3>
+          <div>
+            <ys-md-rendering id="render_3" class="left-rendering-1">
+              <ys-mermaid initial-status="view" error-handling="notHandled"></ys-mermaid>
+            </ys-md-rendering>
+          </div>
         </div>
       </div>
     </div>

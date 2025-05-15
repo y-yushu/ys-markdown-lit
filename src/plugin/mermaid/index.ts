@@ -1,13 +1,25 @@
-import { html, LitElement, PropertyValues, TemplateResult } from 'lit'
-import { customElement, property, state } from 'lit/decorators.js'
+import { html, LitElement, PropertyValues, ReactiveElement, TemplateResult } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
+import { createRef, ref, Ref } from 'lit/directives/ref.js'
 import YsMdRendering from '../../YsMdRendering'
 import { AstToken } from '../../YsMdRendering/registerAllCustomRenderers'
 import mermaid from 'mermaid'
-import { createRef, ref, Ref } from 'lit/directives/ref.js'
+
+mermaid.initialize({
+  startOnLoad: false
+})
+
+type MermaidRenderType = 'code' | 'view'
+type ErrorHandlingType = 'errorHandling' | 'notHandled'
 
 @customElement('ys-mermaid')
 export default class YsMermaid extends LitElement {
+  // 默认展开类型
+  @property({ type: String, attribute: 'initial-status' }) initialStatus: MermaidRenderType = 'code'
+  // 错误处理方式
+  @property({ type: String, attribute: 'error-handling' }) errorHandlingType: ErrorHandlingType = 'errorHandling'
+
   connectedCallback() {
     super.connectedCallback()
 
@@ -21,7 +33,11 @@ export default class YsMermaid extends LitElement {
 
             instance.renderMethods['fence'] = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
               if (ask.node.info === 'mermaid') {
-                return html`<ys-mermaid-render .content=${ask.node.content}></ys-mermaid-render>`
+                return html`<ys-mermaid-render
+                  .content=${ask.node.content}
+                  .status=${this.initialStatus}
+                  .errorHandlingType=${this.errorHandlingType}
+                ></ys-mermaid-render>`
               } else {
                 return originalFenceRule(ask, _chil)
               }
@@ -37,8 +53,6 @@ export default class YsMermaid extends LitElement {
   }
 }
 
-type MermaidRenderType = 'code' | 'view'
-
 @customElement('ys-mermaid-render')
 export class YsMermaidRender extends LitElement {
   createRenderRoot() {
@@ -47,44 +61,64 @@ export class YsMermaidRender extends LitElement {
 
   @property({ type: String }) content: string = ''
 
-  @state() status: MermaidRenderType = 'code'
+  @property() errorHandlingType: ErrorHandlingType = 'errorHandling'
 
-  protected firstUpdated(_changedProperties: PropertyValues): void {
-    mermaid.initialize({
-      startOnLoad: false
-    })
+  @property() status: MermaidRenderType = 'code'
+
+  // 添加一个updated生命周期方法，以处理initialStatus和content的变化
+  protected updated(changedProperties: PropertyValues): void {
+    // 处理content的变化
+    if (changedProperties.has('content') && this.content) {
+      // 如果当前是view模式，需要重新渲染
+      if (this.status === 'view') {
+        this._renderMermaid(false)
+      }
+    }
   }
 
   private mermaidBoxRef: Ref<HTMLDivElement> = createRef()
 
   _checkStatus(status: MermaidRenderType) {
+    if (this.status === status) return
     this.status = status
     if (status === 'code') {
       if (this.mermaidBoxRef.value) {
         this.mermaidBoxRef.value.innerHTML = ''
       }
     } else if (status === 'view') {
-      this._renderMermaid()
+      this._renderMermaid(true)
     }
   }
 
-  private _renderMermaid() {
+  /**
+   * 渲染方法
+   * @param isHand 是否手动渲染
+   */
+  private _renderMermaid(isHand: boolean) {
     if (!this.content.trim()) return
 
     mermaid
       .parse(this.content)
       .then(() => {
         const id = `mermaid_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
-
         mermaid.render(id, this.content).then(res => {
           if (this.mermaidBoxRef.value) {
             this.mermaidBoxRef.value.innerHTML = res.svg
           }
         })
       })
-      .catch(err => {
-        console.error('[Mermaid 渲染失败]', err)
-        this.mermaidBoxRef.value!.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
+      .catch(_err => {
+        if (isHand) {
+          const isDevMode = !!ReactiveElement.disableWarning
+          if (isDevMode) {
+            console.error('[Mermaid 渲染失败]', _err)
+          }
+          this.mermaidBoxRef.value!.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
+        } else {
+          if (this.errorHandlingType === 'errorHandling') {
+            this.mermaidBoxRef.value!.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
+          }
+        }
       })
   }
 

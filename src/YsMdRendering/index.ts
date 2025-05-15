@@ -2,7 +2,6 @@ import { LitElement, ReactiveElement, TemplateResult, css, html, unsafeCSS } fro
 import { customElement, property } from 'lit/decorators.js'
 import MarkdownIt from 'markdown-it'
 import tailwindcss from './index.css?inline'
-
 import { AstToken, RenderFunction, renderMethods } from './registerAllCustomRenderers'
 import Token from 'markdown-it/lib/token.mjs'
 import { generateUUID } from '../utils/generateUUID'
@@ -76,7 +75,7 @@ export default class YsMdRendering extends LitElement {
   }
 
   // 存储默认解析方法
-  renderMethods: Record<string, RenderFunction> = renderMethods
+  renderMethods = Object.assign({}, renderMethods)
 
   // 自定义渲染规则
   customMethods: Record<string, RenderFunction> = {}
@@ -171,7 +170,6 @@ export default class YsMdRendering extends LitElement {
         const token = ast.node
 
         // 自定义渲染步骤
-        // const customMethod = this.customMethods.get(token.type)
         const customMethod = this.customMethods[token.type]
         if (customMethod) {
           return customMethod(ast, this.renderAst4(ast.children))
