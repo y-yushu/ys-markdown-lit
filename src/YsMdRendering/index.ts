@@ -13,6 +13,8 @@ export default class YsMdRendering extends LitElement {
     css`
       :host {
         --rem-size: 1rem;
+        display: block;
+        max-width: 100%;
       }
       .prose {
         font-size: var(--rem-size);

@@ -23,18 +23,20 @@
       .grid {
         width: 100%;
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
         gap: 1rem;
       }
       .grid > div {
+        max-width: 100%;
         border: 1px solid #ccc; /* 添加边框 */
         padding: 1rem; /* 添加内边距，使内容不紧贴边框 */
         background-color: #fff; /* 背景颜色 */
         border-radius: 8px; /* 可选：添加圆角 */
+        overflow-x: auto;
       }
     </style>
     <script type="module">
-      import { MarkdownStr_mermaid as mock } from './src/mock.ts'
+      import { MarkdownStr_code2 as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
@@ -43,19 +45,24 @@
           // ---- 增量添加
           const render_1 = document.getElementById('render_1')
           const render_2 = document.getElementById('render_2')
-          const render_3 = document.getElementById('render_3')
           let index = 0
           const updateContent = () => {
             if (index < mock.length) {
               render_1.content = mock.slice(0, index + 1) // 增量更新内容
               render_2.content = mock.slice(0, index + 1) // 增量更新内容
-              render_3.content = mock.slice(0, index + 1) // 增量更新内容
               index++
-              setTimeout(updateContent, 20) // 每 59ms 更新一个字符
+              setTimeout(updateContent, 10) // 每 59ms 更新一个字符
             }
           }
           updateContent()
         })
+
+        // 监听事件
+        const codedom = document.getElementById('c056')
+        codedom.addEventListener('copy-text', e => {
+          console.log('e.detail.text', e?.detail?.text)
+        })
+        console.log('codedom', codedom)
       }
     </script>
   </head>
@@ -67,25 +74,15 @@
         <div>
           <h3>非实时渲染</h3>
           <div>
-            <ys-md-rendering id="render_1" class="left-rendering-1">
-              <ys-mermaid></ys-mermaid>
+            <ys-md-rendering id="render_1">
+              <ys-code-highlight id="c056"></ys-code-highlight>
             </ys-md-rendering>
           </div>
         </div>
         <div>
           <h3>实时渲染，异常报错</h3>
           <div>
-            <ys-md-rendering id="render_2" class="left-rendering-1">
-              <ys-mermaid initial-status="view"></ys-mermaid>
-            </ys-md-rendering>
-          </div>
-        </div>
-        <div>
-          <h3>实时渲染，异常忽略</h3>
-          <div>
-            <ys-md-rendering id="render_3" class="left-rendering-1">
-              <ys-mermaid initial-status="view" error-handling="notHandled"></ys-mermaid>
-            </ys-md-rendering>
+            <ys-md-rendering id="render_2"> </ys-md-rendering>
           </div>
         </div>
       </div>
