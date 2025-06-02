@@ -1,52 +1,36 @@
-// import { LitElement, TemplateResult, css, html, unsafeCSS } from 'lit'
 import { LitElement, TemplateResult, html } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
-// import { customElement, property, state } from 'lit/decorators.js'
-import { customElement, property, state } from 'lit/decorators.js'
+import { customElement, property } from 'lit/decorators.js'
 import hljs from 'highlight.js/lib/core'
 import highlightcss from 'highlight.js/styles/atom-one-dark.css?inline'
-// 不执行任何语法高亮
-import plaintext from 'highlight.js/lib/languages/plaintext'
-// 默认语法支持
-import './languages/bash'
-import './languages/cpp'
-import './languages/csharp'
-import './languages/css'
-import './languages/dart'
-import './languages/go'
-import './languages/java'
-import './languages/javascript'
-import './languages/json'
-import './languages/kotlin'
-import './languages/lua'
-import './languages/markdown'
-import './languages/perl'
-import './languages/php'
-import './languages/powershell'
-import './languages/python'
-import './languages/r'
-import './languages/ruby'
-import './languages/rust'
-import './languages/scala'
-import './languages/sql'
-import './languages/swift'
-import './languages/typescript'
-import './languages/xml'
-import './languages/yaml'
 import YsMdRendering from '../../YsMdRendering'
 import { AstToken } from '../../YsMdRendering/registerAllCustomRenderers'
+import RegistrationLanguage from './RegistrationLanguage'
 
-hljs.registerLanguage('plaintext', plaintext)
+// 注册语法高亮
+RegistrationLanguage()
 
 // 额外语言字典
 const LanguageDict: Record<string, string> = {
   js: 'javascript',
   ts: 'typescript',
   py: 'python',
+  rb: 'ruby',
   html: 'xml',
+  yml: 'yaml',
+  md: 'markdown',
   'c++': 'cpp',
+  cc: 'cpp',
+  hpp: 'cpp',
   'c#': 'csharp',
-  SQL: 'sql'
+  golang: 'go',
+  rs: ' rust',
+  SQL: 'sql',
+  mysql: 'sql',
+  postgres: 'sql',
+  pgsql: 'sql',
+  sh: 'bash',
+  zsh: 'bash'
 }
 
 @customElement('ys-code-highlight')
@@ -116,36 +100,9 @@ export default class YsCodeHighlight extends LitElement {
   //   }, 0)
   // }
 
-  render() {
-    return html`<slot name="default-language">
-        <languages-bash></languages-bash>
-        <languages-cpp></languages-cpp>
-        <languages-csharp></languages-csharp>
-        <languages-css></languages-css>
-        <languages-dart></languages-dart>
-        <languages-go></languages-go>
-        <languages-java></languages-java>
-        <languages-javascript></languages-javascript>
-        <languages-json></languages-json>
-        <languages-kotlin></languages-kotlin>
-        <languages-lua></languages-lua>
-        <languages-markdown></languages-markdown>
-        <languages-perl></languages-perl>
-        <languages-php></languages-php>
-        <languages-powershell></languages-powershell>
-        <languages-python></languages-python>
-        <languages-r></languages-r>
-        <languages-ruby></languages-ruby>
-        <languages-rust></languages-rust>
-        <languages-scala></languages-scala>
-        <languages-sql></languages-sql>
-        <languages-swift></languages-swift>
-        <languages-typescript></languages-typescript>
-        <languages-xml></languages-xml>
-        <languages-yaml></languages-yaml>
-      </slot>
-      <slot></slot>`
-  }
+  // render() {
+  //   return html`<slot></slot>`
+  // }
 }
 
 @customElement('ys-code-highlight-render')

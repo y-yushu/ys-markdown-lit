@@ -210,7 +210,7 @@ export const MarkdownStr_code2: string = `好的，以下是一段包含多种�
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello World</title><title>Hello World</title><title>Hello World</title><title>Hello World</title><title>Hello World</title><title>Hello World</title><title>Hello World</title><title>Hello World</title><title>Hello World</title><title>Hello World</title><title>Hello World</title><title>Hello World</title>
+    <title>Hello World</title>
 </head>
 <body>
     <h1>Hello, World!</h1>
