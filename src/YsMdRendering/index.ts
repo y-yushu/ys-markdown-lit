@@ -20,7 +20,13 @@ export default class YsMdRendering extends LitElement {
       }
       .prose {
         font-size: var(--rem-size);
+        /* 文字 */
         --tw-prose-body: var(--font-color);
+        /* 加粗 */
+        --tw-prose-bold: var(--font-color);
+        /* 代码块 */
+        --tw-prose-quotes: var(--font-color);
+        /* 标题 */
         --tw-prose-headings: var(--head-color);
       }
     `

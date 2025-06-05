@@ -203,7 +203,7 @@ SELECT 'Hello, World!' AS greeting;
 以上代码块涵盖了常见的编程语言，你可以将这段Markdown文本复制到支持Markdown渲染的工具中查看效果。
 `
 
-export const MarkdownStr_code2: string = `好的，以下是一段包含多种语言代码块的Markdown文本，你可以用它来测试Markdown渲染效果：
+export const MarkdownStr_code2: string = `好的，以下是一段包含多种语言代码块的**Markdown**[文本](http://127.0.0.1/)，你可以用它来测试Markdown渲染效果：
 
 ## HTML代码
 \`\`\`html
@@ -484,3 +484,81 @@ pie title Pets adopted by volunteers
     "Rats" : 15
 \`\`\`
 `
+
+export const MarkdownStr_markdown: string = `以下是一个包含多种 Markdown 语法的实例，你可以用它来测试 Markdown 渲染效果：
+
+### 标题
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+
+### 文本样式
+*这是斜体文本*  
+_这也是斜体文本_  
+**这是加粗文本**  
+__这也是加粗文本__  
+**_这是加粗且斜体的文本_**  
+~~这是删除线文本~~
+
+### 列表
+#### 无序列表
+- 项目1
+- 项目2
+  - 子项目1
+  - 子项目2
+- 项目3
+
+#### 有序列表
+1. 第一项
+2. 第二项
+   1. 子项1
+   2. 子项2
+3. 第三项
+
+#### 任务列表
+- [x] 已完成的任务
+- [ ] 未完成的任务
+- [ ] 正在进行的任务
+
+### 链接
+[链接文本](http://example.com "链接标题")  
+<http://example.com>
+
+### 图片
+![图片描述](https://example.com/image.jpg "图片标题")
+
+### 引用
+> 这是一段引用文本。  
+> 它可以包含多行内容。
+
+### 代码
+#### 行内代码
+\`这是行内代码\`
+
+#### 代码块
+\`\`\`python
+def hello_world():
+    print("Hello, world!")
+\`\`\`
+
+### 表格
+| 表头1 | 表头2 | 表头3 |
+|-------|-------|-------|
+| 单元格1 | 单元格2 | 单元格3 |
+| 单元格4 | 单元格5 | 单元格6 |
+
+### 分割线
+***
+---
+____
+
+### HTML 元素
+<details>
+<summary>点击展开</summary>
+这里是隐藏的内容。
+</details>
+
+希望这个实例能帮助你测试 Markdown 的渲染效果。你可以将这段代码复制到支持 Markdown 的编辑器或工具中查看渲染后的效果。`
