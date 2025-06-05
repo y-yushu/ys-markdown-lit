@@ -13,11 +13,15 @@ export default class YsMdRendering extends LitElement {
     css`
       :host {
         --rem-size: 1rem;
+        --font-color: #2e2142;
+        --head-color: #1a1122;
         display: block;
         max-width: 100%;
       }
       .prose {
         font-size: var(--rem-size);
+        --tw-prose-body: var(--font-color);
+        --tw-prose-headings: var(--head-color);
       }
     `
   ]
