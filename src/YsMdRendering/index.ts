@@ -6,11 +6,12 @@ import tailwindcss from './index.css?inline'
 import { AstToken, RenderFunction, renderMethods } from './registerAllCustomRenderers'
 import Token from 'markdown-it/lib/token.mjs'
 import { generateUUID } from '../utils/generateUUID'
+import { BooleanConverter } from '../utils/converter'
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
   // 手动开启深色模式
-  @property({ type: Boolean }) dark = false
+  @property({ type: Boolean, converter: BooleanConverter }) dark = false
 
   static styles = [
     unsafeCSS(tailwindcss),
@@ -200,6 +201,7 @@ export default class YsMdRendering extends LitElement {
   }
 
   render() {
+    console.log('----------this.dark----------', this.dark)
     const cssMap = {
       prose: true,
       'dark:prose-invert': false,
