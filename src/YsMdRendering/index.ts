@@ -1,5 +1,6 @@
 import { LitElement, ReactiveElement, TemplateResult, css, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
+import { classMap } from 'lit/directives/class-map.js'
 import MarkdownIt from 'markdown-it'
 import tailwindcss from './index.css?inline'
 import { AstToken, RenderFunction, renderMethods } from './registerAllCustomRenderers'
@@ -8,26 +9,19 @@ import { generateUUID } from '../utils/generateUUID'
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
+  // 手动开启深色模式
+  @property({ type: Boolean }) dark = false
+
   static styles = [
     unsafeCSS(tailwindcss),
     css`
       :host {
         --rem-size: 1rem;
-        --font-color: #2e2142;
-        --head-color: #1a1122;
         display: block;
         max-width: 100%;
       }
       .prose {
         font-size: var(--rem-size);
-        /* 文字 */
-        --tw-prose-body: var(--font-color);
-        /* 加粗 */
-        --tw-prose-bold: var(--font-color);
-        /* 代码块 */
-        --tw-prose-quotes: var(--font-color);
-        /* 标题 */
-        --tw-prose-headings: var(--head-color);
       }
     `
   ]
@@ -206,8 +200,24 @@ export default class YsMdRendering extends LitElement {
   }
 
   render() {
+    const cssMap = {
+      prose: true,
+      'dark:prose-invert': false,
+      'prose-invert': false,
+      'max-w-full': true
+    }
+
+    // 手动开启深色模式
+    if (this.dark) {
+      cssMap['prose-invert'] = true
+    }
+    // 自动开始深色模式
+    else {
+      cssMap['dark:prose-invert'] = true
+    }
+
     return html`
-      <div class="prose max-w-full">${this.getAST()}</div>
+      <div class=${classMap(cssMap)}>${this.getAST()}</div>
       <slot></slot>
     `
   }

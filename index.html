@@ -18,8 +18,8 @@
         margin: 0 auto;
         max-width: 1280px;
         padding: 1rem;
-        background-color: #f6f6f6;
       }
+      /* 2B2B2B */
       .grid {
         width: 100%;
         display: grid;
@@ -28,11 +28,21 @@
       }
       .grid > div {
         max-width: 100%;
-        border: 1px solid #ccc; /* 添加边框 */
-        padding: 1rem; /* 添加内边距，使内容不紧贴边框 */
-        background-color: #fff; /* 背景颜色 */
-        border-radius: 8px; /* 可选：添加圆角 */
+        border: 1px solid #ccc;
+        padding: 1rem;
+        border-radius: 8px;
         overflow-x: auto;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #3c3c3c;
+          color: white;
+        }
+        .grid > div {
+          background-color: #2b2b2b;
+          border: 1px solid rebeccapurple;
+        }
       }
     </style>
     <script type="module">
