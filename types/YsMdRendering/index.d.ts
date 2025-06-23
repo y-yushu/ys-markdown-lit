@@ -3,6 +3,7 @@ import MarkdownIt from 'markdown-it';
 import { AstToken, RenderFunction } from './registerAllCustomRenderers';
 import Token from 'markdown-it/lib/token.mjs';
 export default class YsMdRendering extends LitElement {
+    dark: boolean;
     static styles: import("lit").CSSResult[];
     key: string;
     md: MarkdownIt;
