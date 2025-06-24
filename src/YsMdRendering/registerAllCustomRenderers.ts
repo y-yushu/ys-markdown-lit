@@ -87,9 +87,11 @@ const renderListItem = (_ask: AstToken, chil: TemplateResult[]): TemplateResult 
 }
 
 const renderTable = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
-  return html`<table>
-    ${chil}
-  </table>`
+  return html`<div class="w-fit max-w-full overflow-x-auto">
+    <table class="max-w-max border-collapse">
+      ${chil}
+    </table>
+  </div> `
 }
 
 const renderThead = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
@@ -111,11 +113,11 @@ const renderTr = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
 }
 
 const renderTh = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
-  return html`<th>${chil}</th>`
+  return html`<th class="box-border max-w-[200px] min-w-[100px] p-2 px-4 break-words whitespace-normal">${chil}</th>`
 }
 
 const renderTd = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
-  return html`<td>${chil}</td>`
+  return html`<td class="box-border max-w-[200px] min-w-[100px] p-2 px-4 break-words whitespace-normal">${chil}</td>`
 }
 
 const renderLink = (ask: AstToken, chil: TemplateResult[]): TemplateResult => {

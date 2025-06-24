@@ -12,3 +12,4 @@ export declare const MarkdownStr_svg: string;
 export declare const MarkdownStr_echarts2: string;
 export declare const MarkdownStr_mermaid = "#### \u6D4B\u8BD5Mermaid\u6548\u679C\n\n```mermaid\ngitGraph\n    commit\n    commit\n    branch develop\n    checkout develop\n    commit\n    commit\n    checkout main\n    merge develop\n    commit\n    commit\n```\n\n```mermaid\nflowchart TD\n    A[Christmas] -->|Get money| B(Go shopping)\n    B --> C{Let me think}\n    C -->|One| D[Laptop]\n    C -->|Two| E[iPhone]\n    C -->|Three| F[fa:fa-ca\n```\n\n```mermaid\npie title Pets adopted by volunteers\n    \"Dogs\" : 386\n    \"Cats\" : 85\n    \"Rats\" : 15\n```\n";
 export declare const MarkdownStr_markdown: string;
+export declare const MarkdownStr_table: string;

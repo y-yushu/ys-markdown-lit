@@ -109,3 +109,13 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 ## 参与贡献
 
 欢迎提交 issue 或 pull request 参与贡献。
+
+## 更新记录
+
+#### 0.1.14
+
+- table增加横向滚动
+
+#### 0.1.13
+
+- 增加深色模式
