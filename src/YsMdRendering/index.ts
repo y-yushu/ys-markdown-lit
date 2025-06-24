@@ -201,7 +201,6 @@ export default class YsMdRendering extends LitElement {
   }
 
   render() {
-    console.log('----------this.dark----------', this.dark)
     const cssMap = {
       prose: true,
       'dark:prose-invert': false,
