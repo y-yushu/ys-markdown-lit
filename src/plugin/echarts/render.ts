@@ -1,6 +1,8 @@
 import { css, html, LitElement, PropertyValues } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
+import { consume } from '@lit/context'
 import * as echarts from 'echarts'
+import { themeContext, ThemeData } from '../../utils/context'
 
 @customElement('ys-echarts-render')
 export default class YsEchartsRender extends LitElement {
@@ -65,6 +67,10 @@ export default class YsEchartsRender extends LitElement {
 
   @state() isError: Boolean = false
 
+  // 使用 @consume 装饰器消费 context 数据
+  @consume({ context: themeContext, subscribe: true })
+  themeData?: ThemeData
+
   resizeObserver: ResizeObserver | null = null
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
@@ -72,7 +78,7 @@ export default class YsEchartsRender extends LitElement {
     if (chartDom) {
       try {
         // 渲染图表
-        const myChart = echarts.init(chartDom)
+        const myChart = echarts.init(chartDom, this.themeData?.mode || 'light')
         if (this.content) {
           const option = JSON.parse(this.content)
           myChart.setOption(option)

@@ -1,14 +1,17 @@
-import { LitElement, TemplateResult } from 'lit';
+import { LitElement, PropertyValues, TemplateResult } from 'lit';
 import MarkdownIt from 'markdown-it';
 import { AstToken, RenderFunction } from './registerAllCustomRenderers';
 import Token from 'markdown-it/lib/token.mjs';
+import { ThemeData } from '../utils/context';
 export default class YsMdRendering extends LitElement {
-    dark: boolean;
     static styles: import("lit").CSSResult[];
+    constructor();
     key: string;
     md: MarkdownIt;
-    constructor();
     content: string;
+    dark: boolean;
+    themeData: ThemeData;
+    willUpdate(changedProperties: PropertyValues): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
     setMarkdownIt(): void;

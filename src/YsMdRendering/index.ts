@@ -1,18 +1,17 @@
-import { LitElement, ReactiveElement, TemplateResult, css, html, unsafeCSS } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, PropertyValues, ReactiveElement, TemplateResult, css, html, unsafeCSS } from 'lit'
+import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
+import { provide } from '@lit/context'
 import MarkdownIt from 'markdown-it'
 import tailwindcss from './index.css?inline'
 import { AstToken, RenderFunction, renderMethods } from './registerAllCustomRenderers'
 import Token from 'markdown-it/lib/token.mjs'
 import { generateUUID } from '../utils/generateUUID'
 import { BooleanConverter } from '../utils/converter'
+import { themeContext, ThemeData } from '../utils/context'
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
-  // 手动开启深色模式
-  @property({ type: Boolean, converter: BooleanConverter }) dark = false
-
   static styles = [
     unsafeCSS(tailwindcss),
     css`
@@ -27,10 +26,6 @@ export default class YsMdRendering extends LitElement {
     `
   ]
 
-  key = generateUUID()
-  // 渲染工具
-  md: MarkdownIt
-
   constructor() {
     super()
     this.md = new MarkdownIt({
@@ -40,7 +35,31 @@ export default class YsMdRendering extends LitElement {
     })
   }
 
+  key = generateUUID()
+  // 渲染工具
+  md: MarkdownIt
+
   @property({ type: String }) content = ''
+
+  // 手动开启深色模式
+  @property({ type: Boolean, converter: BooleanConverter }) dark = false
+
+  // 全部主题风格
+  @provide({ context: themeContext })
+  @state()
+  themeData: ThemeData = {
+    mode: 'light'
+  }
+
+  // 方法1：使用 willUpdate 生命周期方法（推荐）
+  willUpdate(changedProperties: PropertyValues) {
+    if (changedProperties.has('dark')) {
+      this.themeData = {
+        ...this.themeData,
+        mode: this.dark ? 'dark' : 'light'
+      }
+    }
+  }
 
   connectedCallback() {
     super.connectedCallback()

@@ -24,7 +24,6 @@ export default class YsEcharts extends LitElement {
             const startToken = this.config.logotype
             const endToken = 'echarts_close'
 
-            
             const startTag1 = '<echarts>'
             const endTag1 = '</echarts>'
             // 创建块规则

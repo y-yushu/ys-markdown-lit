@@ -46,7 +46,7 @@
       }
     </style>
     <script type="module">
-      import { MarkdownStr_table as mock } from './src/mock.ts'
+      import { MarkdownStr_echarts2 as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
@@ -58,8 +58,8 @@
           let index = 0
           const updateContent = () => {
             if (index < mock.length) {
-              render_1.content = mock.slice(0, index + 1) // 增量更新内容
-              render_2.content = mock.slice(0, index + 1) // 增量更新内容
+              if (render_1) render_1.content = mock.slice(0, index + 1) // 增量更新内容
+              if (render_2) render_2.content = mock.slice(0, index + 1) // 增量更新内容
               index++
               setTimeout(updateContent, 10) // 每 59ms 更新一个字符
             }
@@ -72,7 +72,6 @@
         codedom.addEventListener('copy-text', e => {
           console.log('e.detail.text', e?.detail?.text)
         })
-        console.log('codedom', codedom)
       }
     </script>
   </head>
@@ -84,7 +83,8 @@
         <div>
           <h3>非实时渲染</h3>
           <div>
-            <ys-md-rendering id="render_1">
+            <ys-md-rendering id="render_1" dark>
+              <ys-echarts></ys-echarts>
               <ys-code-highlight id="c056"></ys-code-highlight>
             </ys-md-rendering>
           </div>
@@ -92,7 +92,7 @@
         <div>
           <h3>实时渲染，异常报错</h3>
           <div>
-            <ys-md-rendering id="render_2"> </ys-md-rendering>
+            <!-- <ys-md-rendering id="render_2"> </ys-md-rendering> -->
           </div>
         </div>
       </div>

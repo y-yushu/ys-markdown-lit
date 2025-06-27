@@ -247,38 +247,7 @@ repeatCount="indefinite"
 `
 
 export const MarkdownStr_echarts2: string = `
-\`\`\`python
-import json
-from pyecharts import options as opts
-from pyecharts.charts import Pie
-
-# 文件读取
-with open('/tmp/json_temporary_number.json', 'r', encoding='utf-8') as file:
-    data = json.load(file)
-
-# 数据处理
-route_types = [item['线路类型'] for item in data]
-route_counts = [item['线路数量'] for item data data]
-
-# 图表option生成
-pie = Pie()
-pie.add(
-    "",
-    [list(z) for z in zip(route_types, route_counts)],
-    radius=["40%", "75%"],
-)
-pie.set_global_opts(
- legend legend_opts=opts.LegendOpts(pos_left="left", pos_bottom="bottom"),
-    title_opts=opts.TitleOpts(title="线路类型统计"),
-)
-pie.set_series_opts(
-    label_opts=opts.LabelOpts(formatter="{b}: {c} ({d}%)"),
-)
-
-# 保存
-with open('/tmp/result_temporary_number.txt', 'w', encoding='utf-8') as file:
-    file.write(pie.dump_options())
-\`\`\`
+#### 输出
 
 @hisw_echarts_start{
     "animation": true,
