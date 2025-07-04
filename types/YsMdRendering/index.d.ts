@@ -4,14 +4,20 @@ import { AstToken, RenderFunction } from './registerAllCustomRenderers';
 import Token from 'markdown-it/lib/token.mjs';
 import { ThemeData } from '../utils/context';
 export default class YsMdRendering extends LitElement {
+    content: string;
+    dark: boolean;
+    customStyles: {};
+    customCss: string;
     static styles: import("lit").CSSResult[];
     constructor();
     key: string;
     md: MarkdownIt;
-    content: string;
-    dark: boolean;
     themeData: ThemeData;
+    private _computedStyles;
+    firstUpdated(): void;
     willUpdate(changedProperties: PropertyValues): void;
+    private _computeStyles;
+    private _parseCssString;
     connectedCallback(): void;
     disconnectedCallback(): void;
     setMarkdownIt(): void;
@@ -24,9 +30,9 @@ export default class YsMdRendering extends LitElement {
      * @param prefix_id id前缀
      * @returns 渲染树
      */
-    buildNestedAST2(flatAST: Token[], prefix_key?: String): AstToken[];
-    renderAst4(asts: AstToken[]): TemplateResult[];
-    getAST(): unknown[];
+    _buildNestedAST2(flatAST: Token[], prefix_key?: String): AstToken[];
+    _renderAst4(asts: AstToken[]): TemplateResult[];
+    _getAST(): unknown[];
     render(): TemplateResult<1>;
 }
 declare global {

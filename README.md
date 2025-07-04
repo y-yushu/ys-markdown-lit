@@ -93,6 +93,47 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 | initial-status | `code`/`view`                | 默认状态             |
 | error-handling | `errorHandling`/`notHandled` | 面对渲染报错时的处理 |
 
+### 自定义样式参数
+
+#### `customStyles` 
+
+**用途**: 通过对象方式覆盖 prose 的 CSS 变量，自定义文档渲染样式。
+
+**用法**: 
+```javascript
+// JavaScript/Vue/React 中使用
+{
+  '--tw-prose-body': '#dc2626',      // 正文颜色
+  '--tw-prose-bullets': '#dc2626',   // 列表符号颜色
+  '--tw-prose-headings': '#1f2937'   // 标题颜色
+}
+```
+
+#### `customCss`
+
+**用途**: 通过 CSS 字符串方式覆盖 prose 的 CSS 变量，适用于 HTML 直接使用。
+
+**用法**:
+```html
+<!-- HTML 中使用 -->
+<ys-md-rendering 
+  custom-css="--tw-prose-body: #dc2626; --tw-prose-bullets: #dc2626; --tw-prose-headings: #1f2937">
+</ys-md-rendering>
+```
+
+#### 支持的变量
+
+| 变量名 | 控制元素 |
+|--------|----------|
+| `--tw-prose-body` | 正文、列表项文字 |
+| `--tw-prose-headings` | 标题文字 |
+| `--tw-prose-links` | 链接文字 |
+| `--tw-prose-bullets` | 无序列表符号 |
+| `--tw-prose-counters` | 有序列表数字 |
+| `--tw-prose-code` | 行内代码 |
+
+> **注意**: Vue 中使用 `customStyles` 需要添加 `.prop` 修饰符：`:customStyles.prop="styles"`
+
 ## 主要特性
 
 - **模块化设计**：按需使用插件
@@ -124,6 +165,10 @@ module.exports = {
 欢迎提交 issue 或 pull request 参与贡献。
 
 ## 更新记录
+
+#### 0.1.15
+
+- 增加`customStyles`及`customCss`属性，用于覆盖默认颜色
 
 #### 0.1.14
 
