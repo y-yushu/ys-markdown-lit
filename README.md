@@ -102,6 +102,19 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 
 支持现代浏览器（Chrome、Firefox、Safari、Edge）的 Web Components 功能。
 
+> 如果vue2项目启动报错，可尝试vue.config.js添加如下配置
+
+```js
+const path = require('path')
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
+module.exports = {
+  // ....
+  transpileDependencies: ['ys-md-rendering']
+}
+```
+
 ## 文档
 
 详细使用说明和自定义选项请参考[文档网站](#)（即将上线）。
