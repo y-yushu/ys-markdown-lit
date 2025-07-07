@@ -36,7 +36,7 @@ const renderHeading = (ask: AstToken, chil: TemplateResult[]): TemplateResult =>
       return html`<h6>${chil}</h6>`
   }
   console.error('[heading标签解析异常]', token)
-  return html``
+  return html`<p>${chil}</p>`
 }
 
 // 注册`p`标签渲染
@@ -71,7 +71,18 @@ const renderS = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
 
 // 注册 s 渲染
 const renderOrderedList = (_ask: AstToken, chil: TemplateResult[]): TemplateResult => {
-  return html`<ol>
+  // 寻找起始数字
+  const token: Token = _ask.node
+  const attrs = token.attrs || []
+  let startNumber = 1
+  for (let i = 0; i < attrs.length; i++) {
+    if (attrs[i][0] === 'start') {
+      startNumber = Number(attrs[i][1])
+      break
+    }
+  }
+
+  return html`<ol start="${startNumber}">
     ${chil}
   </ol>`
 }
