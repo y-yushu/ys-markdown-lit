@@ -13,6 +13,7 @@ export default class YsMdRendering extends LitElement {
     key: string;
     md: MarkdownIt;
     themeData: ThemeData;
+    private _computedStyles;
     willUpdate(changedProperties: PropertyValues): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
@@ -20,6 +21,11 @@ export default class YsMdRendering extends LitElement {
     renderMethods: import("./registerAllCustomRenderers").RenderMethods;
     customMethods: Record<string, RenderFunction>;
     private _handleChildRegister;
+    /**
+     * 覆盖tailwindcss变量
+     * 识别符合`--tw-prose`开头的那些css变量
+     */
+    private setProseVariables;
     /**
      * 一维结构转树状结构
      * @param flatAST 抽象树

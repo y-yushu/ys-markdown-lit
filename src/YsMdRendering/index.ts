@@ -1,6 +1,7 @@
 import { LitElement, PropertyValues, ReactiveElement, TemplateResult, css, html, unsafeCSS } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
+import { styleMap } from 'lit/directives/style-map.js'
 import { provide } from '@lit/context'
 import MarkdownIt from 'markdown-it'
 import tailwindcss from './index.css?inline'
@@ -9,6 +10,7 @@ import Token from 'markdown-it/lib/token.mjs'
 import { generateUUID } from '../utils'
 import { BooleanConverter, ObjectConverter } from '../utils/converter'
 import { themeContext, ThemeData } from '../utils/context'
+import { TailwindVariables } from '../utils/dict'
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
@@ -52,6 +54,8 @@ export default class YsMdRendering extends LitElement {
       linkify: false,
       typographer: true
     })
+    // 初始化需要覆盖prose的css变量
+    this.setProseVariables()
   }
 
   key = generateUUID()
@@ -64,6 +68,10 @@ export default class YsMdRendering extends LitElement {
   themeData: ThemeData = {
     mode: 'light'
   }
+
+  // 计算最终的样式对象
+  @state()
+  private _computedStyles: Record<string, string> = {}
 
   // 方法1：使用 willUpdate 生命周期方法（推荐）
   willUpdate(changedProperties: PropertyValues) {
@@ -133,6 +141,19 @@ export default class YsMdRendering extends LitElement {
       this.shadowRoot?.appendChild(styleElement)
     }
     e.detail.apply(this)
+  }
+
+  /**
+   * 覆盖tailwindcss变量
+   * 识别符合`--tw-prose`开头的那些css变量
+   */
+  private setProseVariables() {
+    const computedStyles = getComputedStyle(this)
+    TailwindVariables.forEach(key => {
+      if (computedStyles.getPropertyValue(key)) {
+        this._computedStyles[key] = computedStyles.getPropertyValue(key)
+      }
+    })
   }
 
   /**
@@ -254,7 +275,7 @@ export default class YsMdRendering extends LitElement {
     }
 
     return html`
-      <div class=${classMap(cssMap)}>${this._getAST()}</div>
+      <div class=${classMap(cssMap)} style=${styleMap(this._computedStyles)}>${this._getAST()}</div>
       <slot></slot>
     `
   }
