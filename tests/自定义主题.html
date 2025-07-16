@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YsMdRendering - 测试对象绑定</title>
+    <script type="module" src="../src/main.ts"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+      }
+      .page {
+        margin: 0 auto;
+        max-width: 1280px;
+        padding: 1rem;
+      }
+      .grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .grid > div {
+        max-width: 100%;
+        border: 1px solid #ccc;
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+      }
+      .test-section {
+        margin: 1rem 0;
+        padding: 1rem;
+        border: 2px dashed #3b82f6;
+        border-radius: 8px;
+        background: #f0f9ff;
+      }
+      .test-section h4 {
+        margin-top: 0;
+        color: #1e40af;
+      }
+      .controls {
+        margin: 1rem 0;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .controls button {
+        padding: 0.5rem 1rem;
+        border: 1px solid #3b82f6;
+        background: white;
+        color: #3b82f6;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .controls button:hover {
+        background: #3b82f6;
+        color: white;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #3c3c3c;
+          color: white;
+        }
+        .grid > div {
+          background-color: #2b2b2b;
+          border: 1px solid rebeccapurple;
+        }
+        .test-section {
+          background: #1e293b;
+          border-color: #60a5fa;
+        }
+        .test-section h4 {
+          color: #93c5fd;
+        }
+        .controls button {
+          background: #1e293b;
+          color: #93c5fd;
+          border-color: #60a5fa;
+        }
+        .controls button:hover {
+          background: #60a5fa;
+          color: #1e293b;
+        }
+      }
+    </style>
+    <script type="module">
+      import { MarkdownStr_table2 as mock } from '../src/mock.ts'
+
+      // 定义测试用的样式对象
+      const testStyles = {
+        // 蓝色主题
+        blue: {
+          h2: { color: 'blue', 'font-size': '1.5rem' },
+          table: { color: 'red', border: '3px solid #00a497', 'border-radius': '8px' },
+          th: { 'background-color': '#3b82f6', color: 'white', padding: '12px' },
+          td: { padding: '10px', border: '1px solid #93c5fd' }
+        },
+        // 红色主题
+        red: {
+          h2: { color: '#dc2626', 'font-size': '1.8rem', 'text-shadow': '2px 2px 4px rgba(0,0,0,0.1)' },
+          table: { color: '#991b1b', border: '3px solid #dc2626', 'border-radius': '12px' },
+          th: { 'background-color': '#dc2626', color: 'white', padding: '15px' },
+          td: { padding: '12px', border: '1px solid #fca5a5' }
+        },
+        // 绿色主题
+        green: {
+          h2: { color: '#059669', 'font-size': '1.6rem' },
+          table: { color: '#047857', border: '3px solid #059669', 'border-radius': '10px' },
+          th: { 'background-color': '#059669', color: 'white', padding: '14px' },
+          td: { padding: '11px', border: '1px solid #a7f3d0' }
+        }
+      }
+
+      window.onload = () => {
+        // 获取元素
+        const render1 = document.getElementById('render_1')
+        const render2 = document.getElementById('render_2')
+        const render3 = document.getElementById('render_3')
+        const render4 = document.getElementById('render_4')
+
+        // 初始内容设置
+        const sampleContent = `
+## 测试标题
+这是一个测试段落。
+
+| 产品名称 | 价格 | 状态 |
+|----------|------|------|
+| iPhone 15 | ¥6,999 | 有库存 |
+| MacBook Pro | ¥14,999 | 缺货 |
+| iPad Air | ¥4,999 | 有库存 |
+        `
+
+        // 设置初始内容
+        if (render1) render1.content = sampleContent
+        if (render2) render2.content = sampleContent
+        if (render3) render3.content = sampleContent
+        if (render4) render4.content = sampleContent
+
+        // 测试1：模拟 Vue 的对象绑定
+        console.log('🧪 测试1：模拟 Vue 的对象绑定方式')
+        if (render2) {
+          // 这模拟了 Vue 中 :custom-styles="proseStyles" 的效果
+          render2.customStyles = testStyles.blue
+          console.log('Vue 对象绑定成功，应该显示蓝色主题')
+        }
+
+        // 测试2：模拟 React 的属性绑定
+        console.log('🧪 测试2：模拟 React 的属性绑定方式')
+        if (render3) {
+          // 这模拟了 React 中 customStyles={proseStyles} 的效果
+          render3.customStyles = testStyles.red
+          console.log('React 属性绑定成功，应该显示红色主题')
+        }
+
+        // 按钮事件：原始的增量更新功能
+        const button = document.getElementById('test_but_1')
+        if (button) {
+          button.addEventListener('click', () => {
+            console.log('开始增量更新内容...')
+            const renders = [render1, render2, render3, render4].filter(r => r)
+            let index = 0
+            const updateContent = () => {
+              if (index < mock.length) {
+                renders.forEach(render => {
+                  if (render) render.content = mock.slice(0, index + 1)
+                })
+                index++
+                setTimeout(updateContent, 10)
+              }
+            }
+            updateContent()
+          })
+        }
+
+        // 主题切换按钮
+        const blueBtn = document.getElementById('set-blue')
+        const redBtn = document.getElementById('set-red')
+        const greenBtn = document.getElementById('set-green')
+        const clearBtn = document.getElementById('clear-styles')
+
+        if (blueBtn) {
+          blueBtn.addEventListener('click', () => {
+            console.log('🎨 设置蓝色主题')
+            if (render2) render2.customStyles = testStyles.blue
+            if (render3) render3.customStyles = testStyles.blue
+            if (render4) render4.customStyles = testStyles.blue
+          })
+        }
+
+        if (redBtn) {
+          redBtn.addEventListener('click', () => {
+            console.log('🎨 设置红色主题')
+            if (render2) render2.customStyles = testStyles.red
+            if (render3) render3.customStyles = testStyles.red
+            if (render4) render4.customStyles = testStyles.red
+          })
+        }
+
+        if (greenBtn) {
+          greenBtn.addEventListener('click', () => {
+            console.log('🎨 设置绿色主题')
+            if (render2) render2.customStyles = testStyles.green
+            if (render3) render3.customStyles = testStyles.green
+            if (render4) render4.customStyles = testStyles.green
+          })
+        }
+
+        if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+            console.log('🧹 清空所有样式')
+            if (render2) render2.customStyles = {}
+            if (render3) render3.customStyles = {}
+            if (render4) render4.customStyles = {}
+          })
+        }
+
+        // 测试不同的赋值方式
+        const testDifferentAssignments = () => {
+          console.log('🔬 测试不同的赋值方式...')
+
+          if (render4) {
+            console.log('测试 JSON 字符串赋值')
+            render4.customStyles = JSON.stringify(testStyles.green)
+
+            setTimeout(() => {
+              console.log('测试 null 赋值')
+              render4.customStyles = null
+            }, 2000)
+
+            setTimeout(() => {
+              console.log('测试空对象赋值')
+              render4.customStyles = {}
+            }, 4000)
+
+            setTimeout(() => {
+              console.log('测试无效 JSON 字符串')
+              render4.customStyles = 'invalid json'
+            }, 6000)
+
+            setTimeout(() => {
+              console.log('测试数组赋值（应该被转换为空对象）')
+              render4.customStyles = [1, 2, 3]
+            }, 8000)
+
+            setTimeout(() => {
+              console.log('最终测试：恢复正常对象')
+              render4.customStyles = testStyles.blue
+            }, 10000)
+          }
+        }
+
+        // 高级测试按钮
+        const advancedTestBtn = document.getElementById('advanced-test')
+        if (advancedTestBtn) {
+          advancedTestBtn.addEventListener('click', testDifferentAssignments)
+        }
+
+        // 动态更新测试
+        const dynamicTestBtn = document.getElementById('dynamic-test')
+        if (dynamicTestBtn) {
+          dynamicTestBtn.addEventListener('click', () => {
+            console.log('🔄 开始动态更新测试')
+            let counter = 0
+            const themes = ['blue', 'red', 'green']
+
+            const updateTheme = () => {
+              const theme = themes[counter % themes.length]
+              console.log(`切换到${theme}主题`)
+
+              if (render2) render2.customStyles = testStyles[theme]
+              if (render3) render3.customStyles = testStyles[theme]
+
+              counter++
+              if (counter < 10) {
+                // 循环10次
+                setTimeout(updateTheme, 1000)
+              }
+            }
+            updateTheme()
+          })
+        }
+
+        // 监听事件（保留原有功能）
+        const codedom = document.getElementById('c056')
+        if (codedom) {
+          codedom.addEventListener('copy-text', e => {
+            console.log('e.detail.text', e?.detail?.text)
+          })
+        }
+
+        console.log('✅ 页面初始化完成，所有测试已设置')
+        console.log('💡 查看控制台输出来观察测试结果')
+        console.log('🎯 如果对象绑定生效，render_2 应该显示蓝色主题，render_3 应该显示红色主题')
+      }
+    </script>
+  </head>
+
+  <body>
+    <div class="page">
+      <div class="test-section">
+        <h4>🧪 ObjectConverter 兼容性测试</h4>
+        <p>这个页面测试了 ObjectConverter 是否能正确处理 Vue 和 React 风格的对象绑定</p>
+
+        <div class="controls">
+          <button id="test_but_1">开始内容更新</button>
+          <button id="set-blue">设置蓝色主题</button>
+          <button id="set-red">设置红色主题</button>
+          <button id="set-green">设置绿色主题</button>
+          <button id="clear-styles">清空样式</button>
+          <button id="advanced-test">高级兼容性测试</button>
+          <button id="dynamic-test">动态切换测试</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <h3>原始方式 - JSON 字符串绑定</h3>
+          <p><code>custom-styles='{"h2":{"color":"blue"}}'</code></p>
+          <div>
+            <ys-md-rendering id="render_1" custom-styles='{"h2":{"color":"blue"},"table":{"color":"red","border":"3px solid #00a497"}}'> </ys-md-rendering>
+          </div>
+        </div>
+
+        <div>
+          <h3>Vue 风格 - 对象绑定测试</h3>
+          <p><code>element.customStyles = objectValue</code></p>
+          <div>
+            <ys-md-rendering id="render_2"> </ys-md-rendering>
+          </div>
+        </div>
+
+        <div>
+          <h3>React 风格 - 属性绑定测试</h3>
+          <p><code>customStyles={proseStyles}</code></p>
+          <div>
+            <ys-md-rendering id="render_3"> </ys-md-rendering>
+          </div>
+        </div>
+
+        <div>
+          <h3>兼容性压力测试</h3>
+          <p>测试各种边界情况和错误输入</p>
+          <div>
+            <ys-md-rendering id="render_4"> </ys-md-rendering>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -6,10 +6,9 @@ import MarkdownIt from 'markdown-it'
 import tailwindcss from './index.css?inline'
 import { AstToken, RenderFunction, renderMethods } from './registerAllCustomRenderers'
 import Token from 'markdown-it/lib/token.mjs'
-import { generateUUID } from '../utils/generateUUID'
-import { BooleanConverter } from '../utils/converter'
+import { generateUUID } from '../utils'
+import { BooleanConverter, ObjectConverter } from '../utils/converter'
 import { themeContext, ThemeData } from '../utils/context'
-import { styleMap } from 'lit/directives/style-map.js'
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
@@ -19,10 +18,18 @@ export default class YsMdRendering extends LitElement {
   @property({ type: Boolean, converter: BooleanConverter }) dark = false
 
   // 自定义样式属性，支持 CSS 变量覆盖
-  @property({ type: Object }) customStyles = {}
+  @property({
+    type: Object,
+    attribute: 'custom-styles',
+    converter: ObjectConverter,
+    hasChanged: (newVal: any, oldVal: any) => {
+      return JSON.stringify(newVal) !== JSON.stringify(oldVal)
+    }
+  })
+  customStyles: Record<string, any> = {}
 
-  // 或者支持 CSS 字符串方式
-  @property({ type: String, attribute: 'custom-css' }) customCss = ''
+  // 是否识别软换行为换行
+  @property({ type: Boolean, converter: BooleanConverter }) breaks = false
 
   static styles = [
     unsafeCSS(tailwindcss),
@@ -34,39 +41,6 @@ export default class YsMdRendering extends LitElement {
       }
       .prose {
         font-size: var(--rem-size);
-      }
-      /* 默认的 prose CSS 变量，可以被覆盖 */
-      .prose {
-        /* 正文内容颜色 - 包括段落文字、列表项文字等主体内容 */
-        --tw-prose-body: theme('colors.gray.700');
-        /* 标题颜色 - h1, h2, h3, h4, h5, h6 标题文字颜色 */
-        --tw-prose-headings: theme('colors.gray.900');
-        /* 链接颜色 - a 标签的文字颜色 */
-        --tw-prose-links: theme('colors.blue.600');
-        /* 粗体文字颜色 - strong, b 标签的文字颜色 */
-        --tw-prose-bold: theme('colors.gray.900');
-        /* 有序列表数字颜色 - ol > li 前面的数字(1. 2. 3.)颜色 */
-        --tw-prose-counters: theme('colors.gray.500');
-        /* 无序列表项目符号颜色 - ul > li 前面的圆点(•)颜色 */
-        --tw-prose-bullets: theme('colors.gray.300');
-        /* 水平分割线颜色 - hr 标签的线条颜色 */
-        --tw-prose-hr: theme('colors.gray.200');
-        /* 引用文字颜色 - blockquote 内的文字颜色 */
-        --tw-prose-quotes: theme('colors.gray.900');
-        /* 引用边框颜色 - blockquote 左侧的竖线颜色 */
-        --tw-prose-quote-borders: theme('colors.gray.200');
-        /* 图片说明文字颜色 - figcaption 标签文字颜色 */
-        --tw-prose-captions: theme('colors.gray.500');
-        /* 行内代码颜色 - code 标签的文字颜色 */
-        --tw-prose-code: theme('colors.gray.900');
-        /* 代码块文字颜色 - 代码块 内的文字颜色 */
-        --tw-prose-pre-code: theme('colors.gray.200');
-        /* 代码块背景颜色 - 代码块 的背景颜色 */
-        --tw-prose-pre-bg: theme('colors.gray.800');
-        /* 表格标题边框颜色 - th 标签的边框颜色 */
-        --tw-prose-th-borders: theme('colors.gray.300');
-        /* 表格单元格边框颜色 - td 标签的边框颜色 */
-        --tw-prose-td-borders: theme('colors.gray.200');
       }
     `
   ]
@@ -91,15 +65,6 @@ export default class YsMdRendering extends LitElement {
     mode: 'light'
   }
 
-  // 计算最终的样式对象
-  @state()
-  private _computedStyles: Record<string, string> = {}
-
-  firstUpdated() {
-    // 首次渲染时计算样式
-    this._computeStyles()
-  }
-
   // 方法1：使用 willUpdate 生命周期方法（推荐）
   willUpdate(changedProperties: PropertyValues) {
     if (changedProperties.has('dark')) {
@@ -108,45 +73,6 @@ export default class YsMdRendering extends LitElement {
         mode: this.dark ? 'dark' : 'light'
       }
     }
-
-    // 当 customStyles 或 customCss 变化时，重新计算样式
-    if (changedProperties.has('customStyles') || changedProperties.has('customCss')) {
-      this._computeStyles()
-    }
-  }
-
-  private _computeStyles() {
-    let styles: Record<string, string> = {}
-
-    // 处理对象形式的自定义样式
-    if (this.customStyles && typeof this.customStyles === 'object') {
-      styles = { ...styles, ...this.customStyles }
-    }
-
-    // 处理 CSS 字符串形式的自定义样式
-    if (this.customCss) {
-      const cssStyles = this._parseCssString(this.customCss)
-      styles = { ...styles, ...cssStyles }
-    }
-
-    this._computedStyles = styles
-  }
-
-  // 解析 CSS 字符串为对象
-  private _parseCssString(cssString: string): Record<string, string> {
-    const styles: Record<string, string> = {}
-
-    // 简单的 CSS 解析，支持 CSS 变量
-    const declarations = cssString.split(';').filter(decl => decl.trim())
-
-    declarations.forEach(decl => {
-      const [property, value] = decl.split(':').map(s => s.trim())
-      if (property && value) {
-        styles[property] = value
-      }
-    })
-
-    return styles
   }
 
   connectedCallback() {
@@ -286,13 +212,16 @@ export default class YsMdRendering extends LitElement {
         // 自定义渲染步骤
         const customMethod = this.customMethods[token.type]
         if (customMethod) {
-          return customMethod(ast, this._renderAst4(ast.children))
+          return customMethod(ast, this._renderAst4(ast.children), {})
         }
 
         // 标准渲染步骤
         const renderMethod = this.renderMethods[token.type]
         if (renderMethod) {
-          return renderMethod(ast, this._renderAst4(ast.children))
+          return renderMethod(ast, this._renderAst4(ast.children), {
+            style: this.customStyles,
+            breaks: this.breaks
+          })
         }
       })
       // 过滤空字符和空html标签
@@ -325,7 +254,7 @@ export default class YsMdRendering extends LitElement {
     }
 
     return html`
-      <div class=${classMap(cssMap)} style=${styleMap(this._computedStyles)}>${this._getAST()}</div>
+      <div class=${classMap(cssMap)}>${this._getAST()}</div>
       <slot></slot>
     `
   }

@@ -46,7 +46,7 @@
       }
     </style>
     <script type="module">
-      import { MarkdownStr_li as mock } from './src/mock.ts'
+      import { MarkdownStr_table2 as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
@@ -69,9 +69,11 @@
 
         // 监听事件
         const codedom = document.getElementById('c056')
-        codedom.addEventListener('copy-text', e => {
-          console.log('e.detail.text', e?.detail?.text)
-        })
+        if (codedom) {
+          codedom.addEventListener('copy-text', e => {
+            console.log('e.detail.text', e?.detail?.text)
+          })
+        }
       }
     </script>
   </head>
@@ -83,9 +85,9 @@
         <div>
           <h3>非实时渲染</h3>
           <div>
-            <ys-md-rendering id="render_1" dark>
-              <ys-echarts></ys-echarts>
-              <ys-code-highlight id="c056"></ys-code-highlight>
+            <ys-md-rendering id="render_1">
+              <!-- <ys-echarts></ys-echarts> -->
+              <!-- <ys-code-highlight id="c056"></ys-code-highlight> -->
             </ys-md-rendering>
           </div>
         </div>

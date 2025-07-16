@@ -97,42 +97,66 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 
 #### `customStyles` 
 
-**用途**: 通过对象方式覆盖 prose 的 CSS 变量，自定义文档渲染样式。
+**用途**: 通过属性，覆盖元素样式
 
-**用法**: 
-```javascript
-// JavaScript/Vue/React 中使用
-{
-  '--tw-prose-body': '#dc2626',      // 正文颜色
-  '--tw-prose-bullets': '#dc2626',   // 列表符号颜色
-  '--tw-prose-headings': '#1f2937'   // 标题颜色
-}
-```
+**示例**:
 
-#### `customCss`
+可通过`color`属性，实现渲染不同颜色的`table`内文字
 
-**用途**: 通过 CSS 字符串方式覆盖 prose 的 CSS 变量，适用于 HTML 直接使用。
-
-**用法**:
 ```html
-<!-- HTML 中使用 -->
-<ys-md-rendering 
-  custom-css="--tw-prose-body: #dc2626; --tw-prose-bullets: #dc2626; --tw-prose-headings: #1f2937">
-</ys-md-rendering>
+<template>
+  <div>
+    <button @click="test">测试</button>
+    <ys-md-rendering :content="content" :style="style" :custom-styles.prop="proseStyles">
+      <!-- 其他插件 -->
+    </ys-md-rendering>
+  </div>
+</template>
+
+<script>
+import 'ys-md-rendering'
+
+/**
+ * 热线通思考渲染,颜色置灰,色号调小
+ */
+export default {
+  name: 'MdRender',
+  props: {
+    content: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      size: 12,
+      color: 'red'
+    }
+  },
+  computed: {
+    style() {
+      return {
+        '--rem-size': this.size + 'px'
+      }
+    },
+    proseStyles() {
+      return {
+        table: {
+          color: this.color,
+          border: '3px solid #00a497'
+        }
+      }
+    }
+  },
+  methods: {
+    test() {
+      this.color = this.color === 'red' ? 'blue' : 'red'
+    }
+  }
+}
+</script>
 ```
 
-#### 支持的变量
-
-| 变量名 | 控制元素 |
-|--------|----------|
-| `--tw-prose-body` | 正文、列表项文字 |
-| `--tw-prose-headings` | 标题文字 |
-| `--tw-prose-links` | 链接文字 |
-| `--tw-prose-bullets` | 无序列表符号 |
-| `--tw-prose-counters` | 有序列表数字 |
-| `--tw-prose-code` | 行内代码 |
-
-> **注意**: Vue 中使用 `customStyles` 需要添加 `.prop` 修饰符：`:customStyles.prop="styles"`
 
 ## 主要特性
 
@@ -166,13 +190,15 @@ module.exports = {
 
 ## 更新记录
 
+#### 0.1.17
+
+- feat: 增加`breaks`属性区分软换行是否换行
+- feat: 更新`customStyles`属性，可直接通过css样式覆盖样式效果
+- feat: 取消`customCss`属性
+
 #### 0.1.16
 
 - fit: 解决了有序列表的起始属性未生效问题
-
-#### 0.1.15
-
-- 增加`customStyles`及`customCss`属性，用于覆盖默认颜色
 
 #### 0.1.14
 
