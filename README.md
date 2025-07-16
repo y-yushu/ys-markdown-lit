@@ -190,7 +190,7 @@ module.exports = {
 
 ## 更新记录
 
-#### 0.1.18
+#### 0.1.19
 
 - feat: 支持通过class或style覆盖prose使用的css变量
 

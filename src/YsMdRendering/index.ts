@@ -54,8 +54,6 @@ export default class YsMdRendering extends LitElement {
       linkify: false,
       typographer: true
     })
-    // 初始化需要覆盖prose的css变量
-    this.setProseVariables()
   }
 
   key = generateUUID()
@@ -81,6 +79,9 @@ export default class YsMdRendering extends LitElement {
         mode: this.dark ? 'dark' : 'light'
       }
     }
+
+    // 覆盖prose的css变量
+    this.setProseVariables()
   }
 
   connectedCallback() {
@@ -151,7 +152,9 @@ export default class YsMdRendering extends LitElement {
     const computedStyles = getComputedStyle(this)
     TailwindVariables.forEach(key => {
       if (computedStyles.getPropertyValue(key)) {
-        this._computedStyles[key] = computedStyles.getPropertyValue(key)
+        if (this._computedStyles[key] !== computedStyles.getPropertyValue(key)) {
+          this._computedStyles[key] = computedStyles.getPropertyValue(key)
+        }
       }
     })
   }
