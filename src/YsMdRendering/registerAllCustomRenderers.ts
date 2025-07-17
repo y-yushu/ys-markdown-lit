@@ -343,8 +343,11 @@ const renderHtmlInline = (ask: AstToken, chil: TemplateResult[], _option: any): 
   const middleContent = html`${chil}`
   const container = document.createElement('div')
   render(middleContent, container)
+  let content = token.content
   const middleContentHTML = container.innerHTML
-  return html`${unsafeHTML(token.content + middleContentHTML + end?.content)}`
+  if (middleContentHTML) content += middleContentHTML
+  if (end?.content) content += end.content
+  return html`${unsafeHTML(content)}`
 }
 
 // 定义渲染方法的类型

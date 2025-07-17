@@ -190,6 +190,10 @@ module.exports = {
 
 ## 更新记录
 
+#### 0.1.20
+
+- fit: 解决`renderHtmlInline`方法可能会渲染出`undefined`问题
+
 #### 0.1.19
 
 - feat: 支持通过class或style覆盖prose使用的css变量
