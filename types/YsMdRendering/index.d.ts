@@ -5,6 +5,7 @@ import Token from 'markdown-it/lib/token.mjs';
 import { ThemeData } from '../utils/context';
 export default class YsMdRendering extends LitElement {
     content: string;
+    mode: string;
     dark: boolean;
     customStyles: Record<string, any>;
     breaks: boolean;

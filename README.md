@@ -95,6 +95,18 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 
 ### 自定义样式参数
 
+#### `mode`
+
+**用途**: 通过属性，控制深色浅色模式，如果不传，则自动切换深色浅色模式
+
+可选：`dark`,`light`
+
+**示例**:
+
+```html
+<ys-md-rendering id="render_2" mode="dark"> </ys-md-rendering>
+```
+
 #### `customStyles` 
 
 **用途**: 通过属性，覆盖元素样式
@@ -190,6 +202,10 @@ module.exports = {
 
 ## 更新记录
 
+#### 0.1.21
+
+- feat: 通过mode为`dark`、`light`控制具体是否为深色模式，如果mode不传或为空，则自动判断深色浅色模式
+
 #### 0.1.20
 
 - fit: 解决`renderHtmlInline`方法可能会渲染出`undefined`问题
@@ -207,11 +223,3 @@ module.exports = {
 #### 0.1.16
 
 - fit: 解决了有序列表的起始属性未生效问题
-
-#### 0.1.14
-
-- table增加横向滚动
-
-#### 0.1.13
-
-- 增加深色模式

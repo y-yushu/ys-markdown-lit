@@ -16,6 +16,9 @@ import { TailwindVariables } from '../utils/dict'
 export default class YsMdRendering extends LitElement {
   @property({ type: String }) content = ''
 
+  // 固定深色模式还是浅色模式
+  @property({ type: String }) mode = ''
+
   // 手动开启深色模式
   @property({ type: Boolean, converter: BooleanConverter }) dark = false
 
@@ -73,10 +76,9 @@ export default class YsMdRendering extends LitElement {
 
   // 方法1：使用 willUpdate 生命周期方法（推荐）
   willUpdate(changedProperties: PropertyValues) {
-    if (changedProperties.has('dark')) {
+    if (changedProperties.has('mode')) {
       this.themeData = {
-        ...this.themeData,
-        mode: this.dark ? 'dark' : 'light'
+        mode: this.mode
       }
     }
 
@@ -268,13 +270,15 @@ export default class YsMdRendering extends LitElement {
       'max-w-full': true
     }
 
-    // 手动开启深色模式
-    if (this.dark) {
-      cssMap['prose-invert'] = true
+    // 深色模式
+    if (this.mode === 'dark') {
+      cssMap['dark:prose-invert'] = false // 关闭环境自动判断
+      cssMap['prose-invert'] = true // 开启深色模式
     }
-    // 自动开始深色模式
-    else {
-      cssMap['dark:prose-invert'] = true
+    // 浅色模式
+    if (this.mode === 'light') {
+      cssMap['dark:prose-invert'] = false // 关闭环境自动判断
+      cssMap['prose-invert'] = false // 关闭深色模式
     }
 
     return html`
