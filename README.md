@@ -202,6 +202,10 @@ module.exports = {
 
 ## 更新记录
 
+#### 未发布
+
+- feat: `custom-styles`属性增加小驼峰支持
+
 #### 0.1.21
 
 - feat: 通过mode为`dark`、`light`控制具体是否为深色模式，如果mode不传或为空，则自动判断深色浅色模式
