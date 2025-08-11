@@ -46,7 +46,7 @@
       }
     </style>
     <script type="module">
-      import { MarkdownStr_table2 as mock } from './src/mock.ts'
+      import { MarkdownStr_mermaid as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
@@ -85,8 +85,10 @@
         <div>
           <h3>非实时渲染</h3>
           <div>
-            <ys-md-rendering id="render_1" style="--rem-size: 12px; --tw-prose-headings: blue; --tw-prose-body: red">
-              <ys-echarts></ys-echarts>
+            <!--  -->
+            <ys-md-rendering id="render_1">
+              <!-- <ys-echarts></ys-echarts> -->
+              <ys-mermaid></ys-mermaid>
               <!-- <ys-code-highlight id="c056"></ys-code-highlight> -->
             </ys-md-rendering>
           </div>

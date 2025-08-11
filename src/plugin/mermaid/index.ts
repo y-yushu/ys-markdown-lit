@@ -1,11 +1,14 @@
 import { html, LitElement, PropertyValues, ReactiveElement, TemplateResult } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { createRef, ref, Ref } from 'lit/directives/ref.js'
+import { consume } from '@lit/context'
 import YsMdRendering from '../../YsMdRendering'
 import { AstToken } from '../../YsMdRendering/registerAllCustomRenderers'
+import { themeContext, ThemeData } from '../../utils/context'
 import mermaid from 'mermaid'
 
+// 初始化 mermaid 只执行一次
 mermaid.initialize({
   startOnLoad: false
 })
@@ -65,13 +68,47 @@ export class YsMermaidRender extends LitElement {
 
   @property() status: MermaidRenderType = 'code'
 
-  // 添加一个updated生命周期方法，以处理initialStatus和content的变化
+  // 使用 consume 装饰器消费主题上下文
+  @consume({ context: themeContext, subscribe: true })
+  @property({ attribute: false })
+  themeData?: ThemeData
+
+  // 存储当前应用的主题，用于检测变化
+  @state() private currentMermaidTheme: 'dark' | 'default' = 'default'
+
+  // 计算属性：是否为深色模式
+  private get isDarkMode(): boolean {
+    return this.themeData?.mode === 'dark'
+  }
+
+  // 添加一个updated生命周期方法，以处理状态变化
   protected updated(changedProperties: PropertyValues): void {
     // 处理content的变化
     if (changedProperties.has('content') && this.content) {
       // 如果当前是view模式，需要重新渲染
       if (this.status === 'view') {
         this._renderMermaid(false)
+      }
+    }
+
+    // 主题变化时更新 mermaid 主题配置并重新渲染
+    if (changedProperties.has('themeData')) {
+      const newTheme = this.isDarkMode ? 'dark' : 'default'
+
+      // 只有当主题确实变化时才更新 mermaid 配置
+      if (this.currentMermaidTheme !== newTheme) {
+        this.currentMermaidTheme = newTheme
+
+        // 更新 mermaid 配置
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: newTheme
+        })
+
+        // 如果当前是view模式，重新渲染图表
+        if (this.status === 'view') {
+          this._renderMermaid(false)
+        }
       }
     }
   }
@@ -123,59 +160,88 @@ export class YsMermaidRender extends LitElement {
   }
 
   render() {
-    return html`
-      <div class="mb-4">
-        <!-- 甘特图卡片 -->
-        <div class="overflow-hidden border border-solid border-gray-300 shadow-xl">
-          <!-- 顶部工具栏 -->
-          <div class="flex h-8 items-center justify-between gap-2 py-2 pr-2 pl-3 select-none">
-            <div class="flex flex-1 items-center gap-2">
-              <div class="inline-flex h-8 cursor-pointer p-0.5">
-                <button
-                  class=${classMap({
-                    'flex min-w-7 cursor-pointer items-center justify-center transition active:text-blue-300': true,
-                    'text-blue-500': this.status === 'code'
-                  })}
-                  @click=${() => this._checkStatus('code')}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256">
-                    <path
-                      d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"
-                    ></path>
-                  </svg>
-                </button>
-                <button
-                  class=${classMap({
-                    'flex min-w-7 cursor-pointer items-center justify-center transition active:text-blue-300': true,
-                    'text-blue-500': this.status === 'view'
-                  })}
-                  @click=${() => this._checkStatus('view')}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256">
-                    <path
-                      d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+    // 判断是否为深色模式
+    const isDark = this.isDarkMode
 
-          <!-- 内容区域 - 代码视图 -->
-          ${this.status === 'code'
-            ? html`
-                <div>
-                  <pre class="!my-0 bg-white leading-relaxed text-blue-600"><code>${this.content}</code></pre>
-                </div>
-              `
-            : html`
-                <div class="min-h-20 w-full bg-white p-4">
-                  <div ${ref(this.mermaidBoxRef)} class="flex justify-center"></div>
-                </div>
-              `}
+    // 定义基础样式类
+    const baseButtonClasses = {
+      flex: true,
+      'min-w-16': true,
+      'cursor-pointer': true,
+      'items-center': true,
+      'justify-center': true,
+      'rounded-md': true,
+      'px-3': true,
+      'py-1': true,
+      'text-sm': true,
+      'font-medium': true,
+      'transition-all': true,
+      'duration-200': true,
+      'ease-in-out': true
+    }
+
+    // 创建完整的按钮类对象
+    const codeButtonClasses = {
+      ...baseButtonClasses,
+      // 激活状态
+      'bg-white': !isDark && this.status === 'code',
+      'text-blue-600': !isDark && this.status === 'code',
+      'shadow-sm': this.status === 'code',
+      'bg-gray-700': isDark && this.status === 'code',
+      'text-blue-400': isDark && this.status === 'code',
+      // 非激活状态
+      'bg-transparent': this.status !== 'code',
+      'text-gray-600': !isDark && this.status !== 'code',
+      'text-gray-400': isDark && this.status !== 'code',
+      'hover:bg-gray-200': !isDark && this.status !== 'code',
+      'hover:bg-gray-800': isDark && this.status !== 'code',
+      'hover:text-gray-800': !isDark && this.status !== 'code',
+      'hover:text-gray-200': isDark && this.status !== 'code'
+    }
+
+    const viewButtonClasses = {
+      ...baseButtonClasses,
+      // 激活状态
+      'bg-white': !isDark && this.status === 'view',
+      'text-blue-600': !isDark && this.status === 'view',
+      'shadow-sm': this.status === 'view',
+      'bg-gray-700': isDark && this.status === 'view',
+      'text-blue-400': isDark && this.status === 'view',
+      // 非激活状态
+      'bg-transparent': this.status !== 'view',
+      'text-gray-600': !isDark && this.status !== 'view',
+      'text-gray-400': isDark && this.status !== 'view',
+      'hover:bg-gray-200': !isDark && this.status !== 'view',
+      'hover:bg-gray-800': isDark && this.status !== 'view',
+      'hover:text-gray-800': !isDark && this.status !== 'view',
+      'hover:text-gray-200': isDark && this.status !== 'view'
+    }
+
+    return html`<div class="mb-4">
+      <!-- 甘特图卡片 -->
+      <div class="${isDark ? 'border-gray-700' : 'border-gray-300'} overflow-hidden rounded-md border border-solid">
+        <!-- 顶部工具栏 -->
+        <div class="${isDark ? 'bg-gray-900' : ''} flex h-10 items-center justify-between gap-2 py-2 pr-2 pl-3 select-none">
+          <div class="${isDark ? 'bg-gray-800' : 'bg-gray-100'} inline-flex h-8 rounded-md p-1">
+            <button class=${classMap(codeButtonClasses)} @click=${() => this._checkStatus('code')}>
+              <span>代码</span>
+            </button>
+            <button class=${classMap(viewButtonClasses)} @click=${() => this._checkStatus('view')}>
+              <span>图表</span>
+            </button>
+          </div>
         </div>
+
+        <!-- 内容区域 - 代码视图 -->
+        ${this.status === 'code'
+          ? html`<div class="max-w-full overflow-x-auto">
+              <pre class="${isDark ? 'bg-[#1e2939]' : ''} !m-0 max-w-full rounded-t-none p-4"><code>${this.content}</code></pre>
+            </div>`
+          : html`<div class="${isDark ? 'bg-[#1e2939]' : 'bg-white'} min-h-20 w-full p-4">
+              <div ${ref(this.mermaidBoxRef)} class="flex justify-center"></div>
+            </div>`}
       </div>
-    `
+    </div>`
   }
 }
 

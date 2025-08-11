@@ -253,7 +253,7 @@ const renderFence = (ask: AstToken, _chil: TemplateResult[], option: any): Templ
   const styleValue = style.trim() ? style : undefined
 
   return html`
-    <div class="max-w-full rounded-lg">
+    <div class="mb-4 max-w-full rounded-lg">
       <div class="sticky top-0 flex h-8 items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs select-none">
         <span class="font-bold text-gray-400">${token.info}</span>
         <!-- <span class="cursor-pointer text-blue-400 active:text-blue-300">复制</span> -->

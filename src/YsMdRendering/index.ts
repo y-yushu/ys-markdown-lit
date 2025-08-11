@@ -57,6 +57,10 @@ export default class YsMdRendering extends LitElement {
       linkify: false,
       typographer: true
     })
+    const mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    this.themeData = {
+      mode
+    }
   }
 
   key = generateUUID()
@@ -77,8 +81,10 @@ export default class YsMdRendering extends LitElement {
   // 方法1：使用 willUpdate 生命周期方法（推荐）
   willUpdate(changedProperties: PropertyValues) {
     if (changedProperties.has('mode')) {
-      this.themeData = {
-        mode: this.mode
+      if (this.mode) {
+        this.themeData = {
+          mode: this.mode
+        }
       }
     }
 

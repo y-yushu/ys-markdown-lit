@@ -202,9 +202,11 @@ module.exports = {
 
 ## 更新记录
 
-#### 未发布
+#### 0.1.22
 
 - feat: `custom-styles`属性增加小驼峰支持
+- feat: 优化`ys-mermaid`样式
+- fix: 解决初始化时，为传入`mode`，导致的样式问题
 
 #### 0.1.21
 
@@ -223,7 +225,3 @@ module.exports = {
 - feat: 增加`breaks`属性区分软换行是否换行
 - feat: 更新`customStyles`属性，可直接通过css样式覆盖样式效果
 - feat: 取消`customCss`属性
-
-#### 0.1.16
-
-- fit: 解决了有序列表的起始属性未生效问题
