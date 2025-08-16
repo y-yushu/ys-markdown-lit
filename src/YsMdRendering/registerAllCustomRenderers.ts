@@ -222,6 +222,13 @@ const renderTd = (_ask: AstToken, chil: TemplateResult[], option: any): Template
 
   return html`<td class="box-border max-w-[200px] min-w-[100px] p-2 px-4 break-words whitespace-normal" style=${ifDefined(styleValue)}>${chil}</td>`
 }
+type LinkClickDetail = {
+  href: string
+  anchor: HTMLAnchorElement
+  rawEvent: MouseEvent
+}
+
+const isModifiedClick = (e: MouseEvent) => e.button === 1 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey
 
 const renderLink = (ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
   const token: Token = ask.node
@@ -229,17 +236,77 @@ const renderLink = (ask: AstToken, chil: TemplateResult[], option: any): Templat
   const href = attrs!.find(attr => attr[0] === 'href')?.[1] || ''
 
   let style = ''
-  if (option?.style?.a) {
-    style = jsonToStyle(option.style.a)
-  }
+  if (option?.style?.a) style = jsonToStyle(option.style.a)
   const styleValue = style.trim() ? style : undefined
+
+  const handleClick = (e: MouseEvent) => {
+    const anchorEl = e.currentTarget as HTMLAnchorElement
+    if (isModifiedClick(e)) return // 中键/组合键，交给浏览器
+
+    // 解析 URL，支持相对链接与协议相对链接(//)
+    let url: URL | null = null
+    try {
+      url = new URL(href, window.location.href)
+    } catch {
+      // 无法解析成 URL 的情况，保持 url=null
+    }
+
+    // 在派发自定义事件前，先阻止默认；若外部不拦截，我们再执行兜底跳转
+    e.preventDefault()
+
+    // 从宿主元素派发（穿透 shadow）
+    const root = anchorEl.getRootNode()
+    const hostEl = root instanceof ShadowRoot ? (root.host as HTMLElement) : anchorEl
+
+    const customEvt = new CustomEvent<LinkClickDetail>('link-click', {
+      detail: { href, anchor: anchorEl, rawEvent: e },
+      bubbles: true,
+      composed: true,
+      cancelable: true
+    })
+
+    // 若外部没有 e.preventDefault()，则 notCanceled 为 true -> 我们执行兜底跳转
+    const notCanceled = hostEl.dispatchEvent(customEvt)
+
+    if (notCanceled) {
+      // 1) 锚点(#section)
+      if (href.startsWith('#')) {
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+        return
+      }
+
+      // 2) 无法解析成 URL 的场景：直接走 location
+      if (!url) {
+        window.location.href = href
+        return
+      }
+
+      // 3) 根据协议处理：同时涵盖 http 与 https
+      const proto = url.protocol // 'http:' | 'https:' | 'mailto:' | 'tel:' | ...
+      if (proto === 'http:' || proto === 'https:') {
+        // 同源 -> 认为是站内链接（相对/绝对），否则外链
+        const sameOrigin = url.origin === window.location.origin
+        if (sameOrigin) {
+          // 站内：默认整页跳转（如果你更想用 SPA 路由，建议外部监听来接管）
+          window.location.assign(url.href)
+        } else {
+          // 外链：新开
+          window.open(url.href, '_blank')
+        }
+      } else {
+        // 4) 其他协议（mailto:, tel:, sms:, weixin:, …）
+        window.location.href = href
+      }
+    }
+  }
 
   return html`<a
     class="text-blue-500 no-underline active:text-blue-400"
     href="${href}"
     target="_blank"
-    rel="noreferrer nofollow noopener"
+    rel="noreferrer noopener nofollow"
     style=${ifDefined(styleValue)}
+    @click=${handleClick}
     >${chil}</a
   >`
 }

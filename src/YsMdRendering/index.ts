@@ -299,7 +299,7 @@ declare global {
     'ys-md-rendering': YsMdRendering
   }
   interface HTMLElementEventMap {
-    // 'count-changed': CustomEvent<{ count: number }>
+    'link-click': CustomEvent<{ href: string }>
     'child-register': CustomEvent<{ feature: string }>
   }
 }

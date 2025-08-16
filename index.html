@@ -46,7 +46,7 @@
       }
     </style>
     <script type="module">
-      import { MarkdownStr_mermaid as mock } from './src/mock.ts'
+      import { MarkdownStr_a as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
@@ -54,6 +54,10 @@
         button.addEventListener('click', () => {
           // ---- 增量添加
           const render_1 = document.getElementById('render_1')
+          render_1.addEventListener('link-click', e => {
+            e.preventDefault()
+            console.log('🚀 ~ e:', e)
+          })
           const render_2 = document.getElementById('render_2')
           let index = 0
           const updateContent = () => {
@@ -96,7 +100,7 @@
         <div>
           <h3>实时渲染，异常报错</h3>
           <div>
-            <!-- <ys-md-rendering id="render_2"> </ys-md-rendering> -->
+            <ys-md-rendering id="render_2"> </ys-md-rendering>
           </div>
         </div>
       </div>

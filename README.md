@@ -202,6 +202,10 @@ module.exports = {
 
 ## 更新记录
 
+#### 0.1.23
+
+- feat: 增加`link-click`事件，点击链接时触发
+
 #### 0.1.22
 
 - feat: `custom-styles`属性增加小驼峰支持

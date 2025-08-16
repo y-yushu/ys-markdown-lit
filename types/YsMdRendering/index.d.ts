@@ -43,6 +43,9 @@ declare global {
         'ys-md-rendering': YsMdRendering;
     }
     interface HTMLElementEventMap {
+        'link-click': CustomEvent<{
+            href: string;
+        }>;
         'child-register': CustomEvent<{
             feature: string;
         }>;
