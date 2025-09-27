@@ -45,7 +45,8 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "build2": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
