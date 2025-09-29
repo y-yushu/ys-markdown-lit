@@ -138,17 +138,29 @@ export class YsMermaidRender extends LitElement {
       .parse(this.content)
       .then(() => {
         const id = `mermaid_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
-        mermaid.render(id, this.content).then(res => {
-          if (this.mermaidBoxRef.value) {
-            this.mermaidBoxRef.value.innerHTML = res.svg
-          }
-        })
+        mermaid
+          .render(id, this.content)
+          .then(res => {
+            if (this.mermaidBoxRef.value) {
+              this.mermaidBoxRef.value.innerHTML = res.svg
+            }
+          })
+          .catch(_err1 => {
+            // 特别捕获 render 阶段的错误
+            console.error('[Mermaid render error]', _err1)
+            if (this.mermaidBoxRef.value) {
+              this.mermaidBoxRef.value.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
+            }
+
+            // 清理可能的错误元素
+            this._cleanupErrorElements()
+          })
       })
-      .catch(_err => {
+      .catch(_err2 => {
         if (isHand) {
           const isDevMode = !!ReactiveElement.disableWarning
           if (isDevMode) {
-            console.error('[Mermaid 渲染失败]', _err)
+            console.error('[Mermaid 渲染失败]', _err2)
           }
           this.mermaidBoxRef.value!.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
         } else {
@@ -156,7 +168,19 @@ export class YsMermaidRender extends LitElement {
             this.mermaidBoxRef.value!.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
           }
         }
+        // 添加清理
+        this._cleanupErrorElements()
       })
+  }
+
+  // 添加一个清理方法
+  private _cleanupErrorElements() {
+    // 清理body中的错误元素
+    setTimeout(() => {
+      document.querySelectorAll('[id^="dmermaid_"]').forEach(el => {
+        el.remove()
+      })
+    }, 0)
   }
 
   render() {

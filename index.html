@@ -46,7 +46,7 @@
       }
     </style>
     <script type="module">
-      import { MarkdownStr_a as mock } from './src/mock.ts'
+      import { MarkdownStr_mermaid as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
@@ -91,9 +91,7 @@
           <div>
             <!--  -->
             <ys-md-rendering id="render_1">
-              <!-- <ys-echarts></ys-echarts> -->
-              <ys-mermaid></ys-mermaid>
-              <!-- <ys-code-highlight id="c056"></ys-code-highlight> -->
+              <ys-mermaid initial-status="view"></ys-mermaid>
             </ys-md-rendering>
           </div>
         </div>
