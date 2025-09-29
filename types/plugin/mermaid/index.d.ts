@@ -23,6 +23,7 @@ export declare class YsMermaidRender extends LitElement {
      * @param isHand 是否手动渲染
      */
     private _renderMermaid;
+    private _cleanupErrorElements;
     render(): TemplateResult<1>;
 }
 declare global {
