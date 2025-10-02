@@ -122,12 +122,19 @@ export class YsRender extends LitElement {
               )
             } else {
               // 第一次创建 clone
-              // TODO 样式隔离没做
               clone = proto.cloneNode(true) as HTMLElement
               clone.setAttribute('data-ys-instance', '')
               clone.setAttribute('data-ys-index', String(idx))
               clone.setAttribute('data-register', item.type)
               clone.setAttribute('data-content', item.content)
+              const styleContent = clone.getAttribute('data-style')
+
+              if (styleContent) {
+                const htmlContent = clone.innerHTML
+                const shadow = clone.attachShadow({ mode: 'open' })
+                shadow.innerHTML = `<style>${styleContent || ''}</style>${htmlContent}`
+                clone.innerHTML = ''
+              }
 
               this.cloneMap.set(key, clone)
 

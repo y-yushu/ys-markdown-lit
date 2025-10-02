@@ -36,24 +36,48 @@ const onRenderInstance = (event: any) => {
   const Comp = resolveComponent(type)
 
   if (Comp) {
-    // 找到 mount 点（由 proto 提供）
-    const mountPoint = (el as HTMLElement).querySelector('.ys-mount') as HTMLElement | null
+    let mountPoint: HTMLElement | null = null
+    if ((el as HTMLElement).shadowRoot) {
+      mountPoint = (el as HTMLElement).shadowRoot!.querySelector('.ys-mount')
+    } else {
+      // 如果没有 shadow，就 fallback 回原逻辑
+      mountPoint = (el as HTMLElement).querySelector('.ys-mount')
+    }
     if (mountPoint) {
       // 首次渲染：渲染组件到 mountPoint（render 会 patch mountPoint 的内容）
       render(h(Comp, { content }), mountPoint)
       appInstances.set(key, { el: mountPoint, type, content })
       console.log('✅ 挂载实例:', key, content)
     } else {
-      // 如果没有 mountPoint，那么直接把组件挂到 el（不推荐）
-      render(h(Comp, { content }), el)
-      appInstances.set(key, { el: el as HTMLElement, type, content })
       console.log('⚠️ 挂载到根 el（没有 mountPoint）:', key)
     }
   } else {
-    // 没有对应组件，直接文本渲染
-    el.textContent = content
+    console.log('⚠️ 没有 mountPoint，直接挂载到根 el:', key)
   }
 }
+// const onRenderInstance = (event: any) => {
+//   const { key, type, content, el } = event.detail
+//   const Comp = resolveComponent(type)
+
+//   if (Comp) {
+//     // 找到 mount 点（由 proto 提供）
+//     const mountPoint = (el as HTMLElement).querySelector('.ys-mount') as HTMLElement | null
+//     if (mountPoint) {
+//       // 首次渲染：渲染组件到 mountPoint（render 会 patch mountPoint 的内容）
+//       render(h(Comp, { content }), mountPoint)
+//       appInstances.set(key, { el: mountPoint, type, content })
+//       console.log('✅ 挂载实例:', key, content)
+//     } else {
+//       // 如果没有 mountPoint，那么直接把组件挂到 el（不推荐）
+//       render(h(Comp, { content }), el)
+//       appInstances.set(key, { el: el as HTMLElement, type, content })
+//       console.log('⚠️ 挂载到根 el（没有 mountPoint）:', key)
+//     }
+//   } else {
+//     // 没有对应组件，直接文本渲染
+//     el.textContent = content
+//   }
+// }
 
 /**
  * onRenderUpdate：内容变化时触发，我们重新 render 同样的组件 vnode 到相同 mountPoint，
@@ -79,39 +103,28 @@ const onRenderUpdate = (event: any) => {
  * 注意：字符串里有 <style>，但它是在运行时由 v-html 添加，不是 SFC 模板里的静态 <style>，
  * 因此不会触发 Vue 的模板静态检查错误。
  */
-const protoType1 = `
-  <style>
-    .type1-wrapper {
-      display: inline-block;
-      padding: 6px 10px;
-      margin: 2px 4px;
-      border-radius: 8px;
-      background: linear-gradient(180deg,#f0f9ff,#e6f3ff);
-      border: 1px solid #90caf9;
-      font-size: 14px;
-      color: #0d47a1;
-    }
-    .type1-label { margin-right:6px; font-weight:700; }
-    .type1-content { font-weight:500; }
-  </style>
-  <!-- 这个 mount 点用于把 Vue 组件插入到 Shadow DOM 内；render(h(Comp), mountPoint) 会渲染到这里 -->
-  <div class="ys-mount"></div>
-`
+const protoType1 = `.type1-wrapper {
+  display: inline-block;
+  padding: 6px 10px;
+  margin: 2px 4px;
+  border-radius: 8px;
+  background: linear-gradient(180deg,#f0f9ff,#e6f3ff);
+  border: 1px solid #90caf9;
+  font-size: 14px;
+  color: #0d47a1;
+}
+.type1-label { margin-right:6px; font-weight:700; }
+.type1-content { font-weight:500; }`
 
-const protoType2 = `
-  <style>
-    .type2-wrapper {
-      display:inline-block;
-      padding:6px 10px;
-      margin:2px 4px;
-      border-radius:8px;
-      background:#f0fff4;
-      border:1px solid red;
-      color:#145214;
-    }
-  </style>
-  <div class="ys-mount"></div>
-`
+const protoType2 = `.type2-wrapper {
+display:inline-block;
+padding:6px 10px;
+margin:2px 4px;
+border-radius:8px;
+background:#f0fff4;
+border:1px solid red;
+color:#145214;
+}`
 </script>
 
 <template>
@@ -120,9 +133,15 @@ const protoType2 = `
 
     <!-- 注意这里把 style/html 放进 slot 内容的方式改为 v-html -->
     <ys-render :content="content" @ys-render-instance="onRenderInstance" @ys-render-update="onRenderUpdate">
-      <div data-register="type1" v-html="protoType1"></div>
-      <div data-register="type2" v-html="protoType2"></div>
+      <div data-register="type1" :data-style="protoType1">
+        <div class="ys-mount"></div>
+      </div>
+      <div data-register="type2" :data-style="protoType2">
+        <div class="ys-mount"></div>
+      </div>
       <div data-register="type3"><!-- 如果需要，加入 proto --></div>
     </ys-render>
+
+    <span class="type1-wrapper">测试</span>
   </div>
 </template>
