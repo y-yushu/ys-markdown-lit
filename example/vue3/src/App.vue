@@ -49,42 +49,20 @@ const onRenderInstance = (event: any) => {
       appInstances.set(key, { el: mountPoint, type, content })
       console.log('✅ 挂载实例:', key, content)
     } else {
-      console.log('⚠️ 挂载到根 el（没有 mountPoint）:', key)
+      console.error('⚠️ 挂载到根 el（没有 mountPoint）:', key)
     }
   } else {
-    console.log('⚠️ 没有 mountPoint，直接挂载到根 el:', key)
+    console.error('⚠️ 没有 mountPoint，直接挂载到根 el:', key)
   }
 }
-// const onRenderInstance = (event: any) => {
-//   const { key, type, content, el } = event.detail
-//   const Comp = resolveComponent(type)
-
-//   if (Comp) {
-//     // 找到 mount 点（由 proto 提供）
-//     const mountPoint = (el as HTMLElement).querySelector('.ys-mount') as HTMLElement | null
-//     if (mountPoint) {
-//       // 首次渲染：渲染组件到 mountPoint（render 会 patch mountPoint 的内容）
-//       render(h(Comp, { content }), mountPoint)
-//       appInstances.set(key, { el: mountPoint, type, content })
-//       console.log('✅ 挂载实例:', key, content)
-//     } else {
-//       // 如果没有 mountPoint，那么直接把组件挂到 el（不推荐）
-//       render(h(Comp, { content }), el)
-//       appInstances.set(key, { el: el as HTMLElement, type, content })
-//       console.log('⚠️ 挂载到根 el（没有 mountPoint）:', key)
-//     }
-//   } else {
-//     // 没有对应组件，直接文本渲染
-//     el.textContent = content
-//   }
-// }
 
 /**
  * onRenderUpdate：内容变化时触发，我们重新 render 同样的组件 vnode 到相同 mountPoint，
  * render(h(Comp, { content }), mountPoint) 会把新 props 传到组件并更新视图
  */
 const onRenderUpdate = (event: any) => {
-  const { key, content } = event.detail
+  const { key, content, incomplete } = event.detail
+
   const rec = appInstances.get(key)
   if (rec) {
     const Comp = resolveComponent(rec.type)

@@ -4,7 +4,7 @@ import { customElement, property } from 'lit/decorators.js'
 type Segment = {
   type: 'text' | 'type1' | 'type2'
   content: string
-  incomplete?: boolean
+  iscomplete?: boolean
 }
 
 @customElement('ys-render')
@@ -25,7 +25,7 @@ export class YsRender extends LitElement {
     slot?.addEventListener('slotchange', () => {
       const nodes = slot.assignedElements()
       nodes.forEach(el => {
-        const type = el.getAttribute('data-register')
+        const type = el.getAttribute('data-register') || null
         if (type) {
           this.templates.set(type, el.cloneNode(true) as HTMLElement)
         }
@@ -73,13 +73,14 @@ export class YsRender extends LitElement {
         result.push({
           type: nextType,
           content: input.slice(nextStart + start.length),
-          incomplete: true
+          iscomplete: false
         })
         break
       } else {
         result.push({
           type: nextType,
-          content: input.slice(nextStart + start.length, endIdx)
+          content: input.slice(nextStart + start.length, endIdx),
+          iscomplete: true
         })
         cursor = endIdx + end.length
       }
@@ -104,30 +105,38 @@ export class YsRender extends LitElement {
             if (this.cloneMap.has(key)) {
               // 已缓存 clone
               clone = this.cloneMap.get(key)!
-              clone.setAttribute('data-content', item.content)
+              clone.dataset.content = item.content
 
+              const wasDispatched = clone.dataset.completeDispatched === 'true'
               // 🔹 每次内容变化，触发 ys-render-update
-              clone.dispatchEvent(
-                new CustomEvent('ys-render-update', {
-                  detail: {
-                    key,
-                    el: clone,
-                    content: item.content,
-                    type: item.type,
-                    incomplete: item.incomplete
-                  },
-                  bubbles: true,
-                  composed: true
-                })
-              )
+              if (!wasDispatched) {
+                this.dispatchEvent(
+                  new CustomEvent('ys-render-update', {
+                    detail: {
+                      key,
+                      el: clone,
+                      content: item.content,
+                      type: item.type,
+                      iscomplete: item.iscomplete
+                    },
+                    bubbles: true,
+                    composed: true
+                  })
+                )
+              }
+
+              if (item.iscomplete) {
+                clone.dataset.completeDispatched = 'true'
+              }
             } else {
               // 第一次创建 clone
               clone = proto.cloneNode(true) as HTMLElement
-              clone.setAttribute('data-ys-instance', '')
-              clone.setAttribute('data-ys-index', String(idx))
-              clone.setAttribute('data-register', item.type)
-              clone.setAttribute('data-content', item.content)
-              const styleContent = clone.getAttribute('data-style')
+              clone.dataset.ysInstance = ''
+              clone.dataset.ysIndex = String(idx)
+              clone.dataset.register = item.type
+              clone.dataset.content = item.content
+
+              const styleContent = clone.dataset.style || ''
 
               if (styleContent) {
                 const htmlContent = clone.innerHTML
@@ -140,14 +149,14 @@ export class YsRender extends LitElement {
 
               // 🔹 延迟触发事件
               setTimeout(() => {
-                clone.dispatchEvent(
+                this.dispatchEvent(
                   new CustomEvent('ys-render-instance', {
                     detail: {
                       key,
                       el: clone,
                       content: item.content,
                       type: item.type,
-                      incomplete: item.incomplete
+                      iscomplete: item.iscomplete
                     },
                     bubbles: true,
                     composed: true
