@@ -3,14 +3,7 @@ import { ifDefined } from 'lit/directives/if-defined.js'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import Token from 'markdown-it/lib/token.mjs'
 import { jsonToStyle } from '../utils'
-
-export type AstToken = {
-  key: string
-  node: Token
-  end: Token | null
-  children: AstToken[]
-  meta?: unknown
-}
+import { AstToken } from '../types'
 
 export type RenderFunction = (ask: AstToken, chil: TemplateResult[], option?: any) => TemplateResult
 

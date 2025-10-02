@@ -46,7 +46,7 @@
       } */
     </style>
     <script type="module">
-      import { MarkdownStr_mermaid as mock } from './src/mock.ts'
+      import { MarkdownStr_think as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
@@ -72,7 +72,7 @@
         })
 
         // 监听事件
-        const codedom = document.getElementById('c056')
+        const codedom = document.getElementById('render_1')
         if (codedom) {
           codedom.addEventListener('copy-text', e => {
             console.log('e.detail.text', e?.detail?.text)
@@ -90,14 +90,20 @@
           <h3>非实时渲染</h3>
           <div>
             <ys-md-rendering id="render_1">
-              <ys-mermaid initial-status="view"></ys-mermaid>
+              <ys-note></ys-note>
+              <ys-code-highlight></ys-code-highlight>
+              <ys-echarts></ys-echarts>
+              <ys-katex></ys-katex>
+              <ys-svg></ys-svg>
+              <ys-mermaid initial-status="view" error-handling="notHandled"></ys-mermaid>
+              <ys-think></ys-think>
             </ys-md-rendering>
           </div>
         </div>
         <div>
           <h3>实时渲染，异常报错</h3>
           <div>
-            <ys-md-rendering id="render_2"> </ys-md-rendering>
+            <!-- <ys-md-rendering id="render_2"> </ys-md-rendering> -->
           </div>
         </div>
       </div>

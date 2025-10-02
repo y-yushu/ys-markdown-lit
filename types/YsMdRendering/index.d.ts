@@ -1,8 +1,10 @@
 import { LitElement, PropertyValues, TemplateResult } from 'lit';
 import MarkdownIt from 'markdown-it';
-import { AstToken, RenderFunction } from './registerAllCustomRenderers';
 import Token from 'markdown-it/lib/token.mjs';
+import { RenderFunction } from './registerAllCustomRenderers';
 import { ThemeData } from '../utils/context';
+import { RuleOptions } from '../utils/getRule';
+import { AstToken, YsRenderUpdateDetail } from '../types';
 export default class YsMdRendering extends LitElement {
     content: string;
     mode: string;
@@ -10,15 +12,22 @@ export default class YsMdRendering extends LitElement {
     customStyles: Record<string, any>;
     breaks: boolean;
     static styles: import("lit").CSSResult[];
-    constructor();
     key: string;
     md: MarkdownIt;
+    constructor();
     themeData: ThemeData;
     private _computedStyles;
+    private templates;
+    private autoKey;
+    private cloneMap;
+    protected firstUpdated(): void;
     willUpdate(changedProperties: PropertyValues): void;
-    connectedCallback(): void;
     disconnectedCallback(): void;
     setMarkdownIt(): void;
+    registrationQuick(type: string): void;
+    registrationCustomize(rulestr: string): void;
+    registrationRulesBySingle(option: Omit<RuleOptions, 'endToken'>): void;
+    registrationRulesByMulti(option: RuleOptions): void;
     renderMethods: import("./registerAllCustomRenderers").RenderMethods;
     customMethods: Record<string, RenderFunction>;
     private _handleChildRegister;
@@ -34,7 +43,7 @@ export default class YsMdRendering extends LitElement {
      * @returns 渲染树
      */
     _buildNestedAST2(flatAST: Token[], prefix_key?: String): AstToken[];
-    _renderAst4(asts: AstToken[]): TemplateResult[];
+    protected _renderAst5(asts: AstToken[]): TemplateResult[];
     _getAST(): unknown[];
     render(): TemplateResult<1>;
 }
@@ -49,5 +58,7 @@ declare global {
         'child-register': CustomEvent<{
             feature: string;
         }>;
+        [key: `${string}-instance`]: CustomEvent<YsRenderUpdateDetail>;
+        [key: `${string}-update`]: CustomEvent<YsRenderUpdateDetail>;
     }
 }

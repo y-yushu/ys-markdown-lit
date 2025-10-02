@@ -1,14 +1,18 @@
-import { LitElement, PropertyValues, TemplateResult } from 'lit';
+import { LitElement, PropertyValues } from 'lit';
 import { ThemeData } from '../../utils/context';
 type MermaidRenderType = 'code' | 'view';
 type ErrorHandlingType = 'errorHandling' | 'notHandled';
 export default class YsMermaid extends LitElement {
+    private config;
     initialStatus: MermaidRenderType;
     errorHandlingType: ErrorHandlingType;
-    connectedCallback(): void;
+    protected firstUpdated(): void;
+    disconnectedCallback(): void;
+    private handleInstance;
+    private handleUpdate;
 }
 export declare class YsMermaidRender extends LitElement {
-    createRenderRoot(): this;
+    static styles: import("lit").CSSResult[];
     content: string;
     errorHandlingType: ErrorHandlingType;
     status: MermaidRenderType;
@@ -24,7 +28,7 @@ export declare class YsMermaidRender extends LitElement {
      */
     private _renderMermaid;
     private _cleanupErrorElements;
-    render(): TemplateResult<1>;
+    render(): import("lit").TemplateResult<1>;
 }
 declare global {
     interface HTMLElementTagNameMap {

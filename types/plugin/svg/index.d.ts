@@ -1,34 +1,36 @@
-import { LitElement, TemplateResult } from 'lit';
+import { LitElement, PropertyValues } from 'lit';
+import { ThemeData } from '../../utils/context';
 export default class YsSvg extends LitElement {
-    connectedCallback(): void;
+    private config;
+    protected firstUpdated(): void;
+    disconnectedCallback(): void;
+    private handleUpdate;
 }
 type SvgRenderType = 'code' | 'view';
 export declare class YsSvgRender extends LitElement {
-    createRenderRoot(): this;
     static styles: import("lit").CSSResult[];
+    themeData?: ThemeData;
+    private get isDarkMode();
     content: string;
     status: SvgRenderType;
     isComplete: boolean;
     isFinish: boolean;
     private svgBoxRef;
-    private svgHeaderRef;
+    private dragStartX;
+    private dragStartY;
     x: number;
     y: number;
-    checkStatus(): void;
+    private isDragging;
+    checkStatus(status: SvgRenderType): void;
     firstUpdated(): void;
-    render(): TemplateResult<1>;
-    /**
-     * 检查 SVG 是否完整
-     * @param content SVG 字符串内容
-     * @returns 是否完整
-     */
+    updated(changedProps: PropertyValues): void;
+    disconnectedCallback(): void;
+    private onMouseDown;
+    private onMouseMove;
+    private onMouseUp;
     private isSvgComplete;
-    /**
-     * 过滤掉内容末尾的半个围栏
-     * @param content SVG 字符串内容
-     * @returns 过滤后的内容
-     */
     private filterTrailingFence;
+    render(): import("lit").TemplateResult<1>;
 }
 declare global {
     interface HTMLElementTagNameMap {

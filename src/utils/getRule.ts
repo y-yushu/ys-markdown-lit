@@ -1,15 +1,7 @@
 import MarkdownIt from 'markdown-it/index.js'
+import { RuleOptions } from '../types'
 
-// 规则配置
-type RuleOptions = {
-  startTag: string
-  endTag: string
-  startToken: string
-  endToken: string
-  isClosed?: boolean // 是否需要闭合标签
-  hasChildren?: boolean // 是否内部进行md解析
-  meta?: unknown // 额外携带参数
-}
+export { type RuleOptions }
 
 /**
  * 规则配置
@@ -17,11 +9,10 @@ type RuleOptions = {
  * @param endTag 结束标识
  * @param startToken token开始标识
  * @param endToken token结束标识
- * @param isClosed 是否需要闭合标签 默认为 true
  * @param hasChildren 是否内部进行md解析 默认为 false
  * @returns {Function} 规则函数
  */
-const getBlockRule = ({ startTag, endTag, startToken, endToken, isClosed = true, hasChildren = false, meta = null }: RuleOptions) => {
+const getBlockRule = ({ startTag, endTag, startToken, endToken, hasChildren = false, meta = null }: RuleOptions) => {
   return (state: MarkdownIt.StateBlock, startLine: number, endLine: number, silent: boolean) => {
     const startPos = state.bMarks[startLine] + state.tShift[startLine]
 
@@ -120,10 +111,10 @@ const getBlockRule = ({ startTag, endTag, startToken, endToken, isClosed = true,
         nextLine++
       }
 
-      // 如果需要闭合但没找到结束标记
-      if (isClosed && !found) {
-        return false
-      }
+      // // 如果需要闭合但没找到结束标记
+      // if (isClosed && !found) {
+      //   return false
+      // }
 
       if (silent) return true
 
@@ -177,10 +168,10 @@ const getBlockRule = ({ startTag, endTag, startToken, endToken, isClosed = true,
       nextLine++
     }
 
-    // 如果 isClosed 为 true，必须同时存在 startTag 和 endTag 才能解析
-    if (isClosed && endPos === -1) {
-      return false // 如果没有结束标签，直接返回 false
-    }
+    // // 如果 isClosed 为 true，必须同时存在 startTag 和 endTag 才能解析
+    // if (isClosed && endPos === -1) {
+    //   return false // 如果没有结束标签，直接返回 false
+    // }
 
     // 如果是 silent 模式，直接返回 true，表示可以匹配
     if (silent) return true

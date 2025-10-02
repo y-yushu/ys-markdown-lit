@@ -1,68 +1,60 @@
-import { html, LitElement, TemplateResult } from 'lit'
+import { html, LitElement, unsafeCSS } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import YsMdRendering from '../../YsMdRendering'
-import { getBlockRule } from '../../utils/getRule'
-import { AstToken } from '../../YsMdRendering/registerAllCustomRenderers'
+import tailwindcss from './index.css?inline'
+import { RuleItem, YsRenderUpdateDetail } from '../../types'
+import { setContent } from '../../utils'
 
 @customElement('ys-think')
 export default class YsThink extends LitElement {
   private config = {
     name: 'thinking',
-    version: '0.0.1',
-    logotype: 'thinking_open'
+    version: '0.1.1'
   }
 
-  connectedCallback() {
-    super.connectedCallback()
+  static styles = [unsafeCSS(tailwindcss)]
 
-    // 触发事件通知主组件
-    this.dispatchEvent(
-      new CustomEvent('child-register', {
-        detail: {
-          apply: (instance: YsMdRendering) => {
-            // 创建块规则 1
-            instance.md.block.ruler.before(
-              'fence',
-              'thinking',
-              getBlockRule({
-                startTag: '<thinking>',
-                endTag: '</thinking>',
-                startToken: this.config.logotype,
-                endToken: 'thinking_close',
-                isClosed: false
-              })
-            )
+  protected firstUpdated() {
+    // 注册组件
+    this.dataset.register = this.config.name
 
-            // 创建块规则 2
-            instance.md.block.ruler.before(
-              'fence',
-              'thinking',
-              getBlockRule({
-                startTag: '<think>',
-                endTag: '</think>',
-                startToken: this.config.logotype,
-                endToken: 'thinking_close',
-                isClosed: false
-              })
-            )
+    // 注册自定义规则
+    const rules: RuleItem[] = [
+      { name: this.config.name, key: `${this.config.name}_auto`, type: 'auto', startTag: '', endTag: '' },
+      { name: this.config.name, key: 'think_1', type: 'fence', startTag: '<thinking>', endTag: '</thinking>' },
+      { name: this.config.name, key: 'think_2', type: 'fence', startTag: '<think>', endTag: '</think>' }
+    ]
+    const rulestr = JSON.stringify(rules)
+    this.dataset.rules = rulestr
 
-            // 注册渲染方法
-            instance.customMethods[this.config.logotype] = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
-              const content = ask.node?.content || ''
+    if (this.parentElement) {
+      this.parentElement.addEventListener(`${this.config.name}-instance`, this.handleInstance)
+      this.parentElement.addEventListener(`${this.config.name}-update`, this.handleUpdate)
+    }
+  }
 
-              return html`
-                <div class="border-l-2 border-solid border-gray-300 px-4">
-                  <span class="text-sm whitespace-pre-wrap text-gray-500">${content}</span>
-                </div>
-              `
-            }
-          },
-          feature: 'Think'
-          //   styles: ''
-        },
-        bubbles: true,
-        composed: true
-      })
+  disconnectedCallback() {
+    if (this.parentElement) {
+      this.parentElement.removeEventListener(`${this.config.name}-instance`, this.handleInstance)
+      this.parentElement.removeEventListener(`${this.config.name}-update`, this.handleUpdate)
+    }
+    super.disconnectedCallback()
+  }
+
+  private handleInstance = (event: CustomEvent<YsRenderUpdateDetail>) => {
+    setContent(
+      event.detail.el,
+      html`<div class="border-l-2 border-solid border-gray-300 px-4">
+        <span class="text-sm whitespace-pre-wrap text-gray-500">${event.detail.content}</span>
+      </div>`
+    )
+  }
+
+  private handleUpdate = (event: CustomEvent<YsRenderUpdateDetail>) => {
+    setContent(
+      event.detail.el,
+      html`<div class="border-l-2 border-solid border-gray-300 px-4">
+        <span class="text-sm whitespace-pre-wrap text-gray-500">${event.detail.content}</span>
+      </div>`
     )
   }
 }

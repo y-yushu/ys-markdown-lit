@@ -1,12 +1,13 @@
-import { html, LitElement, PropertyValues, ReactiveElement, TemplateResult } from 'lit'
+import { html, LitElement, PropertyValues, ReactiveElement, unsafeCSS } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { createRef, ref, Ref } from 'lit/directives/ref.js'
 import { consume } from '@lit/context'
-import YsMdRendering from '../../YsMdRendering'
-import { AstToken } from '../../YsMdRendering/registerAllCustomRenderers'
+import tailwindcss from './index.css?inline'
 import { themeContext, ThemeData } from '../../utils/context'
 import mermaid from 'mermaid'
+import { YsRenderUpdateDetail } from '../../types'
+import { setContent } from '../../utils'
 
 // 初始化 mermaid 只执行一次
 mermaid.initialize({
@@ -18,49 +19,59 @@ type ErrorHandlingType = 'errorHandling' | 'notHandled'
 
 @customElement('ys-mermaid')
 export default class YsMermaid extends LitElement {
+  private config = {
+    name: 'mermaid',
+    version: '0.1.1'
+  }
   // 默认展开类型
   @property({ type: String, attribute: 'initial-status' }) initialStatus: MermaidRenderType = 'code'
   // 错误处理方式
-  @property({ type: String, attribute: 'error-handling' }) errorHandlingType: ErrorHandlingType = 'errorHandling'
+  @property({ type: String, attribute: 'error-handling' }) errorHandlingType: ErrorHandlingType = 'notHandled'
 
-  connectedCallback() {
-    super.connectedCallback()
+  protected firstUpdated() {
+    // 注册组件
+    this.dataset.register = this.config.name
 
-    // 触发事件通知主组件
-    this.dispatchEvent(
-      new CustomEvent('child-register', {
-        detail: {
-          apply: (instance: YsMdRendering) => {
-            // 保存原始的 fence 规则
-            const originalFenceRule = instance.renderMethods['fence']
+    if (this.parentElement) {
+      this.parentElement.addEventListener(`${this.config.name}-instance`, this.handleInstance)
+      this.parentElement.addEventListener(`${this.config.name}-update`, this.handleUpdate)
+    }
+  }
 
-            instance.renderMethods['fence'] = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
-              if (ask.node.info === 'mermaid') {
-                return html`<ys-mermaid-render
-                  .content=${ask.node.content}
-                  .status=${this.initialStatus}
-                  .errorHandlingType=${this.errorHandlingType}
-                ></ys-mermaid-render>`
-              } else {
-                return originalFenceRule(ask, _chil)
-              }
-            }
-          },
-          feature: 'Mermaid渲染'
-          //   styles: ''
-        },
-        bubbles: true,
-        composed: true
-      })
+  disconnectedCallback() {
+    if (this.parentElement) {
+      this.parentElement.removeEventListener(`${this.config.name}-instance`, this.handleInstance)
+      this.parentElement.removeEventListener(`${this.config.name}-update`, this.handleUpdate)
+    }
+    super.disconnectedCallback()
+  }
+
+  private handleInstance = (event: CustomEvent<YsRenderUpdateDetail>) => {
+    setContent(
+      event.detail.el,
+      html`<ys-mermaid-render
+        .content=${event.detail.content}
+        .status=${this.initialStatus}
+        .errorHandlingType=${this.errorHandlingType}
+      ></ys-mermaid-render>`
+    )
+  }
+
+  private handleUpdate = (event: CustomEvent<YsRenderUpdateDetail>) => {
+    setContent(
+      event.detail.el,
+      html`<ys-mermaid-render
+        .content=${event.detail.content}
+        .status=${this.initialStatus}
+        .errorHandlingType=${this.errorHandlingType}
+      ></ys-mermaid-render>`
     )
   }
 }
 
 @customElement('ys-mermaid-render')
 export class YsMermaidRender extends LitElement {
-  createRenderRoot() {
-    return this
-  }
+  static styles = [unsafeCSS(tailwindcss)]
 
   @property({ type: String }) content: string = ''
 

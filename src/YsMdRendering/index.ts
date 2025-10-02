@@ -4,13 +4,15 @@ import { classMap } from 'lit/directives/class-map.js'
 import { styleMap } from 'lit/directives/style-map.js'
 import { provide } from '@lit/context'
 import MarkdownIt from 'markdown-it'
-import tailwindcss from './index.css?inline'
-import { AstToken, RenderFunction, renderMethods } from './registerAllCustomRenderers'
 import Token from 'markdown-it/lib/token.mjs'
+import tailwindcss from './index.css?inline'
+import { RenderFunction, renderMethods } from './registerAllCustomRenderers'
 import { generateUUID } from '../utils'
 import { BooleanConverter, ObjectConverter } from '../utils/converter'
 import { themeContext, ThemeData } from '../utils/context'
 import { TailwindVariables } from '../utils/dict'
+import { getBlockRule, getInlineRule, RuleOptions } from '../utils/getRule'
+import { AstToken, RuleItem, YsRenderUpdateDetail } from '../types'
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
@@ -50,6 +52,10 @@ export default class YsMdRendering extends LitElement {
     `
   ]
 
+  key = generateUUID()
+  // 渲染工具
+  md: MarkdownIt
+
   constructor() {
     super()
     this.md = new MarkdownIt({
@@ -63,10 +69,6 @@ export default class YsMdRendering extends LitElement {
     }
   }
 
-  key = generateUUID()
-  // 渲染工具
-  md: MarkdownIt
-
   // 全部主题风格
   @provide({ context: themeContext })
   @state()
@@ -77,6 +79,42 @@ export default class YsMdRendering extends LitElement {
   // 计算最终的样式对象
   @state()
   private _computedStyles: Record<string, string> = {}
+
+  // 注册模板
+  private templates = new Map<string, HTMLElement>()
+  // 自动注册代码块
+  private autoKey = new Set<string>()
+  // 缓存 clone 元素
+  private cloneMap = new Map<string, HTMLElement>()
+
+  protected firstUpdated() {
+    // 注册子组件
+    const slot = this.shadowRoot?.querySelector('slot')
+    slot?.addEventListener('slotchange', () => {
+      const nodes = slot.assignedElements()
+      nodes.forEach(el => {
+        const type = el.getAttribute('data-register') || null
+        if (type) {
+          // 注册模板
+          this.templates.set(type, el.cloneNode(true) as HTMLElement)
+          // 注册规则
+          const rulestr = el.getAttribute('data-rules') || ''
+          if (rulestr) {
+            // 自定义注册
+            this.registrationCustomize(rulestr)
+          } else {
+            // 快捷注册
+            this.registrationQuick(type)
+          }
+        }
+      })
+    })
+
+    // 更新 markdown-it 渲染器
+    this.setMarkdownIt()
+    // 监听 child-register 事件
+    this.addEventListener('child-register', this._handleChildRegister)
+  }
 
   // 方法1：使用 willUpdate 生命周期方法（推荐）
   willUpdate(changedProperties: PropertyValues) {
@@ -90,13 +128,6 @@ export default class YsMdRendering extends LitElement {
 
     // 覆盖prose的css变量
     this.setProseVariables()
-  }
-
-  connectedCallback() {
-    super.connectedCallback()
-    this.setMarkdownIt()
-    // 监听 child-register 事件
-    this.addEventListener('child-register', this._handleChildRegister)
   }
 
   disconnectedCallback() {
@@ -129,6 +160,65 @@ export default class YsMdRendering extends LitElement {
         this.md.set({ [key]: value })
       }
     })
+  }
+
+  // 快捷规则注册
+  registrationQuick(type: string) {
+    const option: RuleOptions = {
+      startTag: `<${type}>`,
+      endTag: `</${type}>`,
+      startToken: `${type}`,
+      endToken: `${type}_end`
+    }
+    this.registrationRulesByMulti(option)
+    // 自动注册代码块
+    this.autoKey.add(type)
+  }
+
+  // 自定义规则注册
+  registrationCustomize(rulestr: string) {
+    try {
+      const rules: RuleItem[] = JSON.parse(rulestr)
+      rules.forEach(rule => {
+        if (rule.type === 'fence') {
+          // 注册代码块规则
+          this.registrationRulesByMulti({
+            key: rule.key,
+            startTag: rule.startTag,
+            endTag: rule.endTag,
+            startToken: rule.name,
+            endToken: `${rule.name}_end`,
+            meta: rule.meta || null
+          })
+        } else if (rule.type === 'escape') {
+          // 注册转义规则
+          this.registrationRulesBySingle({
+            key: rule.key,
+            startTag: rule.startTag,
+            endTag: rule.endTag,
+            startToken: rule.name,
+            meta: rule.meta || null
+          })
+        } else if (rule.type === 'auto') {
+          // 自动注册代码块
+          this.autoKey.add(rule.name)
+        }
+      })
+    } catch (err) {
+      console.error('自定义规则注册失败:', err)
+    }
+  }
+
+  // 单行规则注册
+  registrationRulesBySingle(option: Omit<RuleOptions, 'endToken'>) {
+    const _rule = getInlineRule(option)
+    this.md.inline.ruler.before('escape', option.key || option.startToken, _rule)
+  }
+
+  // 多行规则注册
+  registrationRulesByMulti(option: RuleOptions) {
+    const _rule = getBlockRule(option)
+    this.md.block.ruler.before('fence', option.key || option.startToken, _rule)
   }
 
   // 存储默认解析方法
@@ -235,26 +325,110 @@ export default class YsMdRendering extends LitElement {
     return root.children
   }
 
-  // 渲染AST v4
-  _renderAst4(asts: AstToken[]): TemplateResult[] {
+  // 渲染AST v5
+  protected _renderAst5(asts: AstToken[]): TemplateResult[] {
     const tempList: TemplateResult[] = asts
-      .map(ast => {
+      .map((ast, i) => {
         const token = ast.node
 
-        // 自定义渲染步骤
-        const customMethod = this.customMethods[token.type]
-        if (customMethod) {
-          return customMethod(ast, this._renderAst4(ast.children), {})
+        const customRender = (type: string) => {
+          const key = `${ast.key}_${i}`
+          let clone: HTMLElement
+          if (this.cloneMap.has(key)) {
+            // 已缓存 clone
+            clone = this.cloneMap.get(key)!
+            clone.dataset.content = 'item.content'
+
+            const wasDispatched = clone.dataset.completeDispatched === 'true'
+            // 🔹 每次内容变化，触发更新
+            if (!wasDispatched) {
+              this.dispatchEvent(
+                new CustomEvent(`${type}-update`, {
+                  detail: {
+                    key,
+                    el: clone,
+                    content: token.content,
+                    type: type,
+                    iscomplete: ast?.end?.meta?.isClose || false,
+                    meta: token.meta || null
+                  },
+                  bubbles: true,
+                  composed: true
+                })
+              )
+            }
+
+            if (ast?.end?.meta?.isClose) {
+              clone.dataset.completeDispatched = 'true'
+            }
+          } else {
+            const proto = this.templates.get(type)
+            // 第一次创建 clone
+            clone = proto!.cloneNode(true) as HTMLElement
+            clone.dataset.ysInstance = ''
+            clone.dataset.ysIndex = String(i)
+            clone.dataset.register = type
+            clone.dataset.content = token.content
+
+            const styleContent = clone.dataset.style || ''
+            if (styleContent) {
+              const htmlContent = clone.innerHTML
+              const shadow = clone.attachShadow({ mode: 'open' })
+              shadow.innerHTML = `<style>${styleContent || ''}</style>${htmlContent}`
+              clone.innerHTML = ''
+            }
+
+            this.cloneMap.set(key, clone)
+
+            // 🔹 触发创建事件
+            setTimeout(() => {
+              this.dispatchEvent(
+                new CustomEvent(`${type}-instance`, {
+                  detail: {
+                    key,
+                    el: clone,
+                    content: token.content,
+                    type: type,
+                    iscomplete: ast?.end?.meta?.isClose || false,
+                    meta: token.meta || null
+                  },
+                  bubbles: true,
+                  composed: true
+                })
+              )
+            })
+          }
+
+          return clone
         }
 
-        // 标准渲染步骤
+        // 1.1 使用外部的渲染方式
+        if (this.templates.has(token.type)) {
+          return customRender(token.type)
+        }
+
+        // 1.2 对代码块渲染做特殊处理
+        if (token.type === 'fence' && this.autoKey.has(token.info)) {
+          return customRender(token.info)
+        }
+
+        // 2. 自定义渲染步骤
+        const customMethod = this.customMethods[token.type]
+        if (customMethod) {
+          return customMethod(ast, this._renderAst5(ast.children), {})
+        }
+
+        // 3. 标准渲染步骤
         const renderMethod = this.renderMethods[token.type]
         if (renderMethod) {
-          return renderMethod(ast, this._renderAst4(ast.children), {
+          return renderMethod(ast, this._renderAst5(ast.children), {
             style: this.customStyles,
             breaks: this.breaks
           })
         }
+
+        console.warn('未找到渲染方法:', token.type)
+        return null
       })
       // 过滤空字符和空html标签
       .filter((e): e is TemplateResult => e !== undefined && e !== html``)
@@ -264,7 +438,7 @@ export default class YsMdRendering extends LitElement {
   _getAST(): unknown[] {
     const ast: Token[] = this.md.parse(this.content, {})
     const list3 = this._buildNestedAST2(ast, this.key)
-    const list4 = this._renderAst4(list3)
+    const list4 = this._renderAst5(list3)
     return list4
   }
 
@@ -301,5 +475,9 @@ declare global {
   interface HTMLElementEventMap {
     'link-click': CustomEvent<{ href: string }>
     'child-register': CustomEvent<{ feature: string }>
+    // 组件载入
+    [key: `${string}-instance`]: CustomEvent<YsRenderUpdateDetail>
+    // 组件更新
+    [key: `${string}-update`]: CustomEvent<YsRenderUpdateDetail>
   }
 }

@@ -1,14 +1,14 @@
 import { LitElement, TemplateResult } from 'lit';
 export default class YsCodeHighlight extends LitElement {
-    private _onMyCustomEvent;
-    connectedCallback(): void;
+    private onMyCustomEvent;
+    firstUpdated(): void;
 }
 export declare class YsCodeHighlightRender extends LitElement {
-    createRenderRoot(): this;
+    static styles: import("lit").CSSResult[];
     language: string;
     info: string;
     content: string;
-    private _handleClick;
+    private clickCopy;
     render(): TemplateResult<1>;
 }
 declare global {
