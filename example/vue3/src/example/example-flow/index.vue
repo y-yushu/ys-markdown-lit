@@ -1,0 +1,30 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const mdstr = ref(`# 小标题
+
+**加粗**
+*斜体*
+\`代码片段\`
+
+- 列表项1
+- 列表项2
+
+[链接](https://example.com)`)
+
+const startStreaming = () => {
+  const text = mdstr.value
+  let i = 0
+  mdstr.value = ''
+  const interval = setInterval(() => {
+    mdstr.value += text[i]
+    i++
+    if (!text[i]) clearInterval(interval)
+  }, 20)
+}
+</script>
+
+<template>
+  <button class="cursor-pointer rounded-md bg-blue-500 px-2 py-1 text-white hover:bg-blue-600 active:bg-blue-700" @click="startStreaming">流输出</button>
+  <ys-md-rendering :content="mdstr"></ys-md-rendering>
+</template>

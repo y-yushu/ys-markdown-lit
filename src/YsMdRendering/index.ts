@@ -36,7 +36,7 @@ export default class YsMdRendering extends LitElement {
   customStyles: Record<string, any> = {}
 
   // 是否识别软换行为换行
-  @property({ type: Boolean, converter: BooleanConverter }) breaks = false
+  @property({ type: Boolean, converter: BooleanConverter }) breaks = true
 
   static styles = [
     unsafeCSS(tailwindcss),
@@ -83,7 +83,7 @@ export default class YsMdRendering extends LitElement {
   // 注册模板
   private templates = new Map<string, HTMLElement>()
   // 自动注册代码块
-  private autoKey = new Set<string>()
+  private autoKey = new Map<string, string>()
   // 缓存 clone 元素
   private cloneMap = new Map<string, HTMLElement>()
 
@@ -172,7 +172,7 @@ export default class YsMdRendering extends LitElement {
     }
     this.registrationRulesByMulti(option)
     // 自动注册代码块
-    this.autoKey.add(type)
+    this.autoKey.set(type, type)
   }
 
   // 自定义规则注册
@@ -180,7 +180,7 @@ export default class YsMdRendering extends LitElement {
     try {
       const rules: RuleItem[] = JSON.parse(rulestr)
       rules.forEach(rule => {
-        if (rule.type === 'fence') {
+        if (rule.type === 'block') {
           // 注册代码块规则
           this.registrationRulesByMulti({
             key: rule.key,
@@ -190,7 +190,7 @@ export default class YsMdRendering extends LitElement {
             endToken: `${rule.name}_end`,
             meta: rule.meta || null
           })
-        } else if (rule.type === 'escape') {
+        } else if (rule.type === 'inline') {
           // 注册转义规则
           this.registrationRulesBySingle({
             key: rule.key,
@@ -199,9 +199,9 @@ export default class YsMdRendering extends LitElement {
             startToken: rule.name,
             meta: rule.meta || null
           })
-        } else if (rule.type === 'auto') {
+        } else if (rule.type === 'fence') {
           // 自动注册代码块
-          this.autoKey.add(rule.name)
+          this.autoKey.set(rule.key, rule.name)
         }
       })
     } catch (err) {
@@ -220,9 +220,6 @@ export default class YsMdRendering extends LitElement {
     const _rule = getBlockRule(option)
     this.md.block.ruler.before('fence', option.key || option.startToken, _rule)
   }
-
-  // 存储默认解析方法
-  renderMethods = Object.assign({}, renderMethods)
 
   // 自定义渲染规则
   customMethods: Record<string, RenderFunction> = {}
@@ -409,7 +406,8 @@ export default class YsMdRendering extends LitElement {
 
         // 1.2 对代码块渲染做特殊处理
         if (token.type === 'fence' && this.autoKey.has(token.info)) {
-          return customRender(token.info)
+          const type = this.autoKey.get(token.info)!
+          return customRender(type)
         }
 
         // 2. 自定义渲染步骤
@@ -419,7 +417,7 @@ export default class YsMdRendering extends LitElement {
         }
 
         // 3. 标准渲染步骤
-        const renderMethod = this.renderMethods[token.type]
+        const renderMethod = renderMethods[token.type]
         if (renderMethod) {
           return renderMethod(ast, this._renderAst5(ast.children), {
             style: this.customStyles,
@@ -445,7 +443,7 @@ export default class YsMdRendering extends LitElement {
   render() {
     const cssMap = {
       prose: true,
-      'dark:prose-invert': false,
+      'dark:prose-invert': true, // 默认自动检测
       'prose-invert': false,
       'max-w-full': true
     }

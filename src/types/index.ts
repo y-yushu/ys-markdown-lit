@@ -32,9 +32,10 @@ export interface RuleOptions {
 
 // 自定义规则项
 export interface RuleItem {
-  key?: string // 规则的key，如果为空，则使用startTag
-  name: string
-  type: 'fence' | 'escape' | 'auto'
+  name: string // 规则类型
+  key: string // 规则的key，在所有规则中的唯一键
+  // fence 注册代码块监听 inline 注册行内元素监听 block 注册块级元素监听
+  type: 'fence' | 'inline' | 'block'
   startTag: string
   endTag: string
   meta?: unknown

@@ -13,40 +13,46 @@
         width: 100%;
         overflow-x: hidden;
         box-sizing: border-box;
+        background-color: #f5f5f5; /* 浅色背景 */
+        color: #2b2b2b; /* 浅色文字 */
       }
+
       .page {
         margin: 0 auto;
         max-width: 1280px;
         padding: 1rem;
       }
-      /* 2B2B2B */
+
       .grid {
         width: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
       }
+
       .grid > div {
         max-width: 100%;
         border: 1px solid #ccc;
         padding: 1rem;
         border-radius: 8px;
         overflow-x: auto;
+        background-color: #ffffff; /* 浅色卡片背景 */
       }
 
-      /* @media (prefers-color-scheme: dark) {
+      /* 深色模式 */
+      @media (prefers-color-scheme: dark) {
         body {
-          background-color: #3c3c3c;
-          color: white;
+          background-color: #1e1e1e;
+          color: #e0e0e0;
         }
         .grid > div {
           background-color: #2b2b2b;
-          border: 1px solid rebeccapurple;
+          border: 1px solid #555;
         }
-      } */
+      }
     </style>
     <script type="module">
-      import { MarkdownStr_think as mock } from './src/mock.ts'
+      import { MarkdownStr_code as mock } from './src/mock.ts'
 
       window.onload = () => {
         // 左侧加载
@@ -56,7 +62,6 @@
           const render_1 = document.getElementById('render_1')
           render_1.addEventListener('link-click', e => {
             e.preventDefault()
-            console.log('🚀 ~ e:', e)
           })
           const render_2 = document.getElementById('render_2')
           let index = 0
@@ -78,6 +83,12 @@
             console.log('e.detail.text', e?.detail?.text)
           })
         }
+
+        const button2 = document.getElementById('test_but_2')
+        button2.addEventListener('click', () => {
+          const render_1 = document.getElementById('render_1')
+          render_1.mode = render_1.mode === 'dark' ? 'light' : 'dark'
+        })
       }
     </script>
   </head>
@@ -85,11 +96,12 @@
   <body>
     <div class="page">
       <button id="test_but_1">开始更新</button>
+      <button id="test_but_2">测试</button>
       <div class="grid">
         <div>
           <h3>非实时渲染</h3>
           <div>
-            <ys-md-rendering id="render_1">
+            <ys-md-rendering id="render_1" mode="dark">
               <ys-note></ys-note>
               <ys-code-highlight></ys-code-highlight>
               <ys-echarts></ys-echarts>

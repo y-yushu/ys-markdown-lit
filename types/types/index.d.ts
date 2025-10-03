@@ -24,9 +24,9 @@ export interface RuleOptions {
     meta?: unknown;
 }
 export interface RuleItem {
-    key?: string;
     name: string;
-    type: 'fence' | 'escape' | 'auto';
+    key: string;
+    type: 'fence' | 'inline' | 'block';
     startTag: string;
     endTag: string;
     meta?: unknown;

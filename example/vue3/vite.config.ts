@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
 
 const webComponents = [
-  'ys-md-rendering',
-  'ys-render' // 直接写全名
+  'ys-md-rendering'
   // 'other-tag'
 ]
 
@@ -17,6 +17,13 @@ export default defineConfig({
           isCustomElement: tag => webComponents.includes(tag)
         }
       }
-    })
-  ]
+    }),
+    tailwindcss()
+  ],
+  resolve: {
+    alias: {
+      '@': '/src',
+      '@types': '/types'
+    }
+  }
 })

@@ -55,7 +55,7 @@ export default class YsCodeHighlight extends LitElement {
       new CustomEvent('child-register', {
         detail: {
           apply: (instance: YsMdRendering) => {
-            instance.renderMethods['fence'] = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
+            instance.customMethods['fence'] = (ask: AstToken, _chil: TemplateResult[]): TemplateResult => {
               const token = (ask as AstToken).node
               const info = LanguageDict[token.info] || token.info
               const language = info || 'plaintext'

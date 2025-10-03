@@ -28,7 +28,6 @@ export default class YsMdRendering extends LitElement {
     registrationCustomize(rulestr: string): void;
     registrationRulesBySingle(option: Omit<RuleOptions, 'endToken'>): void;
     registrationRulesByMulti(option: RuleOptions): void;
-    renderMethods: import("./registerAllCustomRenderers").RenderMethods;
     customMethods: Record<string, RenderFunction>;
     private _handleChildRegister;
     /**

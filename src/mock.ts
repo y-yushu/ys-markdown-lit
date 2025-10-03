@@ -71,6 +71,18 @@ $$
 
 export const MarkdownStr_think: string = `# 测试Think
 
+\`\`\`think
+测试think代码块
+\`\`\`
+
+间隔111
+
+\`\`\`thinking
+测试thinking代码块
+\`\`\`
+
+间隔222
+
 <thinking>
 暗藏灯带
 这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容这个==是思==考的内容

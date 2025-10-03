@@ -9,12 +9,23 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vue/compiler-sfc": "^3.5.22",
+    "highlight.js": "^11.11.1",
+    "naive-ui": "^2.43.1",
+    "pinia": "^3.0.3",
     "vue": "^3.5.21",
+    "vue-router": "^4.5.1",
     "ys-md-rendering": "^0.1.23"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.8.1",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "sass": "^1.93.2",
+    "tailwindcss": "^4.1.14",
     "typescript": "~5.8.3",
     "vite": "^7.1.7",
     "vue-tsc": "^3.0.7"

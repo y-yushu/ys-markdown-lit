@@ -19,9 +19,10 @@ export default class YsThink extends LitElement {
 
     // 注册自定义规则
     const rules: RuleItem[] = [
-      { name: this.config.name, key: `${this.config.name}_auto`, type: 'auto', startTag: '', endTag: '' },
-      { name: this.config.name, key: 'think_1', type: 'fence', startTag: '<thinking>', endTag: '</thinking>' },
-      { name: this.config.name, key: 'think_2', type: 'fence', startTag: '<think>', endTag: '</think>' }
+      { name: this.config.name, key: 'think', type: 'fence', startTag: '', endTag: '' },
+      { name: this.config.name, key: this.config.name, type: 'fence', startTag: '', endTag: '' },
+      { name: this.config.name, key: 'think_1', type: 'block', startTag: '<thinking>', endTag: '</thinking>' },
+      { name: this.config.name, key: 'think_2', type: 'block', startTag: '<think>', endTag: '</think>' }
     ]
     const rulestr = JSON.stringify(rules)
     this.dataset.rules = rulestr

@@ -28,10 +28,10 @@ export default class YsKatex extends LitElement {
 
     // 注册组件规则
     const rules: RuleItem[] = [
-      { name: 'katex', key: 'katex_1', type: 'fence', startTag: '$$', endTag: '$$', meta: { isline: false } },
-      { name: 'katex', key: 'katex_2', type: 'escape', startTag: '$', endTag: '$', meta: { isline: true } },
-      { name: 'katex', key: 'katex_3', type: 'escape', startTag: '\\(', endTag: '\\)', meta: { isline: true } },
-      { name: 'katex', key: 'katex_4', type: 'escape', startTag: '\\[', endTag: '\\]', meta: { isline: false } }
+      { name: 'katex', key: 'katex_1', type: 'block', startTag: '$$', endTag: '$$', meta: { isline: false } },
+      { name: 'katex', key: 'katex_2', type: 'inline', startTag: '$', endTag: '$', meta: { isline: true } },
+      { name: 'katex', key: 'katex_3', type: 'inline', startTag: '\\(', endTag: '\\)', meta: { isline: true } },
+      { name: 'katex', key: 'katex_4', type: 'inline', startTag: '\\[', endTag: '\\]', meta: { isline: false } }
     ]
     const rulestr = JSON.stringify(rules)
     this.dataset.rules = rulestr
