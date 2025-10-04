@@ -18,7 +18,7 @@ const webComponents = [
 export default defineConfig({
   base: '/ys-markdown-lit/',
   build: {
-    outDir: path.resolve(__dirname, '../docs'),
+    outDir: path.resolve(__dirname, '../../docs'),
     emptyOutDir: true // 打包时清空目录，避免旧文件残留
   },
   plugins: [

@@ -1,0 +1,1 @@
+import{p as c}from"./mermaid-BGotkrlZ.js";function i(t,e){t.accDescr&&e.setAccDescription?.(t.accDescr),t.accTitle&&e.setAccTitle?.(t.accTitle),t.title&&e.setDiagramTitle?.(t.title)}c(i,"populateCommonDb");export{i as t};
