@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref, defineProps, watch } from 'vue'
-import hljs from 'highlight.js/lib/core'
-import javascript from 'highlight.js/lib/languages/javascript'
-import xml from 'highlight.js/lib/languages/xml'
 import 'highlight.js/styles/atom-one-dark.css'
 import { NTabs, NTabPane } from 'naive-ui'
 import { usePublicStore } from '@/store/public'
+import { renderCode } from './render'
 
 const store = usePublicStore()
 
@@ -16,10 +14,6 @@ interface CodeItem {
 }
 
 const props = defineProps<{ codes: CodeItem[] }>()
-
-// 注册语言
-if (!hljs.getLanguage('html')) hljs.registerLanguage('html', xml)
-if (!hljs.getLanguage('js')) hljs.registerLanguage('js', javascript)
 
 // 当前激活 tab
 const activeTab = ref(props.codes.find(c => c.name === store.tool)?.name || props.codes[0]?.name || '')
@@ -32,7 +26,8 @@ const renderTab = (tabName: string) => {
   if (highlightedMap.value[tabName]) return
   const item = props.codes.find(c => c.name === tabName)
   if (item) {
-    highlightedMap.value[tabName] = hljs.highlight(item.code, { language: item.type }).value
+    const content = renderCode(item.code, item.type)
+    highlightedMap.value[tabName] = content
   }
 }
 

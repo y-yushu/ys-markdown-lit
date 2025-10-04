@@ -39,24 +39,49 @@ export const menus = [
     label: '支持插件',
     children: [
       {
-        key: '/using-plugins',
-        label: '使用插件',
-        component: () => import('@/views/usingPlugins/index.vue')
-      }
-    ]
-  },
-  {
-    type: 'group',
-    key: 'customPlugin',
-    label: '自定义插件',
-    children: [
+        key: '/using-plugins/code-highlight',
+        label: '代码高亮插件',
+        component: () => import('@/views/usingPlugins/code-highlight.vue')
+      },
       {
-        key: '/custom-plugin',
-        label: '自定义插件',
-        component: () => import('@/views/customPlugin/index.vue')
+        key: '/using-plugins/echarts',
+        label: 'echarts插件',
+        component: () => import('@/views/usingPlugins/echarts.vue')
+      },
+      {
+        key: '/using-plugins/katex',
+        label: 'katex插件',
+        component: () => import('@/views/usingPlugins/katex.vue')
+      },
+      {
+        key: '/using-plugins/mermaid',
+        label: 'mermaid插件',
+        component: () => import('@/views/usingPlugins/mermaid.vue')
+      },
+      {
+        key: '/using-plugins/svg',
+        label: 'svg插件',
+        component: () => import('@/views/usingPlugins/svg.vue')
+      },
+      {
+        key: '/using-plugins/think',
+        label: 'think插件',
+        component: () => import('@/views/usingPlugins/think.vue')
       }
     ]
   }
+  // {
+  //   type: 'group',
+  //   key: 'customPlugin',
+  //   label: '自定义插件',
+  //   children: [
+  //     {
+  //       key: '/custom-plugin',
+  //       label: '自定义插件',
+  //       component: () => import('@/views/customPlugin/index.vue')
+  //     }
+  //   ]
+  // }
 ]
 
 // 生成路由

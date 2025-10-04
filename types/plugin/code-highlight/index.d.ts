@@ -1,5 +1,6 @@
 import { LitElement, TemplateResult } from 'lit';
 export default class YsCodeHighlight extends LitElement {
+    noWordWrap: boolean;
     private onMyCustomEvent;
     firstUpdated(): void;
 }
@@ -8,6 +9,7 @@ export declare class YsCodeHighlightRender extends LitElement {
     language: string;
     info: string;
     content: string;
+    wordWrap: boolean;
     private clickCopy;
     render(): TemplateResult<1>;
 }

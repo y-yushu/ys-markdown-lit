@@ -343,7 +343,7 @@ const renderHr = (_ask: AstToken, _chil: TemplateResult[], option: any): Templat
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<hr style=${ifDefined(styleValue)} />`
+  return html`<hr class="mt-2 mb-2" style=${ifDefined(styleValue)} />`
 }
 
 const renderSoftbreak = (_ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {

@@ -37,13 +37,13 @@ watchEffect(() => {
 <template>
   <n-config-provider :theme="systemDark ? darkTheme : lightTheme">
     <n-layout class="flex h-screen flex-col">
-      <n-layout-header class="flex h-[60px] items-center border-b border-gray-200 p-4">
+      <n-layout-header class="flex h-[60px] items-center p-4" bordered>
         <div class="text-2xl font-bold">markdown渲染插件</div>
       </n-layout-header>
 
       <n-layout-content class="h-[calc(100vh-60px)] flex-1 overflow-auto">
         <n-layout class="h-full" has-sider>
-          <n-layout-sider class="border-r border-gray-200">
+          <n-layout-sider bordered>
             <n-scrollbar class="h-full">
               <n-menu v-model:value="selectedKey" :options="menus" @update:value="handleChange" />
             </n-scrollbar>

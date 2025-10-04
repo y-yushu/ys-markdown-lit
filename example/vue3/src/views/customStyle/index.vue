@@ -13,7 +13,7 @@ import ExampleThemeTxt from '@/example/example-theme/index.txt?raw'
 const codes1: CodeItem[] = [
   {
     name: 'vue3',
-    type: 'html',
+    type: 'vue3',
     code: ExampleSizeTxt
   }
 ]
@@ -21,7 +21,7 @@ const codes1: CodeItem[] = [
 const codes2: CodeItem[] = [
   {
     name: 'vue3',
-    type: 'html',
+    type: 'vue3',
     code: ExampleStyleTxt
   }
 ]
@@ -29,7 +29,7 @@ const codes2: CodeItem[] = [
 const codes3: CodeItem[] = [
   {
     name: 'vue3',
-    type: 'html',
+    type: 'vue3',
     code: ExampleCssTxt
   }
 ]
@@ -37,7 +37,7 @@ const codes3: CodeItem[] = [
 const codes4: CodeItem[] = [
   {
     name: 'vue3',
-    type: 'html',
+    type: 'vue3',
     code: ExampleThemeTxt
   }
 ]
@@ -85,40 +85,42 @@ const codes4: CodeItem[] = [
     >
 
     示例数据如下：
-    <pre class="rounded-md bg-gray-900 p-2 text-white"><code>@utility prose-pink {
-  --tw-prose-body: var(--color-pink-800);
-  --tw-prose-headings: var(--color-pink-900);
-  --tw-prose-lead: var(--color-pink-700);
-  --tw-prose-links: var(--color-pink-900);
-  --tw-prose-bold: var(--color-pink-900);
-  --tw-prose-counters: var(--color-pink-600);
-  --tw-prose-bullets: var(--color-pink-400);
-  --tw-prose-hr: var(--color-pink-300);
-  --tw-prose-quotes: var(--color-pink-900);
-  --tw-prose-quote-borders: var(--color-pink-300);
-  --tw-prose-captions: var(--color-pink-700);
-  --tw-prose-code: var(--color-pink-900);
-  --tw-prose-pre-code: var(--color-pink-100);
-  --tw-prose-pre-bg: var(--color-pink-900);
-  --tw-prose-th-borders: var(--color-pink-300);
-  --tw-prose-td-borders: var(--color-pink-200);
-  --tw-prose-invert-body: var(--color-pink-200);
-  --tw-prose-invert-headings: var(--color-white);
-  --tw-prose-invert-lead: var(--color-pink-300);
-  --tw-prose-invert-links: var(--color-white);
-  --tw-prose-invert-bold: var(--color-white);
-  --tw-prose-invert-counters: var(--color-pink-400);
-  --tw-prose-invert-bullets: var(--color-pink-600);
-  --tw-prose-invert-hr: var(--color-pink-700);
-  --tw-prose-invert-quotes: var(--color-pink-100);
-  --tw-prose-invert-quote-borders: var(--color-pink-700);
-  --tw-prose-invert-captions: var(--color-pink-400);
-  --tw-prose-invert-code: var(--color-white);
-  --tw-prose-invert-pre-code: var(--color-pink-300);
-  --tw-prose-invert-pre-bg: rgb(0 0 0 / 50%);
-  --tw-prose-invert-th-borders: var(--color-pink-600);
-  --tw-prose-invert-td-borders: var(--color-pink-700);
-}</code></pre>
+    <div class="py-4">
+      <pre class="rounded-md bg-gray-900 p-2 text-white"><code>@utility prose-pink {
+    --tw-prose-body: var(--color-pink-800);
+    --tw-prose-headings: var(--color-pink-900);
+    --tw-prose-lead: var(--color-pink-700);
+    --tw-prose-links: var(--color-pink-900);
+    --tw-prose-bold: var(--color-pink-900);
+    --tw-prose-counters: var(--color-pink-600);
+    --tw-prose-bullets: var(--color-pink-400);
+    --tw-prose-hr: var(--color-pink-300);
+    --tw-prose-quotes: var(--color-pink-900);
+    --tw-prose-quote-borders: var(--color-pink-300);
+    --tw-prose-captions: var(--color-pink-700);
+    --tw-prose-code: var(--color-pink-900);
+    --tw-prose-pre-code: var(--color-pink-100);
+    --tw-prose-pre-bg: var(--color-pink-900);
+    --tw-prose-th-borders: var(--color-pink-300);
+    --tw-prose-td-borders: var(--color-pink-200);
+    --tw-prose-invert-body: var(--color-pink-200);
+    --tw-prose-invert-headings: var(--color-white);
+    --tw-prose-invert-lead: var(--color-pink-300);
+    --tw-prose-invert-links: var(--color-white);
+    --tw-prose-invert-bold: var(--color-white);
+    --tw-prose-invert-counters: var(--color-pink-400);
+    --tw-prose-invert-bullets: var(--color-pink-600);
+    --tw-prose-invert-hr: var(--color-pink-700);
+    --tw-prose-invert-quotes: var(--color-pink-100);
+    --tw-prose-invert-quote-borders: var(--color-pink-700);
+    --tw-prose-invert-captions: var(--color-pink-400);
+    --tw-prose-invert-code: var(--color-white);
+    --tw-prose-invert-pre-code: var(--color-pink-300);
+    --tw-prose-invert-pre-bg: rgb(0 0 0 / 50%);
+    --tw-prose-invert-th-borders: var(--color-pink-600);
+    --tw-prose-invert-td-borders: var(--color-pink-700);
+  }</code></pre>
+    </div>
 
     <ExampleBox :codes="codes3">
       <ExampleCss />

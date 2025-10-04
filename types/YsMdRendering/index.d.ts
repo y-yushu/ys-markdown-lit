@@ -20,6 +20,7 @@ export default class YsMdRendering extends LitElement {
     private templates;
     private autoKey;
     private cloneMap;
+    private isReady;
     protected firstUpdated(): void;
     willUpdate(changedProperties: PropertyValues): void;
     disconnectedCallback(): void;
@@ -28,6 +29,7 @@ export default class YsMdRendering extends LitElement {
     registrationCustomize(rulestr: string): void;
     registrationRulesBySingle(option: Omit<RuleOptions, 'endToken'>): void;
     registrationRulesByMulti(option: RuleOptions): void;
+    rewriteRules(): void;
     customMethods: Record<string, RenderFunction>;
     private _handleChildRegister;
     /**

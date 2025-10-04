@@ -75,7 +75,7 @@ export class YsMermaidRender extends LitElement {
 
   @property({ type: String }) content: string = ''
 
-  @property() errorHandlingType: ErrorHandlingType = 'errorHandling'
+  @property() errorHandlingType: ErrorHandlingType = 'notHandled'
 
   @property() status: MermaidRenderType = 'code'
 
@@ -98,7 +98,7 @@ export class YsMermaidRender extends LitElement {
     if (changedProperties.has('content') && this.content) {
       // 如果当前是view模式，需要重新渲染
       if (this.status === 'view') {
-        this._renderMermaid(false)
+        this._renderMermaid()
       }
     }
 
@@ -118,7 +118,7 @@ export class YsMermaidRender extends LitElement {
 
         // 如果当前是view模式，重新渲染图表
         if (this.status === 'view') {
-          this._renderMermaid(false)
+          this._renderMermaid()
         }
       }
     }
@@ -134,15 +134,14 @@ export class YsMermaidRender extends LitElement {
         this.mermaidBoxRef.value.innerHTML = ''
       }
     } else if (status === 'view') {
-      this._renderMermaid(true)
+      this._renderMermaid()
     }
   }
 
   /**
    * 渲染方法
-   * @param isHand 是否手动渲染
    */
-  private _renderMermaid(isHand: boolean) {
+  private _renderMermaid() {
     if (!this.content.trim()) return
 
     mermaid
@@ -158,7 +157,10 @@ export class YsMermaidRender extends LitElement {
           })
           .catch(_err1 => {
             // 特别捕获 render 阶段的错误
-            console.error('[Mermaid render error]', _err1)
+            const isDevMode = !!ReactiveElement.disableWarning
+            if (isDevMode) {
+              console.error('[Mermaid render error]', _err1)
+            }
             if (this.mermaidBoxRef.value) {
               this.mermaidBoxRef.value.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
             }
@@ -168,16 +170,12 @@ export class YsMermaidRender extends LitElement {
           })
       })
       .catch(_err2 => {
-        if (isHand) {
-          const isDevMode = !!ReactiveElement.disableWarning
-          if (isDevMode) {
-            console.error('[Mermaid 渲染失败]', _err2)
-          }
+        const isDevMode = !!ReactiveElement.disableWarning
+        if (isDevMode) {
+          console.error('[Mermaid parse error] 语法校验错误')
+        }
+        if (this.errorHandlingType === 'errorHandling') {
           this.mermaidBoxRef.value!.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
-        } else {
-          if (this.errorHandlingType === 'errorHandling') {
-            this.mermaidBoxRef.value!.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
-          }
         }
         // 添加清理
         this._cleanupErrorElements()
@@ -273,7 +271,9 @@ export class YsMermaidRender extends LitElement {
               <pre class="${isDark ? 'bg-[#1e2939]' : ''} !m-0 max-w-full rounded-t-none p-4"><code>${this.content}</code></pre>
             </div>`
           : html`<div class="${isDark ? 'bg-[#1e2939]' : 'bg-white'} min-h-20 w-full p-4">
-              <div ${ref(this.mermaidBoxRef)} class="flex justify-center"></div>
+              <div ${ref(this.mermaidBoxRef)} class="flex justify-center">
+                <div class="p-2 text-red-500">❌ 图表渲染失败</div>
+              </div>
             </div>`}
       </div>
     </div>`

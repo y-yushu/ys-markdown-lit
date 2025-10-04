@@ -52,7 +52,10 @@
       }
     </style>
     <script type="module">
-      import { MarkdownStr_code as mock } from './src/mock.ts'
+      import { MarkdownStr_svg as mock } from './src/mock.ts'
+
+      const render_11 = document.getElementById('render_1')
+      render_11.content = mock
 
       window.onload = () => {
         // 左侧加载
@@ -64,6 +67,8 @@
             e.preventDefault()
           })
           const render_2 = document.getElementById('render_2')
+          render_1.content = ''
+          render_2.content = ''
           let index = 0
           const updateContent = () => {
             if (index < mock.length) {
@@ -96,18 +101,17 @@
   <body>
     <div class="page">
       <button id="test_but_1">开始更新</button>
-      <button id="test_but_2">测试</button>
+      <button id="test_but_2">切换模式</button>
       <div class="grid">
         <div>
           <h3>非实时渲染</h3>
           <div>
-            <ys-md-rendering id="render_1" mode="dark">
-              <ys-note></ys-note>
-              <ys-code-highlight></ys-code-highlight>
+            <ys-md-rendering id="render_1" mode="light">
+              <ys-code-highlight no-word-wrap></ys-code-highlight>
               <ys-echarts></ys-echarts>
               <ys-katex></ys-katex>
               <ys-svg></ys-svg>
-              <ys-mermaid initial-status="view" error-handling="notHandled"></ys-mermaid>
+              <ys-mermaid initial-status="view" error-handling="errorHandling"></ys-mermaid>
               <ys-think></ys-think>
             </ys-md-rendering>
           </div>
@@ -115,7 +119,12 @@
         <div>
           <h3>实时渲染，异常报错</h3>
           <div>
-            <!-- <ys-md-rendering id="render_2"> </ys-md-rendering> -->
+            <!-- <ys-md-rendering
+              id="render_2"
+              content='# 测试echarts&#10;&#10;&lt;echarts&gt;&#10;{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}&#10;&lt;/echarts&gt;&#10;&#10;&lt;echarts&gt;&#10;{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}&#10;&lt;/echarts&gt;&#10;&#10;&gt; 渲染完成了'
+            >
+              <ys-echarts></ys-echarts>
+            </ys-md-rendering> -->
           </div>
         </div>
       </div>

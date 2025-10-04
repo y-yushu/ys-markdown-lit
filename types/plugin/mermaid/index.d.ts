@@ -24,7 +24,6 @@ export declare class YsMermaidRender extends LitElement {
     _checkStatus(status: MermaidRenderType): void;
     /**
      * 渲染方法
-     * @param isHand 是否手动渲染
      */
     private _renderMermaid;
     private _cleanupErrorElements;

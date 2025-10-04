@@ -6,6 +6,7 @@ import highlightcss from 'highlight.js/styles/atom-one-dark.css?inline'
 import YsMdRendering from '../../YsMdRendering'
 import RegistrationLanguage from './RegistrationLanguage'
 import { AstToken } from '../../types'
+import { BooleanConverter } from '../../utils/converter'
 
 // 注册语法高亮
 RegistrationLanguage()
@@ -35,6 +36,9 @@ const LanguageDict: Record<string, string> = {
 
 @customElement('ys-code-highlight')
 export default class YsCodeHighlight extends LitElement {
+  // 是否启用自动换行
+  @property({ type: Boolean, attribute: 'no-word-wrap', converter: BooleanConverter }) noWordWrap = false
+
   private onMyCustomEvent = (e: CustomEvent) => {
     // 阻止事件继续冒泡，防止重复触发（视具体需求）
     e.stopPropagation()
@@ -64,6 +68,7 @@ export default class YsCodeHighlight extends LitElement {
                 .language=${language}
                 .info=${info}
                 .content=${token.content}
+                .wordWrap=${!this.noWordWrap}
                 @copy-text=${this.onMyCustomEvent}
               ></ys-code-highlight-render>`
             }
@@ -121,6 +126,8 @@ export class YsCodeHighlightRender extends LitElement {
       .code-body {
         display: block;
         background: #1f2937;
+      }
+      .word-wrap {
         white-space: pre-wrap;
         word-wrap: break-word;
       }
@@ -130,6 +137,7 @@ export class YsCodeHighlightRender extends LitElement {
   @property({ type: String }) language = 'plaintext'
   @property({ type: String }) info = ''
   @property({ type: String }) content = ''
+  @property({ type: Boolean }) wordWrap = true
 
   // 分发自定义事件
   private clickCopy() {
@@ -150,7 +158,9 @@ export class YsCodeHighlightRender extends LitElement {
         <span class="code-lang">${this.info || '未知语言'}</span>
         <span class="code-copy" @click=${this.clickCopy}>复制</span>
       </div>
-      <pre class="code-pre"><code class="code-body hljs language-${this.language}">${unsafeHTML(highlightedCode)}</code></pre>
+      <pre class="code-pre"><code class="code-body hljs language-${this.language} ${this.wordWrap ? 'word-wrap' : ''}">${unsafeHTML(
+        highlightedCode
+      )}</code></pre>
     </div>`
   }
 }

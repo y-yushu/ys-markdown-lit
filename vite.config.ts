@@ -4,6 +4,10 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [tailwindcss()],
+  define: {
+    // 关键配置：替换掉浏览器里不存在的 process
+    'process.env.NODE_ENV': JSON.stringify(process.env.VITE_NODE_ENV || 'production')
+  },
   build: {
     target: 'esnext',
     lib: {

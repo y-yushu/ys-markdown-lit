@@ -10,7 +10,7 @@ import ExampleFlowTxt from '@/example/example-flow/index.txt?raw'
 const codes1: CodeItem[] = [
   {
     name: 'vue3',
-    type: 'html',
+    type: 'vue3',
     code: ExampleBaseTxt
   }
 ]
@@ -18,7 +18,7 @@ const codes1: CodeItem[] = [
 const codes2: CodeItem[] = [
   {
     name: 'vue3',
-    type: 'html',
+    type: 'vue3',
     code: ExampleFlowTxt
   }
 ]

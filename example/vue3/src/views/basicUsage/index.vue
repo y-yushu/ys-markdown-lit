@@ -27,7 +27,7 @@ const codes2: CodeItem[] = [
 <template>
   <page-main>
     <h1>项目说明</h1>
-    <span>一套可定制的 Web 组件集合，用于自定义 Markdown 渲染功能，支持插件扩展。 通过markdown-it解析markdown内容，通过Lit渲染</span>
+    <div>一套可定制的 Web 组件集合，用于自定义 Markdown 渲染功能，支持插件扩展。 通过markdown-it解析markdown内容，通过Lit渲染</div>
 
     <h2>安装</h2>
     <code-block class="col-span-1" :codes="codes1"></code-block>

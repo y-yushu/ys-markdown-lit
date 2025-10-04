@@ -5,6 +5,7 @@ import { styleMap } from 'lit/directives/style-map.js'
 import { provide } from '@lit/context'
 import MarkdownIt from 'markdown-it'
 import Token from 'markdown-it/lib/token.mjs'
+import DefaultFence from 'markdown-it/lib/rules_block/fence'
 import tailwindcss from './index.css?inline'
 import { RenderFunction, renderMethods } from './registerAllCustomRenderers'
 import { generateUUID } from '../utils'
@@ -63,10 +64,9 @@ export default class YsMdRendering extends LitElement {
       linkify: false,
       typographer: true
     })
+    this.rewriteRules()
     const mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    this.themeData = {
-      mode
-    }
+    this.themeData = { mode }
   }
 
   // 全部主题风格
@@ -86,6 +86,9 @@ export default class YsMdRendering extends LitElement {
   private autoKey = new Map<string, string>()
   // 缓存 clone 元素
   private cloneMap = new Map<string, HTMLElement>()
+
+  @state()
+  private isReady = false
 
   protected firstUpdated() {
     // 注册子组件
@@ -114,6 +117,9 @@ export default class YsMdRendering extends LitElement {
     this.setMarkdownIt()
     // 监听 child-register 事件
     this.addEventListener('child-register', this._handleChildRegister)
+
+    // 注册完成 → 开启渲染
+    this.isReady = true
   }
 
   // 方法1：使用 willUpdate 生命周期方法（推荐）
@@ -219,6 +225,23 @@ export default class YsMdRendering extends LitElement {
   registrationRulesByMulti(option: RuleOptions) {
     const _rule = getBlockRule(option)
     this.md.block.ruler.before('fence', option.key || option.startToken, _rule)
+  }
+
+  // 重写markdown-it规则
+  rewriteRules() {
+    this.md.block.ruler.at('fence', (state, startLine, endLine, silent) => {
+      const result = DefaultFence(state, startLine, endLine, silent)
+      if (!result) return false
+
+      const token = state.tokens[state.tokens.length - 1]
+      if (token.type === 'fence' && token.map) {
+        const lastLineIndex = token.map[1] - 1
+        const lineText = state.src.slice(state.bMarks[lastLineIndex], state.eMarks[lastLineIndex])
+        token.meta = { ...token.meta, isClose: lineText.trim() === '```' }
+      }
+
+      return true
+    })
   }
 
   // 自定义渲染规则
@@ -334,7 +357,7 @@ export default class YsMdRendering extends LitElement {
           if (this.cloneMap.has(key)) {
             // 已缓存 clone
             clone = this.cloneMap.get(key)!
-            clone.dataset.content = 'item.content'
+            clone.dataset.content = token.content
 
             const wasDispatched = clone.dataset.completeDispatched === 'true'
             // 🔹 每次内容变化，触发更新
@@ -355,9 +378,14 @@ export default class YsMdRendering extends LitElement {
               )
             }
 
-            if (ast?.end?.meta?.isClose) {
-              clone.dataset.completeDispatched = 'true'
-            }
+            // 完成标识
+            let isComplete = false
+            // 自定义标签判断标识
+            if (ast?.end?.meta?.isClose) isComplete = true
+            // fence判断标识
+            if (ast.node.type === 'fence' && ast.node.meta?.isClose) isComplete = true
+            // 关闭后续监听
+            if (isComplete) clone.dataset.completeDispatched = 'true'
           } else {
             const proto = this.templates.get(type)
             // 第一次创建 clone
@@ -379,6 +407,7 @@ export default class YsMdRendering extends LitElement {
 
             // 🔹 触发创建事件
             setTimeout(() => {
+              // 执行创建方法
               this.dispatchEvent(
                 new CustomEvent(`${type}-instance`, {
                   detail: {
@@ -386,13 +415,43 @@ export default class YsMdRendering extends LitElement {
                     el: clone,
                     content: token.content,
                     type: type,
-                    iscomplete: ast?.end?.meta?.isClose || false,
+                    iscomplete: false,
                     meta: token.meta || null
                   },
                   bubbles: true,
                   composed: true
                 })
               )
+              // 完成标识
+              let isComplete = false
+              // 自定义标签判断标识
+              if (ast?.end?.meta?.isClose) {
+                isComplete = true
+              }
+              // fence判断标识
+              if (ast.node.type === 'fence' && ast.node.meta?.isClose) {
+                isComplete = true
+              }
+              // 如果已经是完成状态，则直接触发更新事件
+              if (isComplete) {
+                setTimeout(() => {
+                  this.dispatchEvent(
+                    new CustomEvent(`${type}-update`, {
+                      detail: {
+                        key,
+                        el: clone,
+                        content: token.content,
+                        type: type,
+                        iscomplete: isComplete,
+                        meta: token.meta || null
+                      },
+                      bubbles: true,
+                      composed: true
+                    })
+                  )
+                  clone.dataset.completeDispatched = 'true'
+                })
+              }
             })
           }
 
@@ -441,6 +500,10 @@ export default class YsMdRendering extends LitElement {
   }
 
   render() {
+    if (!this.isReady) {
+      return html`<slot></slot>` // 只显示 slot 占位
+    }
+
     const cssMap = {
       prose: true,
       'dark:prose-invert': true, // 默认自动检测
