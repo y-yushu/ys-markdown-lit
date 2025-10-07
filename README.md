@@ -39,6 +39,10 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 </template>
 ```
 
+## 示例文档
+
+[示例文档](https://y-yushu.github.io/ys-markdown-lit/)
+
 ## 主要特性
 
 - **模块化设计**：按需使用插件

@@ -45,7 +45,7 @@ watchEffect(() => {
         <n-layout class="h-full" has-sider>
           <n-layout-sider bordered>
             <n-scrollbar class="h-full">
-              <n-menu v-model:value="selectedKey" :options="menus" @update:value="handleChange" />
+              <n-menu :value="selectedKey" :options="menus" @update:value="handleChange" />
             </n-scrollbar>
           </n-layout-sider>
           <n-layout-content class="h-full overflow-auto">

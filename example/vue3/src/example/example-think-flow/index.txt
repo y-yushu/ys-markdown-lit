@@ -2,25 +2,35 @@
 import { ref } from 'vue'
 import { NButton } from 'naive-ui'
 import 'ys-md-rendering'
-import 'ys-md-rendering/plugin/ys-svg'
+import 'ys-md-rendering/plugin/ys-think'
 
-const text = `### svg图标渲染
+const text = `### think样式
 
-\`\`\`svg
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000">
-<rect x="75" y="75" width="50" height="50" fill="blue">
-<animateTransform
-attributeName="transform"
-type="rotate"
-from="0 100 100"
-to="360 100 100"
-dur="3s"
-repeatCount="indefinite"
-/>
-</rect>
-<circle cx="100" cy="100" r="2" fill="red"/>
-</svg>
+- fence think标识
+
+\`\`\`think
+这是通过think标识渲染的代码块
 \`\`\`
+
+- fence thinking标识
+
+\`\`\`thinking
+这是通过thinking标识渲染的代码块
+\`\`\`
+
+- 内联thinking
+
+<thinking>
+这是通过thinking标签渲染的内容
+</thinking>
+
+- 内联think
+
+<think>
+这是通过\`<think></think>\`渲染的内容
+</think>
+
+正文输出
 `
 
 const mdstr = ref('')
@@ -39,6 +49,6 @@ const render = () => {
 <template>
   <n-button @click="render">流输出</n-button>
   <ys-md-rendering :content="mdstr">
-    <ys-svg></ys-svg>
+    <ys-think></ys-think>
   </ys-md-rendering>
 </template>

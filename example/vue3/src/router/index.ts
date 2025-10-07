@@ -69,19 +69,19 @@ export const menus = [
         component: () => import('@/views/usingPlugins/think.vue')
       }
     ]
+  },
+  {
+    type: 'group',
+    key: 'customPlugin',
+    label: '自定义插件',
+    children: [
+      {
+        key: '/custom-plugin/simple-usage',
+        label: '快捷注册',
+        component: () => import('@/views/customPlugin/simpleUsage.vue')
+      }
+    ]
   }
-  // {
-  //   type: 'group',
-  //   key: 'customPlugin',
-  //   label: '自定义插件',
-  //   children: [
-  //     {
-  //       key: '/custom-plugin',
-  //       label: '自定义插件',
-  //       component: () => import('@/views/customPlugin/index.vue')
-  //     }
-  //   ]
-  // }
 ]
 
 // 生成路由

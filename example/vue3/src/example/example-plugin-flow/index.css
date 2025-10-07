@@ -1,0 +1,105 @@
+/* card-auto.css - 与 CardAuto.vue 里 Tailwind 类对应的纯 CSS 实现 */
+/* 布局 */
+.max-w-sm {
+  max-width: 24rem; /* 384px */
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.rounded-2xl {
+  border-radius: 1rem; /* 16px */
+}
+.border-2 {
+  border-width: 2px;
+}
+.border-blue-400 {
+  border-color: #60a5fa; /* Tailwind blue-400 */
+}
+.bg-white {
+  background-color: #ffffff;
+}
+.shadow-lg {
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* 加载动画 */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+.p-6 {
+  padding: 1.5rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.h-7 {
+  height: 1.75rem; /* 28px */
+}
+.w-36 {
+  width: 9rem; /* 144px */
+}
+.rounded {
+  border-radius: 0.25rem; /* 4px */
+}
+.bg-blue-300 {
+  background-color: #93c5fd;
+}
+.h-5 {
+  height: 1.25rem; /* 20px */
+}
+.w-full {
+  width: 100%;
+}
+.bg-blue-200 {
+  background-color: #bfdbfe;
+}
+
+/* 正常内容区 */
+.bg-blue-500 {
+  background-color: #3b82f6; /* Tailwind blue-500 */
+}
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+.text-lg {
+  font-size: 1.125rem; /* 18px */
+}
+.font-semibold {
+  font-weight: 600;
+}
+.text-white {
+  color: #ffffff;
+}
+.text-sm {
+  font-size: 0.875rem; /* 14px */
+}
+.text-blue-600 {
+  color: #2563eb;
+}
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
+}
+
+h3 {
+  margin-block: 0;
+}
+
+p {
+  margin-block: 0;
+}
