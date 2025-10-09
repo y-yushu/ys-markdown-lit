@@ -5,7 +5,6 @@ import { styleMap } from 'lit/directives/style-map.js'
 import { provide } from '@lit/context'
 import MarkdownIt from 'markdown-it'
 import Token from 'markdown-it/lib/token.mjs'
-import DefaultFence from 'markdown-it/lib/rules_block/fence'
 import tailwindcss from './index.css?inline'
 import { RenderFunction, renderMethods } from './registerAllCustomRenderers'
 import { generateUUID } from '../utils'
@@ -228,21 +227,7 @@ export default class YsMdRendering extends LitElement {
   }
 
   // 重写markdown-it规则
-  rewriteRules() {
-    this.md.block.ruler.at('fence', (state, startLine, endLine, silent) => {
-      const result = DefaultFence(state, startLine, endLine, silent)
-      if (!result) return false
-
-      const token = state.tokens[state.tokens.length - 1]
-      if (token.type === 'fence' && token.map) {
-        const lastLineIndex = token.map[1] - 1
-        const lineText = state.src.slice(state.bMarks[lastLineIndex], state.eMarks[lastLineIndex])
-        token.meta = { ...token.meta, isClose: lineText.trim() === '```' }
-      }
-
-      return true
-    })
-  }
+  rewriteRules() {}
 
   // 自定义渲染规则
   customMethods: Record<string, RenderFunction> = {}
@@ -494,6 +479,23 @@ export default class YsMdRendering extends LitElement {
 
   _getAST(): unknown[] {
     const ast: Token[] = this.md.parse(this.content, {})
+    // fix: 解决通过 block.ruler.at 修改导致的fence判断失败问题
+    ast.forEach(e => {
+      if (e.type === 'fence') {
+        e.meta = {
+          ...e.meta,
+          isClose: true
+        }
+      }
+    })
+    const last = ast[ast.length - 1]
+    if (last && last.type === 'fence') {
+      last.meta.isClose = false
+      const _content = this.content.trimEnd()
+      if (last.content && _content.endsWith('```')) {
+        last.meta.isClose = true
+      }
+    }
     const list3 = this._buildNestedAST2(ast, this.key)
     const list4 = this._renderAst5(list3)
     return list4
