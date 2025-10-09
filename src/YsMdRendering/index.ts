@@ -64,15 +64,13 @@ export default class YsMdRendering extends LitElement {
       typographer: true
     })
     this.rewriteRules()
-    const mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    this.themeData = { mode }
   }
 
   // 全部主题风格
   @provide({ context: themeContext })
   @state()
   themeData: ThemeData = {
-    mode: 'light'
+    mode: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   }
 
   // 计算最终的样式对象
@@ -227,7 +225,34 @@ export default class YsMdRendering extends LitElement {
   }
 
   // 重写markdown-it规则
-  rewriteRules() {}
+  rewriteRules() {
+    // 插入一个规则到 inline 阶段
+    const colorPattern = /#([0-9a-fA-F]{6})/g
+    this.md.inline.ruler.push('color', (state, silent) => {
+      const pos = state.pos
+      const max = state.posMax
+
+      // 查找匹配的色号
+      const match = state.src.slice(pos, max).match(colorPattern)
+
+      if (!match) {
+        return false
+      }
+
+      const color = match[0] // 匹配到的色号
+      const length = color.length
+
+      if (!silent) {
+        // 创建一个 token
+        const token = state.push('color', 'span', 0)
+        token.attrPush(['style', `color: ${color};`])
+        token.content = color
+      }
+
+      state.pos += length
+      return true
+    })
+  }
 
   // 自定义渲染规则
   customMethods: Record<string, RenderFunction> = {}
@@ -391,7 +416,7 @@ export default class YsMdRendering extends LitElement {
             this.cloneMap.set(key, clone)
 
             // 🔹 触发创建事件
-            setTimeout(() => {
+            queueMicrotask(() => {
               // 执行创建方法
               this.dispatchEvent(
                 new CustomEvent(`${type}-instance`, {
@@ -419,7 +444,7 @@ export default class YsMdRendering extends LitElement {
               }
               // 如果已经是完成状态，则直接触发更新事件
               if (isComplete) {
-                setTimeout(() => {
+                queueMicrotask(() => {
                   this.dispatchEvent(
                     new CustomEvent(`${type}-update`, {
                       detail: {

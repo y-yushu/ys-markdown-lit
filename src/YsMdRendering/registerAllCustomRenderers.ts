@@ -410,6 +410,17 @@ const renderHtmlInline = (ask: AstToken, chil: TemplateResult[], _option: any): 
   return html`${unsafeHTML(content)}`
 }
 
+const renderColor = (ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
+  const token: Token = ask.node
+  const attrs: Array<[string, string]> | null = token.attrs || []
+  const color = attrs.find(attr => attr[0] === 'color')?.[1] || ''
+  let style = ''
+  if (option?.style?.color) {
+    style = jsonToStyle(option.style.color)
+  }
+  return html`<span style="color: red;">${token.content}</span>`
+}
+
 // 定义渲染方法的类型
 export const renderMethods: RenderMethods = {
   inline: rederInline,
@@ -437,5 +448,6 @@ export const renderMethods: RenderMethods = {
   image: renderImage,
   text: renderText,
   html_block: renderHtmlBlock,
-  html_inline: renderHtmlInline
+  html_inline: renderHtmlInline,
+  color: renderColor
 }

@@ -52,7 +52,7 @@
       }
     </style>
     <script type="module">
-      import { MarkdownStr_svg as mock } from './src/mock.ts'
+      import { MarkdownStr_mock as mock } from './src/mock.ts'
 
       const render_11 = document.getElementById('render_1')
       render_11.content = mock
@@ -63,17 +63,14 @@
         button.addEventListener('click', () => {
           // ---- 增量添加
           const render_1 = document.getElementById('render_1')
-          render_1.addEventListener('link-click', e => {
-            e.preventDefault()
-          })
-          const render_2 = document.getElementById('render_2')
           render_1.content = ''
-          render_2.content = ''
+          // const render_2 = document.getElementById('render_2')
+          // render_2.content = ''
           let index = 0
           const updateContent = () => {
             if (index < mock.length) {
               if (render_1) render_1.content = mock.slice(0, index + 1) // 增量更新内容
-              if (render_2) render_2.content = mock.slice(0, index + 1) // 增量更新内容
+              // if (render_2) render_2.content = mock.slice(0, index + 1) // 增量更新内容
               index++
               setTimeout(updateContent, 10) // 每 59ms 更新一个字符
             }
@@ -106,7 +103,7 @@
         <div>
           <h3>非实时渲染</h3>
           <div>
-            <ys-md-rendering id="render_1" mode="light">
+            <ys-md-rendering id="render_1">
               <ys-code-highlight no-word-wrap></ys-code-highlight>
               <ys-echarts></ys-echarts>
               <ys-katex></ys-katex>
