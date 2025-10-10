@@ -344,6 +344,13 @@ export default class YsMdRendering extends LitElement {
             clone = this.cloneMap.get(key)!
             clone.dataset.content = token.content
 
+            // 完成标识
+            let isComplete = false
+            // 自定义标签判断标识
+            if (ast?.end?.meta?.isClose) isComplete = true
+            // fence判断标识
+            if (ast.node.type === 'fence' && ast.node.meta?.isClose) isComplete = true
+
             const wasDispatched = clone.dataset.completeDispatched === 'true'
             // 🔹 每次内容变化，触发更新
             if (!wasDispatched) {
@@ -354,7 +361,7 @@ export default class YsMdRendering extends LitElement {
                     el: clone,
                     content: token.content,
                     type: type,
-                    iscomplete: ast?.end?.meta?.isClose || false,
+                    iscomplete: isComplete,
                     meta: token.meta || null
                   },
                   bubbles: true,
@@ -363,12 +370,6 @@ export default class YsMdRendering extends LitElement {
               )
             }
 
-            // 完成标识
-            let isComplete = false
-            // 自定义标签判断标识
-            if (ast?.end?.meta?.isClose) isComplete = true
-            // fence判断标识
-            if (ast.node.type === 'fence' && ast.node.meta?.isClose) isComplete = true
             // 关闭后续监听
             if (isComplete) clone.dataset.completeDispatched = 'true'
           } else {
