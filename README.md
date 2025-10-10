@@ -71,6 +71,10 @@ module.exports = {
 
 ## 更新记录
 
+#### 0.2.3
+
+- fix: 解决增量更新时，自定义组件iscomplete属性未更新问题
+
 #### 0.2.2
 
 - fix: 解决通过 block.ruler.at 修改导致的fence判断失败问题
