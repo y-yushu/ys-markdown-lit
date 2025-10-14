@@ -65,11 +65,9 @@ module.exports = {
 }
 ```
 
-## 文档
-
-详细使用说明和自定义选项请参考[文档网站](#)（即将上线）。
-
 ## 更新记录
+
+- feat: 增加HEX颜色识别功能
 
 #### 0.2.3
 
@@ -90,17 +88,3 @@ module.exports = {
 #### 0.1.23
 
 - feat: 增加`link-click`事件，点击链接时触发
-
-#### 0.1.22
-
-- feat: `custom-styles`属性增加小驼峰支持
-- feat: 优化`ys-mermaid`样式
-- fix: 解决初始化时，为传入`mode`，导致的样式问题
-
-#### 0.1.21
-
-- feat: 通过mode为`dark`、`light`控制具体是否为深色模式，如果mode不传或为空，则自动判断深色浅色模式
-
-#### 0.1.20
-
-- fit: 解决`renderHtmlInline`方法可能会渲染出`undefined`问题

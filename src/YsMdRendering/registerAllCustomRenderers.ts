@@ -410,15 +410,13 @@ const renderHtmlInline = (ask: AstToken, chil: TemplateResult[], _option: any): 
   return html`${unsafeHTML(content)}`
 }
 
-const renderColor = (ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
+// 渲染颜色标签
+const renderColor = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = ask.node
-  const attrs: Array<[string, string]> | null = token.attrs || []
-  const color = attrs.find(attr => attr[0] === 'color')?.[1] || ''
-  let style = ''
-  if (option?.style?.color) {
-    style = jsonToStyle(option.style.color)
-  }
-  return html`<span style="color: red;">${token.content}</span>`
+  return html`<div class="mx-1 inline-flex items-center gap-1 rounded-md border border-dashed px-2 py-1.5 leading-none">
+    <div class="inline-block h-3 w-3 rounded-sm" style="background-color: ${token.content};"></div>
+    ${token.content}
+  </div>`
 }
 
 // 定义渲染方法的类型
