@@ -419,6 +419,15 @@ const renderColor = (ask: AstToken, _chil: TemplateResult[], _option: any): Temp
   </div>`
 }
 
+const renderMark = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
+  let style = ''
+  if (option?.style?.mark) {
+    style = jsonToStyle(option.style.mark)
+  }
+  const styleValue = style.trim() ? style : undefined
+  return html`<mark style=${ifDefined(styleValue)}>${chil}</mark>`
+}
+
 // 定义渲染方法的类型
 export const renderMethods: RenderMethods = {
   inline: rederInline,
@@ -447,5 +456,6 @@ export const renderMethods: RenderMethods = {
   text: renderText,
   html_block: renderHtmlBlock,
   html_inline: renderHtmlInline,
-  color: renderColor
+  color: renderColor,
+  mark_open: renderMark
 }

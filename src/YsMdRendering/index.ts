@@ -4,6 +4,7 @@ import { classMap } from 'lit/directives/class-map.js'
 import { styleMap } from 'lit/directives/style-map.js'
 import { provide } from '@lit/context'
 import MarkdownIt from 'markdown-it'
+import { mark } from '@mdit/plugin-mark'
 import Token from 'markdown-it/lib/token.mjs'
 import tailwindcss from './index.css?inline'
 import { RenderFunction, renderMethods } from './registerAllCustomRenderers'
@@ -62,7 +63,7 @@ export default class YsMdRendering extends LitElement {
       html: true,
       linkify: false,
       typographer: true
-    })
+    }).use(mark)
     this.rewriteRules()
   }
 
@@ -227,29 +228,24 @@ export default class YsMdRendering extends LitElement {
   // 重写markdown-it规则
   rewriteRules() {
     // 插入一个规则到 inline 阶段
-    const colorPattern = /#([0-9a-fA-F]{6})/g
+    const colorPattern = /^#([0-9a-fA-F]{3,8})\b/
     this.md.inline.ruler.push('color', (state, silent) => {
-      const pos = state.pos
-      const max = state.posMax
+      const src = state.src.slice(state.pos)
+      const match = src.match(colorPattern)
+      if (!match) return false
 
-      // 查找匹配的色号
-      const match = state.src.slice(pos, max).match(colorPattern)
+      const color = match[0]
 
-      if (!match) {
-        return false
-      }
-
-      const color = match[0] // 匹配到的色号
-      const length = color.length
+      // 防止误判：确认这是合法颜色字符串（#fff 或 #ffffff 等）
+      if (!/^#[0-9a-fA-F]{3,8}$/.test(color)) return false
 
       if (!silent) {
-        // 创建一个 token
         const token = state.push('color', 'span', 0)
         token.attrPush(['style', `color: ${color};`])
         token.content = color
       }
 
-      state.pos += length
+      state.pos += color.length
       return true
     })
   }

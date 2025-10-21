@@ -68,6 +68,7 @@ module.exports = {
 ## 更新记录
 
 - feat: 增加HEX颜色识别功能
+- feat: 添加`@mdit/plugin-mark`支持
 
 #### 0.2.3
 
