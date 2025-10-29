@@ -56,6 +56,10 @@
 
       const render_11 = document.getElementById('render_1')
       render_11.content = mock
+      render_11.addEventListener('link-click', e => {
+        e.preventDefault()
+        console.log(e.detail.text, '222')
+      })
 
       window.onload = () => {
         // 左侧加载

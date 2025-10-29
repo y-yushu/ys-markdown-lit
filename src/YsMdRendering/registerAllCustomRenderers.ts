@@ -216,6 +216,7 @@ const renderTd = (_ask: AstToken, chil: TemplateResult[], option: any): Template
   return html`<td class="box-border max-w-[200px] min-w-[100px] p-2 px-4 break-words whitespace-normal" style=${ifDefined(styleValue)}>${chil}</td>`
 }
 type LinkClickDetail = {
+  text: string
   href: string
   anchor: HTMLAnchorElement
   rawEvent: MouseEvent
@@ -250,9 +251,9 @@ const renderLink = (ask: AstToken, chil: TemplateResult[], option: any): Templat
     // 从宿主元素派发（穿透 shadow）
     const root = anchorEl.getRootNode()
     const hostEl = root instanceof ShadowRoot ? (root.host as HTMLElement) : anchorEl
-
+    const text = (chil?.[0]?.values?.[0] as string) || ''
     const customEvt = new CustomEvent<LinkClickDetail>('link-click', {
-      detail: { href, anchor: anchorEl, rawEvent: e },
+      detail: { text, href, anchor: anchorEl, rawEvent: e },
       bubbles: true,
       composed: true,
       cancelable: true

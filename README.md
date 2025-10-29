@@ -67,6 +67,9 @@ module.exports = {
 
 ## 更新记录
 
+#### 0.2.4
+
+- fix: 解决超链接点击没有传递text问题
 - feat: 增加HEX颜色识别功能
 - feat: 添加`@mdit/plugin-mark`支持
 
