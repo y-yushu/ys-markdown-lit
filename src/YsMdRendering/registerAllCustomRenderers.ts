@@ -334,7 +334,7 @@ const renderCodeInline = (ask: AstToken, _chil: TemplateResult[], option: any): 
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<span class="mx-1 rounded-lg bg-gray-700 px-2 py-0.5 text-white" style=${ifDefined(styleValue)}>${token.content}</span>`
+  return html`<span class="mx-1 rounded-sm px-2 py-0.5 text-[#c12c1f] border border-solid border-[#f0efeb80] bg-[#f0efeb40]" style=${ifDefined(styleValue)}>${token.content}</span>`
 }
 
 const renderHr = (_ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {

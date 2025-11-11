@@ -13,8 +13,8 @@
         width: 100%;
         overflow-x: hidden;
         box-sizing: border-box;
-        background-color: #f5f5f5; /* 浅色背景 */
-        color: #2b2b2b; /* 浅色文字 */
+        background-color: #f5f5f5;
+        color: #2b2b2b;
       }
 
       .page {
@@ -26,7 +26,8 @@
       .grid {
         width: 100%;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        /* grid-template-columns: 1fr 1fr; */
+        grid-template-columns: 1fr;
         gap: 1rem;
       }
 
@@ -36,22 +37,24 @@
         padding: 1rem;
         border-radius: 8px;
         overflow-x: auto;
-        background-color: #ffffff; /* 浅色卡片背景 */
+        background-color: #ffffff;
       }
 
-      /* 深色模式 */
-      @media (prefers-color-scheme: dark) {
-        body {
-          background-color: #1e1e1e;
-          color: #e0e0e0;
-        }
-        .grid > div {
-          background-color: #2b2b2b;
-          border: 1px solid #555;
-        }
+      /* ===== 深色方案 ===== */
+      body.dark {
+        background: #1e1e1e;
+        color: #e0e0e0;
+      }
+      body.dark .grid > div {
+        background: #2b2b2b;
+        border-color: #555;
       }
     </style>
     <script type="module">
+      // 深色模式
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (isDark) document.body.classList.add('dark')
+
       import { MarkdownStr_mock as mock } from './src/mock.ts'
 
       const render_11 = document.getElementById('render_1')
@@ -93,7 +96,14 @@
         const button2 = document.getElementById('test_but_2')
         button2.addEventListener('click', () => {
           const render_1 = document.getElementById('render_1')
-          render_1.mode = render_1.mode === 'dark' ? 'light' : 'dark'
+          if (render_1) {
+            render_1.setAttribute('mode', render_1.mode === 'dark' ? 'light' : 'dark')
+            if (render_1.mode === 'dark') {
+              document.body.classList.add('dark')
+            } else {
+              document.body.classList.remove('dark')
+            }
+          }
         })
       }
     </script>
@@ -117,17 +127,17 @@
             </ys-md-rendering>
           </div>
         </div>
-        <div>
+        <!-- <div>
           <h3>实时渲染，异常报错</h3>
           <div>
-            <!-- <ys-md-rendering
+            <ys-md-rendering
               id="render_2"
               content='# 测试echarts&#10;&#10;&lt;echarts&gt;&#10;{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}&#10;&lt;/echarts&gt;&#10;&#10;&lt;echarts&gt;&#10;{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}&#10;&lt;/echarts&gt;&#10;&#10;&gt; 渲染完成了'
             >
               <ys-echarts></ys-echarts>
-            </ys-md-rendering> -->
+            </ys-md-rendering>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </body>

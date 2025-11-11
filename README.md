@@ -67,6 +67,8 @@ module.exports = {
 
 ## 更新记录
 
+- feat: `CodeInline`行内样式调整
+
 #### 0.2.4
 
 - fix: 解决超链接点击没有传递text问题
