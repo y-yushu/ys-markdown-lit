@@ -1,14 +1,181 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/ys-markdown-lit/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ys-md-rendering使用示例</title>
-    <script type="module" crossorigin src="/ys-markdown-lit/assets/index.js"></script>
-    <link rel="stylesheet" crossorigin href="/ys-markdown-lit/assets/index.css">
+    <title>ys-md-rendering 示例目录</title>
+    <style>
+      :root {
+        color: #111827;
+        background: #f3f4f6;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        box-sizing: border-box;
+        width: min(1120px, 100%);
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+
+      .header {
+        margin-bottom: 28px;
+      }
+
+      .title {
+        margin: 0 0 8px;
+        font-size: 32px;
+        line-height: 1.2;
+      }
+
+      .description {
+        max-width: 760px;
+        margin: 0;
+        color: #4b5563;
+        font-size: 15px;
+        line-height: 1.8;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .section-card {
+        display: block;
+        min-height: 150px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .section-card:hover {
+        border-color: #93c5fd;
+      }
+
+      .section-index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        margin-bottom: 14px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .section-title {
+        margin: 0 0 8px;
+        font-size: 20px;
+        line-height: 1.35;
+      }
+
+      .section-desc {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .outline {
+        margin-top: 28px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .outline-title {
+        margin: 0 0 14px;
+        font-size: 18px;
+      }
+
+      .outline-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding-left: 20px;
+        color: #374151;
+        line-height: 1.7;
+      }
+
+      .status {
+        color: #6b7280;
+        font-size: 13px;
+      }
+
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .title {
+          font-size: 26px;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <main class="page">
+      <header class="header">
+        <h1 class="title">ys-md-rendering 示例目录</h1>
+        <p class="description">这里用于组织组件使用示例。当前页面只建立目录结构，具体示例页面和代码展示后续逐步补充。</p>
+      </header>
+
+      <section class="grid" aria-label="示例分类">
+        <a class="section-card" href="#basic">
+          <span class="section-index">1</span>
+          <h2 class="section-title">简单使用示例</h2>
+          <p class="section-desc">展示最小接入方式：引入组件、设置 Markdown 内容，并完成基础渲染。</p>
+        </a>
+
+        <a class="section-card" href="#styles">
+          <span class="section-index">2</span>
+          <h2 class="section-title">样式属性重构渲染效果</h2>
+          <p class="section-desc">展示通过 `custom-styles`、`custom-css`、模式切换等属性调整 Markdown 渲染样式。</p>
+        </a>
+
+        <a class="section-card" href="#plugins">
+          <span class="section-index">3</span>
+          <h2 class="section-title">组件内置插件示例</h2>
+          <p class="section-desc">展示代码高亮、ECharts、KaTeX、SVG、Mermaid、Think 等插件的接入方式。</p>
+        </a>
+
+        <a class="section-card" href="#custom-plugin">
+          <span class="section-index">4</span>
+          <h2 class="section-title">高级自定义插件功能</h2>
+          <p class="section-desc">展示如何注册自定义规则、自定义渲染器，以及如何响应组件实例更新事件。</p>
+        </a>
+      </section>
+
+      <section class="outline" aria-label="待补充页面">
+        <h2 class="outline-title">目录规划</h2>
+        <ol class="outline-list">
+          <li id="basic">简单使用示例 <span class="status">待补充具体页面</span></li>
+          <li id="styles">样式通过各种属性重构渲染效果 <span class="status">待补充具体页面</span></li>
+          <li id="plugins">组件支持的各个插件 <span class="status">待补充具体页面</span></li>
+          <li id="custom-plugin">更高级的自定义插件功能 <span class="status">待补充具体页面</span></li>
+        </ol>
+      </section>
+    </main>
   </body>
 </html>

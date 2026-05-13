@@ -153,7 +153,7 @@ const renderTable = (_ask: AstToken, chil: TemplateResult[], option: any): Templ
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<div class="w-fit max-w-full overflow-x-auto">
+  return html`<div class="table w-fit max-w-full overflow-x-auto">
     <table class="max-w-max border-collapse" style=${ifDefined(styleValue)}>
       ${chil}
     </table>
@@ -326,6 +326,26 @@ const renderFence = (ask: AstToken, _chil: TemplateResult[], option: any): Templ
   `
 }
 
+const renderCodeBlock = (ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
+  const token: Token = ask.node
+  let style = ''
+  if (option?.style?.pre) {
+    style = jsonToStyle(option.style.pre)
+  }
+  const styleValue = style.trim() ? style : undefined
+
+  return html`
+    <div class="mb-4 max-w-full rounded-lg">
+      <div class="sticky top-0 flex h-8 items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs select-none">
+        <span class="font-bold text-gray-400">代码</span>
+      </div>
+      <div class="max-w-full overflow-x-auto">
+        <pre class="!m-0 max-w-full rounded-t-none" style=${ifDefined(styleValue)}><code>${token.content}</code></pre>
+      </div>
+    </div>
+  `
+}
+
 const renderCodeInline = (ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
   const token: Token = ask.node
   let style = ''
@@ -334,7 +354,9 @@ const renderCodeInline = (ask: AstToken, _chil: TemplateResult[], option: any): 
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<span class="mx-1 rounded-sm px-2 py-0.5 text-[#c12c1f] border border-solid border-[#f0efeb80] bg-[#f0efeb40]" style=${ifDefined(styleValue)}>${token.content}</span>`
+  return html`<span class="mx-1 rounded-sm border border-solid border-[#f0efeb80] bg-[#f0efeb40] px-2 py-0.5 text-[#c12c1f]" style=${ifDefined(styleValue)}
+    >${token.content}</span
+  >`
 }
 
 const renderHr = (_ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
@@ -449,6 +471,7 @@ export const renderMethods: RenderMethods = {
   td_open: renderTd,
   link_open: renderLink,
   fence: renderFence,
+  code_block: renderCodeBlock,
   code_inline: renderCodeInline,
   hr: renderHr,
   softbreak: renderSoftbreak,

@@ -1,7 +1,67 @@
-// export const MarkdownStr_mock: string =
-//   '## 信息来源\n\n1. `http://alwaysworking.com.cn/news_detail/50.html` - 关于工贸类使用危险化学品企业安全现状评价的法规说明。\n2. 《非药品类易制毒化学品生产、经营许可办法.docx》 - 规定了危险化学品生产、储存企业的安全评价周期及报告要求。\n3. `http://m.ruiwen.com/s0g0h/gongwen/xize/290068.html` - 阐述了安全现状评价的适用范围及矿山企业的特殊规定。\n4. `https://www.yingcaicheng.com/notice/208595` - 详细说明了矿山企业在闭库治理等特定阶段进行安全现状评价的要求。\n5. `http://www.chinaqking.com/yc/2020/2383345.html` - 指出建筑施工企业需要定期进行安全现状评价以应对行业安全挑战。\n6. 《应急管理部关于修改〈生产安全事故应急预案管理办法〉的决定》.pdf - 明确了高危行业企业每三年进行一次应急预案评估的要求。'
-export const MarkdownStr_mock: string =
-`# 台湾海峡
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ys-md-rendering dist 示例</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #f5f5f5;
+        color: #1f2937;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      .page {
+        box-sizing: border-box;
+        width: min(1120px, 100%);
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .viewer {
+        box-sizing: border-box;
+        padding: 24px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="viewer">
+        <ys-md-rendering
+          id="renderer"
+          custom-css="
+            .prose h1 {
+              color: #dc2626;
+            }
+
+            .prose table tr:hover {
+              background: rgba(37, 99, 235, 0.08);
+            }
+          "
+        >
+          <ys-code-highlight no-word-wrap></ys-code-highlight>
+          <ys-echarts></ys-echarts>
+          <ys-katex></ys-katex>
+          <ys-svg></ys-svg>
+          <ys-mermaid data-register="mermaid" initial-status="view"></ys-mermaid>
+          <ys-think></ys-think>
+        </ys-md-rendering>
+      </div>
+    </main>
+
+    <script id="markdown-source" type="text/markdown">
+# 台湾海峡
 
 > 台湾海峡，是连接南海与东海的重要海峡，也是亚洲重要的国际航运通道之一。
 >
@@ -175,7 +235,7 @@ export const MarkdownStr_mock: string =
 
 这是 ~~删除线~~。
 
-这是 \`行内代码\`。
+这是 `行内代码`。
 
 ---
 
@@ -205,7 +265,7 @@ export const MarkdownStr_mock: string =
 
 ### JavaScript
 
-\`\`\`js
+```js
 const strait = {
   name: "台湾海峡",
   width: 180,
@@ -213,34 +273,34 @@ const strait = {
 };
 
 console.log(strait.name);
-\`\`\`
+```
 
 ### JSON
 
-\`\`\`json
+```json
 {
   "name": "Taiwan Strait",
   "type": "strait",
   "importance": "international shipping"
 }
-\`\`\`
+```
 
 ### Bash
 
-\`\`\`bash
+```bash
 pnpm install
 pnpm dev
-\`\`\`
+```
 
 ---
 
 ## Mermaid 流程图测试
 
-\`\`\`mermaid
+```mermaid
 graph TD
   A[东海] --> B[台湾海峡]
   B --> C[南海]
-\`\`\`
+```
 
 ---
 
@@ -319,9 +379,9 @@ ___
 
 ## 超长代码滚动测试
 
-\`\`\`js
+```js
 const veryLongLine = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
-\`\`\`
+```
 
 ---
 
@@ -339,4 +399,22 @@ const veryLongLine = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdef
 
 台湾海峡既是重要海上通道，也是自然、历史与文化交汇的重要区域。
 
-本文档主要用于 Markdown 渲染测试。🎉`  
+本文档主要用于 Markdown 渲染测试。🎉
+    </script>
+
+    <script type="module">
+      import './dist/ys-md-rendering.es.js'
+      import './dist/plugin/ys-code-highlight.es.js'
+      import './dist/plugin/ys-echarts.es.js'
+      import './dist/plugin/ys-katex.es.js'
+      import './dist/plugin/ys-svg.es.js'
+      import './dist/plugin/ys-mermaid.es.js'
+      import './dist/plugin/ys-think.es.js'
+
+      const renderer = document.getElementById('renderer')
+      const markdownSource = document.getElementById('markdown-source')
+
+      renderer.content = markdownSource.textContent.trim()
+    </script>
+  </body>
+</html>

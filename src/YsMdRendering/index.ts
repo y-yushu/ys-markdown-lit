@@ -36,6 +36,10 @@ export default class YsMdRendering extends LitElement {
   })
   customStyles: Record<string, any> = {}
 
+  // 自定义 CSS 文本，注入当前组件的 Shadow Root
+  @property({ type: String, attribute: 'custom-css' })
+  customCss = ''
+
   // 是否识别软换行为换行
   @property({ type: Boolean, converter: BooleanConverter }) breaks = true
 
@@ -132,6 +136,10 @@ export default class YsMdRendering extends LitElement {
 
     // 覆盖prose的css变量
     this.setProseVariables()
+  }
+
+  protected updated() {
+    this.syncCustomCssStyle()
   }
 
   disconnectedCallback() {
@@ -264,8 +272,31 @@ export default class YsMdRendering extends LitElement {
       const styleElement = document.createElement('style')
       styleElement.textContent = styles
       this.shadowRoot?.appendChild(styleElement)
+      this.syncCustomCssStyle()
     }
     e.detail.apply(this)
+  }
+
+  // 同步应用侧传入的完整 CSS，固定复用同一个 style 节点
+  private syncCustomCssStyle() {
+    const root = this.shadowRoot
+    if (!root) return
+
+    const styleId = 'ys-md-rendering-custom-css'
+    let styleElement = root.querySelector<HTMLStyleElement>(`#${styleId}`)
+
+    if (!this.customCss.trim()) {
+      styleElement?.remove()
+      return
+    }
+
+    if (!styleElement) {
+      styleElement = document.createElement('style')
+      styleElement.id = styleId
+    }
+
+    styleElement.textContent = this.customCss
+    root.appendChild(styleElement)
   }
 
   /**

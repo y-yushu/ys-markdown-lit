@@ -10,6 +10,7 @@ export default class YsMdRendering extends LitElement {
     mode: string;
     dark: boolean;
     customStyles: Record<string, any>;
+    customCss: string;
     breaks: boolean;
     static styles: import("lit").CSSResult[];
     key: string;
@@ -23,6 +24,7 @@ export default class YsMdRendering extends LitElement {
     private isReady;
     protected firstUpdated(): void;
     willUpdate(changedProperties: PropertyValues): void;
+    protected updated(): void;
     disconnectedCallback(): void;
     setMarkdownIt(): void;
     registrationQuick(type: string): void;
@@ -32,6 +34,7 @@ export default class YsMdRendering extends LitElement {
     rewriteRules(): void;
     customMethods: Record<string, RenderFunction>;
     private _handleChildRegister;
+    private syncCustomCssStyle;
     /**
      * 覆盖tailwindcss变量
      * 识别符合`--tw-prose`开头的那些css变量

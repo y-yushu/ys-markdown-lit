@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ys-md-rendering dist 示例</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #f5f5f5;
+        color: #1f2937;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+      }
+
+      .page {
+        box-sizing: border-box;
+        width: min(1120px, 100%);
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .viewer {
+        box-sizing: border-box;
+        padding: 24px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="viewer">
+        <ys-md-rendering
+          id="renderer"
+          custom-css="
+            .prose table tr:hover {
+              background: rgba(37, 99, 235, 0.08);
+            }
+          "
+        >
+        </ys-md-rendering>
+      </div>
+    </main>
+
+    <script id="markdown-source" type="text/markdown">
+# 台湾海峡
+
+台湾海峡位于中国大陆东南沿海与台湾岛之间，是连接东海与南海的重要海上通道。
+
+---
+
+## 地理特点
+
+- 南北走向
+- 航运繁忙
+- 季风影响明显
+- 台风活动频繁
+
+### 海峡宽度
+
+| 区域 | 宽度 |
+|---|---:|
+| 最窄处 | 130 km |
+| 平均宽度 | 180 km |
+
+---
+
+## 航运价值
+
+> 台湾海峡是东亚地区重要的国际航运通道之一。
+>
+> 大量国际货轮会经过这一海域。
+
+相关资料：
+
+[维基百科](https://zh.wikipedia.org/wiki/台湾海峡)
+
+---
+
+## 代码块测试
+
+```js
+function getStraitName() {
+  return "台湾海峡"
+}
+
+console.log(getStraitName())
+```
+
+## 结尾
+
+台湾海峡不仅具有重要地理意义，也长期影响区域航运与文化交流。🌊
+    </script>
+
+    <script type="module">
+      import './dist/ys-md-rendering.es.js'
+
+      const renderer = document.getElementById('renderer')
+      const markdownSource = document.getElementById('markdown-source')
+
+      const normalizeMarkdown = source => {
+        const lines = source.replace(/^\n/, '').replace(/\s+$/, '').split('\n')
+        const contentLines = lines.filter(line => line.trim())
+        const minIndent = contentLines.reduce((min, line) => {
+          const indent = line.match(/^[ \t]*/)?.[0].length ?? 0
+          return Math.min(min, indent)
+        }, Infinity)
+
+        if (!Number.isFinite(minIndent) || minIndent === 0) {
+          return lines.join('\n')
+        }
+
+        return lines.map(line => line.slice(minIndent)).join('\n')
+      }
+
+      renderer.content = normalizeMarkdown(markdownSource.textContent || '')
+    </script>
+  </body>
+</html>
