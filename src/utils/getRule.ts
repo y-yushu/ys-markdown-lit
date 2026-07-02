@@ -1,7 +1,26 @@
-import MarkdownIt from 'markdown-it/index.js'
-import { RuleOptions } from '../types'
+import type { RuleOptions } from '../types'
 
 export { type RuleOptions }
+
+type MarkdownBlockState = {
+  bMarks: number[]
+  tShift: number[]
+  eMarks: number[]
+  src: string
+  md: any
+  env: any
+  tokens: any[]
+  line: number
+  getLines: (begin: number, end: number, indent: number, keepLastLF: boolean) => string
+  push: (type: string, tag: string, nesting: number) => any
+}
+
+type MarkdownInlineState = {
+  pos: number
+  posMax: number
+  src: string
+  push: (type: string, tag: string, nesting: number) => any
+}
 
 /**
  * 规则配置
@@ -12,8 +31,8 @@ export { type RuleOptions }
  * @param hasChildren 是否内部进行md解析 默认为 false
  * @returns {Function} 规则函数
  */
-const getBlockRule = ({ startTag, endTag, startToken, endToken, hasChildren = false, meta = null }: RuleOptions) => {
-  return (state: MarkdownIt.StateBlock, startLine: number, endLine: number, silent: boolean) => {
+const getBlockRule = ({ startTag, endTag, startToken, endToken, hasChildren = false, meta = null }: RuleOptions): any => {
+  return (state: MarkdownBlockState, startLine: number, endLine: number, silent: boolean) => {
     const startPos = state.bMarks[startLine] + state.tShift[startLine]
 
     // 检查是否以 <thinking> 开始
@@ -230,8 +249,8 @@ const getBlockRule = ({ startTag, endTag, startToken, endToken, hasChildren = fa
  * @param startToken token标识
  * @returns {Function} 行内规则函数
  */
-const getInlineRule = ({ startTag, endTag, startToken, meta }: Omit<RuleOptions, 'endToken'>) => {
-  return (state: MarkdownIt.StateInline, silent: boolean) => {
+const getInlineRule = ({ startTag, endTag, startToken, meta }: Omit<RuleOptions, 'endToken'>): any => {
+  return (state: MarkdownInlineState, silent: boolean) => {
     const start = state.pos
     const max = state.posMax
 

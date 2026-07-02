@@ -1,12 +1,15 @@
-import { html, LitElement, PropertyValues, ReactiveElement, unsafeCSS } from 'lit'
+import { html, LitElement, ReactiveElement, unsafeCSS } from 'lit'
+import type { PropertyValues } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
-import { createRef, ref, Ref } from 'lit/directives/ref.js'
+import { createRef, ref } from 'lit/directives/ref.js'
+import type { Ref } from 'lit/directives/ref.js'
 import { consume } from '@lit/context'
-import tailwindcss from './index.css?inline'
-import { themeContext, ThemeData } from '../../utils/context'
+import componentStyles from './index.css?inline'
+import { themeContext } from '../../utils/context'
+import type { ThemeData } from '../../utils/context'
 import mermaid from 'mermaid'
-import { YsRenderUpdateDetail } from '../../types'
+import type { YsRenderUpdateDetail } from '../../types'
 import { setContent } from '../../utils'
 
 // 初始化 mermaid 只执行一次
@@ -71,7 +74,7 @@ export default class YsMermaid extends LitElement {
 
 @customElement('ys-mermaid-render')
 export class YsMermaidRender extends LitElement {
-  static styles = [unsafeCSS(tailwindcss)]
+  static styles = [unsafeCSS(componentStyles)]
 
   @property({ type: String }) content: string = ''
 
@@ -162,7 +165,7 @@ export class YsMermaidRender extends LitElement {
               console.error('[Mermaid render error]', _err1)
             }
             if (this.mermaidBoxRef.value) {
-              this.mermaidBoxRef.value.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
+              this.mermaidBoxRef.value.innerHTML = `<div class="ys-mermaid-error">❌ 图表渲染失败</div>`
             }
 
             // 清理可能的错误元素
@@ -175,7 +178,7 @@ export class YsMermaidRender extends LitElement {
           console.error('[Mermaid parse error] 语法校验错误')
         }
         if (this.errorHandlingType === 'errorHandling') {
-          this.mermaidBoxRef.value!.innerHTML = `<div class="text-red-500 p-2">❌ 图表渲染失败</div>`
+          this.mermaidBoxRef.value!.innerHTML = `<div class="ys-mermaid-error">❌ 图表渲染失败</div>`
         }
         // 添加清理
         this._cleanupErrorElements()
@@ -196,66 +199,28 @@ export class YsMermaidRender extends LitElement {
     // 判断是否为深色模式
     const isDark = this.isDarkMode
 
-    // 定义基础样式类
     const baseButtonClasses = {
-      flex: true,
-      'min-w-16': true,
-      'cursor-pointer': true,
-      'items-center': true,
-      'justify-center': true,
-      'rounded-md': true,
-      'px-3': true,
-      'py-1': true,
-      'text-sm': true,
-      'font-medium': true,
-      'transition-all': true,
-      'duration-200': true,
-      'ease-in-out': true
+      'ys-mermaid-tab': true
     }
 
-    // 创建完整的按钮类对象
     const codeButtonClasses = {
       ...baseButtonClasses,
-      // 激活状态
-      'bg-white': !isDark && this.status === 'code',
-      'text-blue-600': !isDark && this.status === 'code',
-      'shadow-sm': this.status === 'code',
-      'bg-gray-700': isDark && this.status === 'code',
-      'text-blue-400': isDark && this.status === 'code',
-      // 非激活状态
-      'bg-transparent': this.status !== 'code',
-      'text-gray-600': !isDark && this.status !== 'code',
-      'text-gray-400': isDark && this.status !== 'code',
-      'hover:bg-gray-200': !isDark && this.status !== 'code',
-      'hover:bg-gray-800': isDark && this.status !== 'code',
-      'hover:text-gray-800': !isDark && this.status !== 'code',
-      'hover:text-gray-200': isDark && this.status !== 'code'
+      'ys-mermaid-tab-active': this.status === 'code',
+      'ys-mermaid-tab-idle': this.status !== 'code'
     }
 
     const viewButtonClasses = {
       ...baseButtonClasses,
-      // 激活状态
-      'bg-white': !isDark && this.status === 'view',
-      'text-blue-600': !isDark && this.status === 'view',
-      'shadow-sm': this.status === 'view',
-      'bg-gray-700': isDark && this.status === 'view',
-      'text-blue-400': isDark && this.status === 'view',
-      // 非激活状态
-      'bg-transparent': this.status !== 'view',
-      'text-gray-600': !isDark && this.status !== 'view',
-      'text-gray-400': isDark && this.status !== 'view',
-      'hover:bg-gray-200': !isDark && this.status !== 'view',
-      'hover:bg-gray-800': isDark && this.status !== 'view',
-      'hover:text-gray-800': !isDark && this.status !== 'view',
-      'hover:text-gray-200': isDark && this.status !== 'view'
+      'ys-mermaid-tab-active': this.status === 'view',
+      'ys-mermaid-tab-idle': this.status !== 'view'
     }
 
-    return html`<div class="mb-4">
+    return html`<div class="ys-mermaid-root">
       <!-- 甘特图卡片 -->
-      <div class="${isDark ? 'border-gray-700' : 'border-gray-300'} overflow-hidden rounded-md border border-solid">
+      <div class=${isDark ? 'ys-mermaid-card ys-mermaid-card-dark' : 'ys-mermaid-card'}>
         <!-- 顶部工具栏 -->
-        <div class="${isDark ? 'bg-gray-900' : ''} flex h-10 items-center justify-between gap-2 py-2 pr-2 pl-3 select-none">
-          <div class="${isDark ? 'bg-gray-800' : 'bg-gray-100'} inline-flex h-8 rounded-md p-1">
+        <div class="ys-mermaid-toolbar">
+          <div class="ys-mermaid-tabs">
             <button class=${classMap(codeButtonClasses)} @click=${() => this._checkStatus('code')}>
               <span>代码</span>
             </button>
@@ -267,12 +232,12 @@ export class YsMermaidRender extends LitElement {
 
         <!-- 内容区域 - 代码视图 -->
         ${this.status === 'code'
-          ? html`<div class="max-w-full overflow-x-auto">
-              <pre class="${isDark ? 'bg-[#1e2939]' : ''} !m-0 max-w-full rounded-t-none p-4"><code>${this.content}</code></pre>
+          ? html`<div class="ys-mermaid-scroll">
+              <pre class="ys-mermaid-code"><code>${this.content}</code></pre>
             </div>`
-          : html`<div class="${isDark ? 'bg-[#1e2939]' : 'bg-white'} min-h-20 w-full p-4">
-              <div ${ref(this.mermaidBoxRef)} class="flex justify-center">
-                <div class="p-2 text-red-500">❌ 图表渲染失败</div>
+          : html`<div class="ys-mermaid-view">
+              <div ${ref(this.mermaidBoxRef)} class="ys-mermaid-graph">
+                <div class="ys-mermaid-error">❌ 图表渲染失败</div>
               </div>
             </div>`}
       </div>

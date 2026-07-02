@@ -3,7 +3,8 @@ import { customElement } from 'lit/decorators.js'
 import { consume } from '@lit/context'
 import * as echarts from 'echarts'
 import { setContent } from '../../utils'
-import { themeContext, ThemeData } from '../../utils/context'
+import { themeContext } from '../../utils/context'
+import type { ThemeData } from '../../utils/context'
 // import './render'
 
 @customElement('ys-echarts')

@@ -1,9 +1,10 @@
-import { html, render, TemplateResult } from 'lit'
+import { html, render } from 'lit'
+import type { TemplateResult } from 'lit'
 import { ifDefined } from 'lit/directives/if-defined.js'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import Token from 'markdown-it/lib/token.mjs'
 import { jsonToStyle } from '../utils'
-import { AstToken } from '../types'
+import type { AstToken } from '../types'
 
 export type RenderFunction = (ask: AstToken, chil: TemplateResult[], option?: any) => TemplateResult
 
@@ -24,17 +25,17 @@ const renderHeading = (ask: AstToken, chil: TemplateResult[], option: any): Temp
 
   switch (token.tag) {
     case 'h1':
-      return html`<h1 style=${ifDefined(styleValue)}>${chil}</h1>`
+      return html`<h1 class="ys-md-heading ys-md-h1" part="heading heading-1" style=${ifDefined(styleValue)}>${chil}</h1>`
     case 'h2':
-      return html`<h2 style=${ifDefined(styleValue)}>${chil}</h2>`
+      return html`<h2 class="ys-md-heading ys-md-h2" part="heading heading-2" style=${ifDefined(styleValue)}>${chil}</h2>`
     case 'h3':
-      return html`<h3 style=${ifDefined(styleValue)}>${chil}</h3>`
+      return html`<h3 class="ys-md-heading ys-md-h3" part="heading heading-3" style=${ifDefined(styleValue)}>${chil}</h3>`
     case 'h4':
-      return html`<h4 style=${ifDefined(styleValue)}>${chil}</h4>`
+      return html`<h4 class="ys-md-heading ys-md-h4" part="heading heading-4" style=${ifDefined(styleValue)}>${chil}</h4>`
     case 'h5':
-      return html`<h5 style=${ifDefined(styleValue)}>${chil}</h5>`
+      return html`<h5 class="ys-md-heading ys-md-h5" part="heading heading-5" style=${ifDefined(styleValue)}>${chil}</h5>`
     case 'h6':
-      return html`<h6 style=${ifDefined(styleValue)}>${chil}</h6>`
+      return html`<h6 class="ys-md-heading ys-md-h6" part="heading heading-6" style=${ifDefined(styleValue)}>${chil}</h6>`
   }
   console.error('[heading标签解析异常]', token)
   return html`<p>${chil}</p>`
@@ -52,7 +53,7 @@ const renderParagraph = (ask: AstToken, chil: TemplateResult[], option: any): Te
   if (token.hidden) {
     return html`${chil}`
   } else {
-    return html`<p style=${ifDefined(styleValue)}>${chil}</p>`
+    return html`<p class="ys-md-p" part="paragraph" style=${ifDefined(styleValue)}>${chil}</p>`
   }
 }
 
@@ -64,7 +65,7 @@ const renderBlockquote = (_ask: AstToken, chil: TemplateResult[], option: any): 
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<blockquote style=${ifDefined(styleValue)}>${chil}</blockquote>`
+  return html`<blockquote class="ys-md-blockquote" part="blockquote" style=${ifDefined(styleValue)}>${chil}</blockquote>`
 }
 
 // 注册 strong 渲染
@@ -75,7 +76,7 @@ const renderStrong = (_ask: AstToken, chil: TemplateResult[], option: any): Temp
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<strong style=${ifDefined(styleValue)}>${chil}</strong>`
+  return html`<strong class="ys-md-strong" part="strong" style=${ifDefined(styleValue)}>${chil}</strong>`
 }
 
 // 注册 em 渲染
@@ -86,7 +87,7 @@ const renderEm = (_ask: AstToken, chil: TemplateResult[], option: any): Template
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<em style=${ifDefined(styleValue)}>${chil}</em>`
+  return html`<em class="ys-md-em" part="emphasis" style=${ifDefined(styleValue)}>${chil}</em>`
 }
 
 // 注册 s 渲染
@@ -97,7 +98,7 @@ const renderS = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateR
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<s style=${ifDefined(styleValue)}>${chil}</s>`
+  return html`<s class="ys-md-s" part="strikethrough" style=${ifDefined(styleValue)}>${chil}</s>`
 }
 
 // 注册有序列表渲染
@@ -119,7 +120,7 @@ const renderOrderedList = (_ask: AstToken, chil: TemplateResult[], option: any):
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<ol start="${startNumber}" style=${ifDefined(styleValue)}>
+  return html`<ol class="ys-md-ol" part="list ordered-list" start="${startNumber}" style=${ifDefined(styleValue)}>
     ${chil}
   </ol>`
 }
@@ -131,7 +132,7 @@ const renderBulletList = (_ask: AstToken, chil: TemplateResult[], option: any): 
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<ul style=${ifDefined(styleValue)}>
+  return html`<ul class="ys-md-ul" part="list unordered-list" style=${ifDefined(styleValue)}>
     ${chil}
   </ul>`
 }
@@ -143,7 +144,7 @@ const renderListItem = (_ask: AstToken, chil: TemplateResult[], option: any): Te
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<li style=${ifDefined(styleValue)}>${chil}</li>`
+  return html`<li class="ys-md-li" part="list-item" style=${ifDefined(styleValue)}>${chil}</li>`
 }
 
 const renderTable = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
@@ -153,8 +154,8 @@ const renderTable = (_ask: AstToken, chil: TemplateResult[], option: any): Templ
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<div class="table w-fit max-w-full overflow-x-auto">
-    <table class="max-w-max border-collapse" style=${ifDefined(styleValue)}>
+  return html`<div class="ys-table-wrap ys-md-table-wrap" part="table-wrap">
+    <table class="ys-md-table" part="table" style=${ifDefined(styleValue)}>
       ${chil}
     </table>
   </div> `
@@ -167,7 +168,7 @@ const renderThead = (_ask: AstToken, chil: TemplateResult[], option: any): Templ
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<thead style=${ifDefined(styleValue)}>
+  return html`<thead class="ys-md-thead" part="table-head" style=${ifDefined(styleValue)}>
     ${chil}
   </thead>`
 }
@@ -179,7 +180,7 @@ const renderTbody = (_ask: AstToken, chil: TemplateResult[], option: any): Templ
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<tbody style=${ifDefined(styleValue)}>
+  return html`<tbody class="ys-md-tbody" part="table-body" style=${ifDefined(styleValue)}>
     ${chil}
   </tbody>`
 }
@@ -191,7 +192,7 @@ const renderTr = (_ask: AstToken, chil: TemplateResult[], option: any): Template
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<tr style=${ifDefined(styleValue)}>
+  return html`<tr class="ys-md-tr" part="table-row" style=${ifDefined(styleValue)}>
     ${chil}
   </tr>`
 }
@@ -203,7 +204,7 @@ const renderTh = (_ask: AstToken, chil: TemplateResult[], option: any): Template
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<th class="box-border max-w-[200px] min-w-[100px] p-2 px-4 break-words whitespace-normal" style=${ifDefined(styleValue)}>${chil}</th>`
+  return html`<th class="ys-md-th" part="table-header-cell" style=${ifDefined(styleValue)}>${chil}</th>`
 }
 
 const renderTd = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
@@ -213,7 +214,7 @@ const renderTd = (_ask: AstToken, chil: TemplateResult[], option: any): Template
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<td class="box-border max-w-[200px] min-w-[100px] p-2 px-4 break-words whitespace-normal" style=${ifDefined(styleValue)}>${chil}</td>`
+  return html`<td class="ys-md-td" part="table-cell" style=${ifDefined(styleValue)}>${chil}</td>`
 }
 type LinkClickDetail = {
   text: string
@@ -295,7 +296,8 @@ const renderLink = (ask: AstToken, chil: TemplateResult[], option: any): Templat
   }
 
   return html`<a
-    class="text-blue-500 no-underline active:text-blue-400"
+    class="ys-md-a"
+    part="link"
     href="${href}"
     target="_blank"
     rel="noreferrer noopener nofollow"
@@ -314,14 +316,11 @@ const renderFence = (ask: AstToken, _chil: TemplateResult[], option: any): Templ
   const styleValue = style.trim() ? style : undefined
 
   return html`
-    <div class="mb-4 max-w-full rounded-lg">
-      <div class="sticky top-0 flex h-8 items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs select-none">
-        <span class="font-bold text-gray-400">${token.info}</span>
-        <!-- <span class="cursor-pointer text-blue-400 active:text-blue-300">复制</span> -->
+    <div class="ys-code-block ys-md-code-block" part="code-block">
+      <div class="ys-code-block-header ys-md-code-block-header" part="code-block-header">
+        <span class="ys-code-block-title ys-md-code-block-title" part="code-block-title">${token.info}</span>
       </div>
-      <div class="max-w-full overflow-x-auto">
-        <pre class="!m-0 max-w-full rounded-t-none" style=${ifDefined(styleValue)}><code>${token.content}</code></pre>
-      </div>
+      <pre class="ys-md-code-pre" part="code-pre" style=${ifDefined(styleValue)}><code class="ys-md-code-content" part="code-content">${token.content}</code></pre>
     </div>
   `
 }
@@ -335,13 +334,11 @@ const renderCodeBlock = (ask: AstToken, _chil: TemplateResult[], option: any): T
   const styleValue = style.trim() ? style : undefined
 
   return html`
-    <div class="mb-4 max-w-full rounded-lg">
-      <div class="sticky top-0 flex h-8 items-center justify-between rounded-t-md bg-gray-700 px-3 text-xs select-none">
-        <span class="font-bold text-gray-400">代码</span>
+    <div class="ys-code-block ys-md-code-block" part="code-block">
+      <div class="ys-code-block-header ys-md-code-block-header" part="code-block-header">
+        <span class="ys-code-block-title ys-md-code-block-title" part="code-block-title">代码</span>
       </div>
-      <div class="max-w-full overflow-x-auto">
-        <pre class="!m-0 max-w-full rounded-t-none" style=${ifDefined(styleValue)}><code>${token.content}</code></pre>
-      </div>
+      <pre class="ys-md-code-pre" part="code-pre" style=${ifDefined(styleValue)}><code class="ys-md-code-content" part="code-content">${token.content}</code></pre>
     </div>
   `
 }
@@ -354,9 +351,7 @@ const renderCodeInline = (ask: AstToken, _chil: TemplateResult[], option: any): 
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<span class="mx-1 rounded-sm border border-solid border-[#f0efeb80] bg-[#f0efeb40] px-2 py-0.5 text-[#c12c1f]" style=${ifDefined(styleValue)}
-    >${token.content}</span
-  >`
+  return html`<code class="ys-md-code-inline" part="code-inline" style=${ifDefined(styleValue)}>${token.content}</code>`
 }
 
 const renderHr = (_ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
@@ -366,7 +361,7 @@ const renderHr = (_ask: AstToken, _chil: TemplateResult[], option: any): Templat
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<hr class="mt-2 mb-2" style=${ifDefined(styleValue)} />`
+  return html`<hr class="ys-md-hr" part="divider" style=${ifDefined(styleValue)} />`
 }
 
 const renderSoftbreak = (_ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
@@ -377,7 +372,7 @@ const renderSoftbreak = (_ask: AstToken, _chil: TemplateResult[], option: any): 
       style = jsonToStyle(option.style.br)
     }
     const styleValue = style.trim() ? style : undefined
-    return html`<br style=${ifDefined(styleValue)} />`
+    return html`<br class="ys-md-br" part="line-break" style=${ifDefined(styleValue)} />`
   } else {
     return html`${' '}`
   }
@@ -390,7 +385,7 @@ const renderHardbreak = (_ask: AstToken, _chil: TemplateResult[], option: any): 
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<br style=${ifDefined(styleValue)} />`
+  return html`<br class="ys-md-br" part="line-break" style=${ifDefined(styleValue)} />`
 }
 
 const renderImage = (ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
@@ -407,7 +402,7 @@ const renderImage = (ask: AstToken, _chil: TemplateResult[], option: any): Templ
   const styleValue = style.trim() ? style : undefined
 
   // 返回图片的 HTML 模板
-  return html`<img src="${src}" alt="${alt}" title="${title}" style=${ifDefined(styleValue)} />`
+  return html`<img class="ys-md-img" part="image" src="${src}" alt="${alt}" title="${title}" style=${ifDefined(styleValue)} />`
 }
 
 const renderText = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
@@ -436,8 +431,8 @@ const renderHtmlInline = (ask: AstToken, chil: TemplateResult[], _option: any): 
 // 渲染颜色标签
 const renderColor = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = ask.node
-  return html`<div class="mx-1 inline-flex items-center gap-1 rounded-md border border-dashed px-2 py-1.5 leading-none">
-    <div class="inline-block h-3 w-3 rounded-sm" style="background-color: ${token.content};"></div>
+  return html`<div class="ys-inline-color ys-md-inline-color" part="inline-color">
+    <div class="ys-color-swatch ys-md-color-swatch" part="color-swatch" style="background-color: ${token.content};"></div>
     ${token.content}
   </div>`
 }
@@ -448,7 +443,7 @@ const renderMark = (_ask: AstToken, chil: TemplateResult[], option: any): Templa
     style = jsonToStyle(option.style.mark)
   }
   const styleValue = style.trim() ? style : undefined
-  return html`<mark style=${ifDefined(styleValue)}>${chil}</mark>`
+  return html`<mark class="ys-md-mark" part="mark" style=${ifDefined(styleValue)}>${chil}</mark>`
 }
 
 // 定义渲染方法的类型

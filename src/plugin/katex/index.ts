@@ -3,7 +3,7 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { customElement } from 'lit/decorators.js'
 import katex from 'katex'
 import katexcss from 'katex/dist/katex.min.css?inline'
-import { RuleItem, YsRenderUpdateDetail } from '../../types'
+import type { RuleItem, YsRenderUpdateDetail } from '../../types'
 import { setContent } from '../../utils'
 
 @customElement('ys-katex')

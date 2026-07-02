@@ -1,4 +1,5 @@
-import { render, TemplateResult } from 'lit'
+import { render } from 'lit'
+import type { TemplateResult } from 'lit'
 
 /**
  * 设置元素内容，根据是否有 shadowRoot 来判断是直接设置 innerHTML 还是修改 shadowRoot 内容

@@ -1,11 +1,12 @@
-import { LitElement, TemplateResult, css, html, unsafeCSS } from 'lit'
+import { LitElement, css, html, unsafeCSS } from 'lit'
+import type { TemplateResult } from 'lit'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { customElement, property } from 'lit/decorators.js'
 import hljs from 'highlight.js/lib/core'
 import highlightcss from 'highlight.js/styles/atom-one-dark.css?inline'
 import YsMdRendering from '../../YsMdRendering'
 import RegistrationLanguage from './RegistrationLanguage'
-import { AstToken } from '../../types'
+import type { AstToken } from '../../types'
 import { BooleanConverter } from '../../utils/converter'
 
 // 注册语法高亮

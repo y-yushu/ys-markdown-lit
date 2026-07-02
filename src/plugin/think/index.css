@@ -1,1 +1,10 @@
-@import 'tailwindcss';
+.ys-think-block {
+  padding-inline: 1rem;
+  border-left: 2px solid #d1d5db;
+}
+
+.ys-think-content {
+  color: #6b7280;
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+}

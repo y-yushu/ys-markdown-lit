@@ -1,0 +1,74 @@
+.markdown-pc {
+  --ys-md-text: #18202f;
+  --ys-md-muted: #667085;
+  --ys-md-border: #d8dee8;
+  --ys-md-bg: #ffffff;
+  --ys-md-soft-bg: #f7f9fc;
+  --ys-md-code-bg: #111827;
+  --ys-md-code-text: #e5edf8;
+  --ys-md-link: #0f5bd8;
+  --ys-md-quote: #475467;
+  --ys-md-selection: rgba(15, 91, 216, 0.16);
+  --ys-md-table-header-bg: #eef4ff;
+  --ys-md-heading-weight: 720;
+  --ys-md-strong-weight: 700;
+  --ys-md-line-height: 1.78;
+  --ys-md-heading-margin: 1.65em 0 0.72em;
+  --ys-md-block-margin: 1em 0;
+  --ys-md-list-padding: 1.9em;
+  --ys-md-list-item-margin: 0.42em 0;
+  --ys-md-panel-padding: 0.9em 1.05em;
+  --ys-md-code-padding: 1.05em 1.25em;
+  --ys-md-table-cell-padding: 0.72em 0.95em;
+  --ys-md-content-width: 860px;
+  --ys-md-table-min-width: 42em;
+  --ys-md-h1-size: 2.05em;
+  --ys-md-h2-size: 1.62em;
+  --ys-md-h3-size: 1.32em;
+  --ys-md-h4-size: 1.12em;
+  --ys-md-heading-border-width: 1px;
+  --ys-md-heading-padding-block-end: 0.28em;
+  --ys-md-code-block-radius: var(--ys-md-radius-lg);
+}
+
+.markdown-pc .ys-md-blockquote {
+  border-left-width: 5px;
+  box-shadow: inset 3px 0 0 rgba(15, 91, 216, 0.2);
+}
+
+.markdown-pc .ys-md-table-wrap {
+  border: 1px solid var(--ys-md-border);
+  border-radius: var(--ys-md-radius-lg);
+}
+
+.markdown-pc .ys-md-table :is(th, td) {
+  border-width: 0 0 1px;
+}
+
+.markdown-pc.ys-markdown-dark {
+  --ys-md-text: #e5eaf3;
+  --ys-md-muted: #a7b0c0;
+  --ys-md-border: #313a49;
+  --ys-md-bg: #0f141d;
+  --ys-md-soft-bg: #18202d;
+  --ys-md-code-bg: #090d14;
+  --ys-md-code-text: #dbeafe;
+  --ys-md-link: #7db4ff;
+  --ys-md-quote: #b8c0ce;
+  --ys-md-table-header-bg: #172235;
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown-pc:not(.ys-markdown-light) {
+    --ys-md-text: #e5eaf3;
+    --ys-md-muted: #a7b0c0;
+    --ys-md-border: #313a49;
+    --ys-md-bg: #0f141d;
+    --ys-md-soft-bg: #18202d;
+    --ys-md-code-bg: #090d14;
+    --ys-md-code-text: #dbeafe;
+    --ys-md-link: #7db4ff;
+    --ys-md-quote: #b8c0ce;
+    --ys-md-table-header-bg: #172235;
+  }
+}

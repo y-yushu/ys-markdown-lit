@@ -1,4 +1,4 @@
-import { ComplexAttributeConverter } from 'lit'
+import type { ComplexAttributeConverter } from 'lit'
 
 // 创建一个可复用的布尔转换器
 export const BooleanConverter: ComplexAttributeConverter<boolean> = {

@@ -1,0 +1,86 @@
+.markdown-tablet {
+  --ys-md-text: #172033;
+  --ys-md-muted: #697386;
+  --ys-md-border: #dbe3ef;
+  --ys-md-bg: #fbfcff;
+  --ys-md-soft-bg: #f0f5ff;
+  --ys-md-code-bg: #172033;
+  --ys-md-code-text: #eef4ff;
+  --ys-md-link: #6d3fd1;
+  --ys-md-quote: #5b4a8b;
+  --ys-md-selection: rgba(109, 63, 209, 0.18);
+  --ys-md-table-header-bg: #f4efff;
+  --ys-md-heading-weight: 680;
+  --ys-md-strong-weight: 680;
+  --ys-md-line-height: 1.72;
+  --ys-md-heading-margin: 1.35em 0 0.58em;
+  --ys-md-block-margin: 0.82em 0;
+  --ys-md-list-padding: 1.65em;
+  --ys-md-list-item-margin: 0.32em 0;
+  --ys-md-panel-padding: 0.82em 0.95em;
+  --ys-md-code-padding: 0.92em 1em;
+  --ys-md-table-cell-padding: 0.62em 0.78em;
+  --ys-md-content-width: 720px;
+  --ys-md-container-padding: 0.2em 0.35em;
+  --ys-md-table-min-width: 36em;
+  --ys-md-h1-size: 1.78em;
+  --ys-md-h2-size: 1.42em;
+  --ys-md-h3-size: 1.22em;
+  --ys-md-h4-size: 1.08em;
+  --ys-md-code-block-radius: var(--ys-md-radius-xl);
+}
+
+.markdown-tablet .ys-md-heading {
+  color: #24304a;
+}
+
+.markdown-tablet .ys-md-h2 {
+  padding-left: 0.55em;
+  border-left: 4px solid var(--ys-md-link);
+}
+
+.markdown-tablet .ys-md-blockquote,
+.markdown-tablet details {
+  border-color: transparent;
+  box-shadow: 0 1px 0 rgba(109, 63, 209, 0.12);
+}
+
+.markdown-tablet .ys-md-li {
+  padding: 0.08em 0;
+}
+
+.markdown-tablet.ys-markdown-dark {
+  --ys-md-text: #e8ecf5;
+  --ys-md-muted: #a8b0c2;
+  --ys-md-border: #34384a;
+  --ys-md-bg: #11131b;
+  --ys-md-soft-bg: #1d2130;
+  --ys-md-code-bg: #080a10;
+  --ys-md-code-text: #eef4ff;
+  --ys-md-link: #b59cff;
+  --ys-md-quote: #c8bcff;
+  --ys-md-table-header-bg: #211c35;
+}
+
+.markdown-tablet.ys-markdown-dark .ys-md-heading {
+  color: #f2f4fa;
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown-tablet:not(.ys-markdown-light) {
+    --ys-md-text: #e8ecf5;
+    --ys-md-muted: #a8b0c2;
+    --ys-md-border: #34384a;
+    --ys-md-bg: #11131b;
+    --ys-md-soft-bg: #1d2130;
+    --ys-md-code-bg: #080a10;
+    --ys-md-code-text: #eef4ff;
+    --ys-md-link: #b59cff;
+    --ys-md-quote: #c8bcff;
+    --ys-md-table-header-bg: #211c35;
+  }
+
+  .markdown-tablet:not(.ys-markdown-light) .ys-md-heading {
+    color: #f2f4fa;
+  }
+}

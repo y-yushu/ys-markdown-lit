@@ -1,1 +1,120 @@
-@import 'tailwindcss';
+.ys-mermaid-root {
+  margin-bottom: 1rem;
+}
+
+.ys-mermaid-card {
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+}
+
+.ys-mermaid-card-dark {
+  border-color: #374151;
+}
+
+.ys-mermaid-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  height: 2.5rem;
+  padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+  user-select: none;
+}
+
+.ys-mermaid-card-dark .ys-mermaid-toolbar {
+  background: #111827;
+}
+
+.ys-mermaid-tabs {
+  display: inline-flex;
+  height: 2rem;
+  padding: 0.25rem;
+  border-radius: 0.375rem;
+  background: #f3f4f6;
+}
+
+.ys-mermaid-card-dark .ys-mermaid-tabs {
+  background: #1f2937;
+}
+
+.ys-mermaid-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4rem;
+  padding: 0.25rem 0.75rem;
+  border: 0;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: #4b5563;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.ys-mermaid-card-dark .ys-mermaid-tab {
+  color: #9ca3af;
+}
+
+.ys-mermaid-tab-idle:hover {
+  color: #1f2937;
+  background: #e5e7eb;
+}
+
+.ys-mermaid-card-dark .ys-mermaid-tab-idle:hover {
+  color: #e5e7eb;
+  background: #1f2937;
+}
+
+.ys-mermaid-tab-active {
+  color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
+.ys-mermaid-card-dark .ys-mermaid-tab-active {
+  color: #60a5fa;
+  background: #374151;
+}
+
+.ys-mermaid-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.ys-mermaid-code {
+  max-width: 100%;
+  margin: 0;
+  padding: 1rem;
+  overflow-x: auto;
+  background: transparent;
+}
+
+.ys-mermaid-card-dark .ys-mermaid-code {
+  background: #1e2939;
+}
+
+.ys-mermaid-view {
+  min-height: 5rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+.ys-mermaid-card-dark .ys-mermaid-view {
+  background: #1e2939;
+}
+
+.ys-mermaid-graph {
+  display: flex;
+  justify-content: center;
+}
+
+.ys-mermaid-error {
+  padding: 0.5rem;
+  color: #ef4444;
+}

@@ -1,7 +1,7 @@
 import { html, LitElement, unsafeCSS } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import tailwindcss from './index.css?inline'
-import { RuleItem, YsRenderUpdateDetail } from '../../types'
+import componentStyles from './index.css?inline'
+import type { RuleItem, YsRenderUpdateDetail } from '../../types'
 import { setContent } from '../../utils'
 
 @customElement('ys-think')
@@ -11,7 +11,7 @@ export default class YsThink extends LitElement {
     version: '0.1.1'
   }
 
-  static styles = [unsafeCSS(tailwindcss)]
+  static styles = [unsafeCSS(componentStyles)]
 
   protected firstUpdated() {
     // 注册组件
@@ -44,8 +44,8 @@ export default class YsThink extends LitElement {
   private handleInstance = (event: CustomEvent<YsRenderUpdateDetail>) => {
     setContent(
       event.detail.el,
-      html`<div class="border-l-2 border-solid border-gray-300 px-4">
-        <span class="text-sm whitespace-pre-wrap text-gray-500">${event.detail.content}</span>
+      html`<div class="ys-think-block">
+        <span class="ys-think-content">${event.detail.content}</span>
       </div>`
     )
   }
@@ -53,8 +53,8 @@ export default class YsThink extends LitElement {
   private handleUpdate = (event: CustomEvent<YsRenderUpdateDetail>) => {
     setContent(
       event.detail.el,
-      html`<div class="border-l-2 border-solid border-gray-300 px-4">
-        <span class="text-sm whitespace-pre-wrap text-gray-500">${event.detail.content}</span>
+      html`<div class="ys-think-block">
+        <span class="ys-think-content">${event.detail.content}</span>
       </div>`
     )
   }

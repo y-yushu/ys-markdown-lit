@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "emitDeclarationOnly": true
+  },
+  "include": ["src/YsMdRendering", "src/plugin", "src/types", "src/utils", "src/index.ts"],
+  "exclude": ["src/**/*.stories.ts"]
+}

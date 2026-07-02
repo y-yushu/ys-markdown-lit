@@ -1,74 +1,125 @@
 {
   "name": "ys-md-rendering",
   "private": false,
-  "version": "0.2.4",
+  "version": "0.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/y-yushu/ys-markdown-lit.git"
   },
   "type": "module",
-  "types": "./types/YsMdRendering/index.d.ts",
-  "module": "./dist/ys-md-rendering.es.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./types/YsMdRendering/index.d.ts",
-      "import": "./dist/ys-md-rendering.es.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./plugin/code-highlight": {
+      "types": "./dist/plugin/code-highlight/index.d.ts",
+      "import": "./dist/plugin/code-highlight/index.js"
+    },
+    "./plugin/echarts": {
+      "types": "./dist/plugin/echarts/index.d.ts",
+      "import": "./dist/plugin/echarts/index.js"
+    },
+    "./plugin/katex": {
+      "types": "./dist/plugin/katex/index.d.ts",
+      "import": "./dist/plugin/katex/index.js"
+    },
+    "./plugin/think": {
+      "types": "./dist/plugin/think/index.d.ts",
+      "import": "./dist/plugin/think/index.js"
+    },
+    "./plugin/svg": {
+      "types": "./dist/plugin/svg/index.d.ts",
+      "import": "./dist/plugin/svg/index.js"
+    },
+    "./plugin/mermaid": {
+      "types": "./dist/plugin/mermaid/index.d.ts",
+      "import": "./dist/plugin/mermaid/index.js"
     },
     "./plugin/ys-code-highlight": {
-      "types": "./types/plugin/code-highlight/index.d.ts",
-      "import": "./dist/plugin/ys-code-highlight.es.js"
+      "types": "./dist/plugin/code-highlight/index.d.ts",
+      "import": "./dist/plugin/code-highlight/index.js"
     },
     "./plugin/ys-echarts": {
-      "types": "./types/plugin/echarts/index.d.ts",
-      "import": "./dist/plugin/ys-echarts.es.js"
+      "types": "./dist/plugin/echarts/index.d.ts",
+      "import": "./dist/plugin/echarts/index.js"
     },
     "./plugin/ys-katex": {
-      "types": "./types/plugin/katex/index.d.ts",
-      "import": "./dist/plugin/ys-katex.es.js"
+      "types": "./dist/plugin/katex/index.d.ts",
+      "import": "./dist/plugin/katex/index.js"
     },
     "./plugin/ys-think": {
-      "types": "./types/plugin/think/index.d.ts",
-      "import": "./dist/plugin/ys-think.es.js"
+      "types": "./dist/plugin/think/index.d.ts",
+      "import": "./dist/plugin/think/index.js"
     },
     "./plugin/ys-svg": {
-      "types": "./types/plugin/svg/index.d.ts",
-      "import": "./dist/plugin/ys-svg.es.js"
+      "types": "./dist/plugin/svg/index.d.ts",
+      "import": "./dist/plugin/svg/index.js"
     },
     "./plugin/ys-mermaid": {
-      "types": "./types/plugin/mermaid/index.d.ts",
-      "import": "./dist/plugin/ys-mermaid.es.js"
+      "types": "./dist/plugin/mermaid/index.d.ts",
+      "import": "./dist/plugin/mermaid/index.js"
     }
   },
   "files": [
-    "dist",
-    "types"
+    "dist"
   ],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:tsc": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006",
+    "build": "pnpm run build:lib && pnpm run build:types",
+    "build:lib": "vite build",
+    "build:types": "tsc -p tsconfig.build.json",
+    "build:storybook": "storybook build"
   },
   "dependencies": {
-    "@lit/context": "^1.1.5",
-    "@mdit/plugin-mark": "^0.22.1",
-    "@tailwindcss/vite": "^4.1.5",
+    "@lit/context": "^1.1.6",
+    "@mdit/plugin-mark": "^0.22.2",
+    "lit": "^3.3.3",
+    "markdown-it": "^14.2.0"
+  },
+  "peerDependencies": {
     "echarts": "^5.6.0",
-    "highlight.js": "^11.10.0",
-    "katex": "^0.16.21",
-    "lit": "^3.2.1",
-    "markdown-it": "^14.1.0",
-    "mermaid": "^11.6.0",
-    "tailwindcss": "^4.1.5"
+    "highlight.js": "^11.11.1",
+    "katex": "^0.16.47",
+    "mermaid": "^11.16.0"
+  },
+  "peerDependenciesMeta": {
+    "echarts": {
+      "optional": true
+    },
+    "highlight.js": {
+      "optional": true
+    },
+    "katex": {
+      "optional": true
+    },
+    "mermaid": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.16",
-    "@types/katex": "^0.16.7",
+    "@chromatic-com/storybook": "^5.2.1",
+    "@storybook/addon-a11y": "^10.4.6",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/addon-vitest": "^10.4.6",
+    "@storybook/web-components-vite": "^10.4.6",
+    "@types/katex": "^0.16.8",
     "@types/markdown-it": "^14.1.2",
-    "autoprefixer": "^10.4.20",
-    "prettier": "^3.5.0",
-    "prettier-plugin-tailwindcss": "^0.6.11",
-    "typescript": "~5.7.2",
-    "vite": "^6.1.0"
+    "@types/node": "^26.0.1",
+    "@vitest/browser-playwright": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.9",
+    "echarts": "^5.6.0",
+    "highlight.js": "^11.11.1",
+    "katex": "^0.16.47",
+    "mermaid": "^11.16.0",
+    "playwright": "^1.61.1",
+    "prettier": "^3.9.4",
+    "storybook": "^10.4.6",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1",
+    "vitest": "^4.1.9"
   }
 }

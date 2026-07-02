@@ -1,4 +1,5 @@
-import { LitElement, PropertyValues, ReactiveElement, TemplateResult, css, html, unsafeCSS } from 'lit'
+import { LitElement, ReactiveElement, css, html, unsafeCSS } from 'lit'
+import type { PropertyValues, TemplateResult } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { styleMap } from 'lit/directives/style-map.js'
@@ -6,24 +7,43 @@ import { provide } from '@lit/context'
 import MarkdownIt from 'markdown-it'
 import { mark } from '@mdit/plugin-mark'
 import Token from 'markdown-it/lib/token.mjs'
-import tailwindcss from './index.css?inline'
-import { RenderFunction, renderMethods } from './registerAllCustomRenderers'
+import componentStyles from './index.css?inline'
+import { renderMethods } from './registerAllCustomRenderers'
+import type { RenderFunction } from './registerAllCustomRenderers'
 import { generateUUID } from '../utils'
 import { BooleanConverter, ObjectConverter } from '../utils/converter'
-import { themeContext, ThemeData } from '../utils/context'
-import { TailwindVariables } from '../utils/dict'
-import { getBlockRule, getInlineRule, RuleOptions } from '../utils/getRule'
-import { AstToken, RuleItem, YsRenderUpdateDetail } from '../types'
+import { themeContext } from '../utils/context'
+import type { ThemeData } from '../utils/context'
+import { getBlockRule, getInlineRule } from '../utils/getRule'
+import type { RuleOptions } from '../utils/getRule'
+import type { AstToken, RuleItem, YsRenderUpdateDetail } from '../types'
+
+type MarkdownTheme = 'pc' | 'tablet' | 'h5'
+
+type ThemeStyleModule = {
+  default: string
+}
+
+const themeStyleLoaders: Record<MarkdownTheme, () => Promise<ThemeStyleModule>> = {
+  pc: () => import('./themes/pc.css?inline'),
+  tablet: () => import('./themes/tablet.css?inline'),
+  h5: () => import('./themes/h5.css?inline')
+}
+
+const themeStyleCache: Partial<Record<MarkdownTheme, string>> = {}
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
   @property({ type: String }) content = ''
 
+  // Markdown 主题风格
+  @property({ type: String }) theme: MarkdownTheme = 'pc'
+
+  // 基础字号大小，默认 16 表示 16px
+  @property({ type: Number }) size = 16
+
   // 固定深色模式还是浅色模式
   @property({ type: String }) mode = ''
-
-  // 手动开启深色模式
-  @property({ type: Boolean, converter: BooleanConverter }) dark = false
 
   // 自定义样式属性，支持 CSS 变量覆盖
   @property({
@@ -44,15 +64,12 @@ export default class YsMdRendering extends LitElement {
   @property({ type: Boolean, converter: BooleanConverter }) breaks = true
 
   static styles = [
-    unsafeCSS(tailwindcss),
+    unsafeCSS(componentStyles),
     css`
       :host {
         --rem-size: 1rem;
         display: block;
         max-width: 100%;
-      }
-      .prose {
-        font-size: var(--rem-size);
       }
     `
   ]
@@ -78,16 +95,13 @@ export default class YsMdRendering extends LitElement {
     mode: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   }
 
-  // 计算最终的样式对象
-  @state()
-  private _computedStyles: Record<string, string> = {}
-
   // 注册模板
   private templates = new Map<string, HTMLElement>()
   // 自动注册代码块
   private autoKey = new Map<string, string>()
   // 缓存 clone 元素
   private cloneMap = new Map<string, HTMLElement>()
+  private themeStyleRequestId = 0
 
   @state()
   private isReady = false
@@ -127,18 +141,15 @@ export default class YsMdRendering extends LitElement {
   // 方法1：使用 willUpdate 生命周期方法（推荐）
   willUpdate(changedProperties: PropertyValues) {
     if (changedProperties.has('mode')) {
-      if (this.mode) {
-        this.themeData = {
-          mode: this.mode
-        }
+      const nextMode = this.resolvedMode
+      if (this.themeData.mode !== nextMode) {
+        this.themeData = { mode: nextMode }
       }
     }
-
-    // 覆盖prose的css变量
-    this.setProseVariables()
   }
 
   protected updated() {
+    this.syncThemeStyle()
     this.syncCustomCssStyle()
   }
 
@@ -299,19 +310,67 @@ export default class YsMdRendering extends LitElement {
     root.appendChild(styleElement)
   }
 
-  /**
-   * 覆盖tailwindcss变量
-   * 识别符合`--tw-prose`开头的那些css变量
-   */
-  private setProseVariables() {
-    const computedStyles = getComputedStyle(this)
-    TailwindVariables.forEach(key => {
-      if (computedStyles.getPropertyValue(key)) {
-        if (this._computedStyles[key] !== computedStyles.getPropertyValue(key)) {
-          this._computedStyles[key] = computedStyles.getPropertyValue(key)
-        }
-      }
-    })
+  private get resolvedTheme(): MarkdownTheme {
+    return this.theme === 'tablet' || this.theme === 'h5' ? this.theme : 'pc'
+  }
+
+  private get resolvedMode(): ThemeData['mode'] {
+    return this.mode === 'dark' || this.mode === 'light' ? this.mode : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  }
+
+  private get resolvedSize() {
+    return Number.isFinite(this.size) && this.size > 0 ? this.size : 16
+  }
+
+  private getSizeStyles(): Record<string, string> {
+    const size = this.resolvedSize
+    const unit = size / 4
+    return {
+      '--ys-md-unit': `${unit}px`,
+      '--rem-size': `${size}px`,
+      '--ys-md-space-0-5': `${unit * 0.5}px`,
+      '--ys-md-space-1': `${unit}px`,
+      '--ys-md-space-1-5': `${unit * 1.5}px`,
+      '--ys-md-space-2': `${unit * 2}px`,
+      '--ys-md-space-3': `${unit * 3}px`,
+      '--ys-md-space-4': `${unit * 4}px`,
+      '--ys-md-space-5': `${unit * 5}px`,
+      '--ys-md-space-6': `${unit * 6}px`,
+      '--ys-md-space-8': `${unit * 8}px`,
+      '--ys-md-radius-sm': `${unit}px`,
+      '--ys-md-radius-md': `${unit * 1.5}px`,
+      '--ys-md-radius-lg': `${unit * 2}px`,
+      '--ys-md-radius-xl': `${unit * 2.5}px`,
+      '--ys-md-scrollbar-size': `${unit * 2}px`
+    }
+  }
+
+  private async syncThemeStyle() {
+    const root = this.shadowRoot
+    if (!root) return
+
+    const theme = this.resolvedTheme
+    const requestId = ++this.themeStyleRequestId
+    const styleId = 'ys-md-rendering-theme'
+    let styleElement = root.querySelector<HTMLStyleElement>(`#${styleId}`)
+
+    if (!styleElement) {
+      styleElement = document.createElement('style')
+      styleElement.id = styleId
+    }
+
+    let themeStyle = themeStyleCache[theme]
+    if (!themeStyle) {
+      const module = await themeStyleLoaders[theme]()
+      themeStyle = module.default
+      themeStyleCache[theme] = themeStyle
+    }
+
+    if (requestId !== this.themeStyleRequestId || theme !== this.resolvedTheme || !this.shadowRoot) return
+
+    styleElement.textContent = themeStyle
+    root.appendChild(styleElement)
+    this.syncCustomCssStyle()
   }
 
   /**
@@ -560,25 +619,16 @@ export default class YsMdRendering extends LitElement {
     }
 
     const cssMap = {
-      prose: true,
-      'dark:prose-invert': true, // 默认自动检测
-      'prose-invert': false,
-      'max-w-full': true
+      'ys-md-content': true,
+      'ys-markdown-body': true,
+      'ys-markdown-dark': this.mode === 'dark',
+      'ys-markdown-light': this.mode === 'light',
+      [`markdown-${this.resolvedTheme}`]: true
     }
-
-    // 深色模式
-    if (this.mode === 'dark') {
-      cssMap['dark:prose-invert'] = false // 关闭环境自动判断
-      cssMap['prose-invert'] = true // 开启深色模式
-    }
-    // 浅色模式
-    if (this.mode === 'light') {
-      cssMap['dark:prose-invert'] = false // 关闭环境自动判断
-      cssMap['prose-invert'] = false // 关闭深色模式
-    }
+    const inlineStyles = this.getSizeStyles()
 
     return html`
-      <div class=${classMap(cssMap)} style=${styleMap(this._computedStyles)}>${this._getAST()}</div>
+      <div class=${classMap(cssMap)} part="container" style=${styleMap(inlineStyles)}>${this._getAST()}</div>
       <slot></slot>
     `
   }
