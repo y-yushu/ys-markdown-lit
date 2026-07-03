@@ -1,0 +1,556 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="介绍/样式定制指南" />
+
+# 样式定制指南
+
+`<ys-md-rendering>` 使用 Shadow DOM 封装内部样式。外部定制时，建议按以下分层选择机制，**从标准、可维护的方式开始，最后再使用兜底方案**。
+
+---
+
+## 推荐分层
+
+<table>
+  <thead>
+    <tr>
+      <th>层级</th>
+      <th>机制</th>
+      <th>适用场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>0. 基线</strong>
+      </td>
+      <td>
+        <code>density</code> / <code>appearance</code> / <code>mode</code> / <code>size</code>
+      </td>
+      <td>选择排版密度、外观色板、明暗模式、基准字号</td>
+    </tr>
+    <tr>
+      <td>
+        <strong>1. Token</strong>
+      </td>
+      <td>
+        宿主 CSS 覆盖 <code>--ys-md-*</code> 变量
+      </td>
+      <td>全局换色、间距、行高、圆角等品牌主题</td>
+    </tr>
+    <tr>
+      <td>
+        <strong>2. Part</strong>
+      </td>
+      <td>
+        <code>ys-md-rendering::part(...)</code>
+      </td>
+      <td>
+        单类元素样式、<code>:hover</code> / <code>:focus</code> 等交互态
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>3. custom-styles</strong>
+      </td>
+      <td>
+        属性 <code>custom-styles</code>（JSON）
+      </td>
+      <td>运行时按配置给单个标签写 inline style</td>
+    </tr>
+    <tr>
+      <td>
+        <strong>4. custom-css</strong>
+      </td>
+      <td>
+        属性 <code>custom-css</code>（CSS 字符串）
+      </td>
+      <td>
+        Shadow 内未暴露 <code>part</code> 的少量规则、调试兜底
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+**原则：**
+
+- 改整站主色、链接色、引用背景 → 优先 **CSS 变量**，不要给每个元素写一条 `::part()`
+- 表格行 hover、链接 hover → 用 **`::part():hover`**
+- 接口返回「某段引用要红色边框」→ 用 **`custom-styles`**
+- 长 CSS 字符串塞进 HTML 属性 → 尽量避免，改用外部 `.css` 文件
+
+---
+
+## 0. 基线：`density` / `appearance` / `mode` / `size`
+
+```html
+<ys-md-rendering
+  density="streaming"
+  appearance="blue"
+  mode="light"
+  size="16"
+  content="..."
+></ys-md-rendering>
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>density</code>
+      </td>
+      <td>
+        <code>streaming</code> / <code>compact</code>
+      </td>
+      <td>
+        排版密度：<code>streaming</code> 适合长文流式阅读；<code>compact</code> 垂直节奏均匀、标题与段落间距接近
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>appearance</code>
+      </td>
+      <td>
+        <code>blue</code> / <code>red</code> / <code>green</code>
+      </td>
+      <td>外观色板（颜色、圆角、阴影、引用/表格装饰 token）</td>
+    </tr>
+    <tr>
+      <td>
+        <code>mode</code>
+      </td>
+      <td>
+        <code>light</code> / <code>dark</code> / 空
+      </td>
+      <td>
+        空值跟随系统 <code>prefers-color-scheme</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>size</code>
+      </td>
+      <td>
+        数字（默认 <code>16</code>）
+      </td>
+      <td>基准字号（px），同时影响 spacing / radius 等衍生变量</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 1. CSS 变量（主题 Token）
+
+组件通过 **双层 token** 控制样式：
+
+<table>
+  <thead>
+    <tr>
+      <th>层级</th>
+      <th>命名</th>
+      <th>谁赋值</th>
+      <th>用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>公开</td>
+      <td>
+        <code>--ys-md-link</code>、<code>--ys-md-h1-size</code> 等
+      </td>
+      <td>宿主 / <code>::part(container)</code> / <code>size</code> 属性</td>
+      <td>业务覆盖入口，优先级最高</td>
+    </tr>
+    <tr>
+      <td>预设</td>
+      <td>
+        <code>--ys-md-preset-link</code> 等
+      </td>
+      <td>
+        <code>density</code> / <code>appearance</code> 主题文件
+      </td>
+      <td>主题默认值；无公开覆盖时生效</td>
+    </tr>
+  </tbody>
+</table>
+
+结构层消费模式：`var(--ys-md-link, var(--ys-md-preset-link))` — 先读公开变量，未设置则用 preset。
+
+在**业务项目的样式表**中设置公开 token 即可覆盖主题：
+
+```css
+/* global.css */
+ys-md-rendering {
+  --ys-md-link: #00aa00;
+  --ys-md-h1-size: 2em;
+}
+```
+
+也可写在容器 part 上：
+
+```css
+ys-md-rendering::part(container) {
+  --ys-md-link: #00aa00;
+}
+```
+
+### 常用 Token（公开名）
+
+<table>
+  <thead>
+    <tr>
+      <th>变量</th>
+      <th>用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>--ys-md-text</code>
+      </td>
+      <td>正文颜色</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-muted</code>
+      </td>
+      <td>次要文字</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-link</code>
+      </td>
+      <td>链接颜色</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-border</code>
+      </td>
+      <td>边框颜色</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-bg</code>
+      </td>
+      <td>容器背景</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-soft-bg</code>
+      </td>
+      <td>引用块、行内代码等浅底背景</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-quote</code>
+      </td>
+      <td>引用块文字色</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-code-bg</code> / <code>--ys-md-code-text</code>
+      </td>
+      <td>代码块</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-line-height</code>
+      </td>
+      <td>行高</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-block-margin</code>
+      </td>
+      <td>段落、列表等块级间距</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-panel-padding</code>
+      </td>
+      <td>引用块内边距</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--ys-md-h1-size</code> ~ <code>--ys-md-h4-size</code>
+      </td>
+      <td>标题字号</td>
+    </tr>
+  </tbody>
+</table>
+
+各 `density` / `appearance` 预设通过 `--ys-md-preset-*` 赋值；**公开** `--ys-md-*` 在宿主或 `::part(container)` 上设置时，会覆盖对应 preset。
+
+`size` 属性还会动态注入公开 `--ys-md-space-*`、`--ys-md-radius-*` 等尺寸变量；与 `density` 叠加使用，例如 `size=18` + `density=compact` 表示「紧凑排版 + 稍大基准字号」。
+
+---
+
+## 2. `::part()` 外部样式
+
+Shadow 内主要节点已暴露 `part`，可从外部写标准 CSS，**支持 `:hover`、`:focus`、`:active`**：
+
+```css
+/* 链接 hover */
+ys-md-rendering::part(link):hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+/* 表格行 hover */
+ys-md-rendering::part(table-row):hover {
+  background: rgba(15, 91, 216, 0.08);
+}
+
+/* 引用块 */
+ys-md-rendering::part(blockquote) {
+  border-left-color: var(--ys-md-link);
+}
+```
+
+### 已暴露的 Part 名称
+
+<table>
+  <thead>
+    <tr>
+      <th>part</th>
+      <th>对应元素</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>container</code>
+      </td>
+      <td>Markdown 根容器</td>
+    </tr>
+    <tr>
+      <td>
+        <code>heading</code> / <code>heading-1</code> ~ <code>heading-6</code>
+      </td>
+      <td>标题</td>
+    </tr>
+    <tr>
+      <td>
+        <code>paragraph</code>
+      </td>
+      <td>段落</td>
+    </tr>
+    <tr>
+      <td>
+        <code>blockquote</code>
+      </td>
+      <td>引用</td>
+    </tr>
+    <tr>
+      <td>
+        <code>link</code>
+      </td>
+      <td>链接</td>
+    </tr>
+    <tr>
+      <td>
+        <code>strong</code> / <code>emphasis</code> / <code>strikethrough</code>
+      </td>
+      <td>加粗 / 斜体 / 删除线</td>
+    </tr>
+    <tr>
+      <td>
+        <code>list</code> / <code>ordered-list</code> / <code>unordered-list</code>
+      </td>
+      <td>列表</td>
+    </tr>
+    <tr>
+      <td>
+        <code>list-item</code>
+      </td>
+      <td>列表项</td>
+    </tr>
+    <tr>
+      <td>
+        <code>table-wrap</code> / <code>table</code> / <code>table-head</code> / <code>table-body</code>
+      </td>
+      <td>表格</td>
+    </tr>
+    <tr>
+      <td>
+        <code>table-row</code> / <code>table-header-cell</code> / <code>table-cell</code>
+      </td>
+      <td>表格行与单元格</td>
+    </tr>
+    <tr>
+      <td>
+        <code>code-block</code> / <code>code-pre</code> / <code>code-content</code> / <code>code-inline</code>
+      </td>
+      <td>代码</td>
+    </tr>
+    <tr>
+      <td>
+        <code>divider</code>
+      </td>
+      <td>分割线</td>
+    </tr>
+    <tr>
+      <td>
+        <code>image</code>
+      </td>
+      <td>图片</td>
+    </tr>
+    <tr>
+      <td>
+        <code>mark</code>
+      </td>
+      <td>高亮标记</td>
+    </tr>
+  </tbody>
+</table>
+
+**限制：**
+
+- 只能 styling **挂了 `part` 的元素本身**，不能写 `::part(table) td` 这类子选择器
+- 插件子组件（如 `ys-code-highlight`）在各自 Shadow Root 内，需使用插件自身的 `part`（如有）
+
+---
+
+## 3. `custom-styles`（运行时 inline）
+
+`custom-styles` 是一个 JSON 对象，按 **HTML 标签名** 为对应节点生成 **inline `style`**：
+
+```html
+<ys-md-rendering
+  .customStyles=${{
+    blockquote: { borderLeftColor: '#0f5bd8', padding: '1em' },
+    a: { fontWeight: '600' },
+  }}
+  content="..."
+></ys-md-rendering>
+```
+
+Vue 示例：
+
+```vue
+<ys-md-rendering
+  :custom-styles="{
+    blockquote: { borderLeftColor: '#0f5bd8' }
+  }"
+  :content="content"
+/>
+```
+
+支持的 key 与渲染器一致，例如：`h1`~`h6`、`p`、`blockquote`、`a`、`ul`、`ol`、`li`、`table`、`tr`、`th`、`td`、`strong`、`em`、`code`、`img` 等。
+
+**适用：** 后端 / 配置驱动的单节点样式。
+
+**不适用：**
+
+- `:hover`、媒体查询、伪元素（请用 `::part()` 或 CSS 变量）
+- 整站主题（请用 CSS 变量）
+
+---
+
+## 4. `custom-css`（兜底）
+
+向 Shadow Root 注入一段完整 CSS 文本：
+
+```html
+<ys-md-rendering custom-css=".ys-md-tr:hover { background: rgba(0,0,0,.04); }" />
+```
+
+建议在框架中通过 **property 绑定**（`.customCss="..."`）传入，避免在 HTML attribute 上写长字符串。
+
+**仅建议在以下情况使用：**
+
+- Shadow 内暂无对应 `part` 的选择器
+- 临时调试
+
+日常主题与交互态定制，应优先使用 **CSS 变量 + `::part()`**。
+
+---
+
+## 快速决策
+
+<table>
+  <thead>
+    <tr>
+      <th>我想…</th>
+      <th>用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>换品牌主色、链接色</td>
+      <td>
+        宿主 CSS → <code>--ys-md-link</code> 等变量
+      </td>
+    </tr>
+    <tr>
+      <td>表格行 hover 高亮</td>
+      <td>
+        <code>::part(table-row):hover</code>
+      </td>
+    </tr>
+    <tr>
+      <td>引用块左边线颜色</td>
+      <td>
+        <code>--ys-md-link</code> 或 <code>::part(blockquote)</code>
+      </td>
+    </tr>
+    <tr>
+      <td>接口动态改某段样式</td>
+      <td>
+        <code>custom-styles</code>
+      </td>
+    </tr>
+    <tr>
+      <td>改流式 / 紧凑排版</td>
+      <td>
+        <code>density="streaming|compact"</code>
+      </td>
+    </tr>
+    <tr>
+      <td>换色板</td>
+      <td>
+        <code>appearance="blue|red|green"</code>
+      </td>
+    </tr>
+    <tr>
+      <td>未暴露 part 的内部规则</td>
+      <td>
+        少量 <code>custom-css</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 示例：组合使用
+
+```css
+/* app.css — 品牌 token */
+ys-md-rendering {
+  --ys-md-link: #0f5bd8;
+  --ys-md-soft-bg: #f3f7fd;
+}
+
+/* 交互态 */
+ys-md-rendering::part(link):hover {
+  text-decoration: underline;
+}
+
+ys-md-rendering::part(table-row):hover {
+  background: rgba(15, 91, 216, 0.06);
+}
+```
+
+```vue
+<ys-md-rendering density="streaming" appearance="blue" mode="light" :size="16" :content="markdown" />
+```
+
+无需再传入大段 `custom-css`，除非有 Shadow 内部的特殊需求。

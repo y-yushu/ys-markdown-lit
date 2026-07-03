@@ -1,0 +1,65 @@
+.ys-markdown-body.markdown-appearance-blue {
+  --ys-md-preset-text: #18202f;
+  --ys-md-preset-muted: #667085;
+  --ys-md-preset-border: #d8dee8;
+  --ys-md-preset-bg: #ffffff;
+  --ys-md-preset-soft-bg: #f7f9fc;
+  --ys-md-preset-code-bg: #111827;
+  --ys-md-preset-code-text: #e5edf8;
+  --ys-md-preset-link: #0f5bd8;
+  --ys-md-preset-quote: #475467;
+  --ys-md-preset-quote-bg: #f3f7fd;
+  --ys-md-preset-quote-accent: var(--ys-md-preset-link);
+  --ys-md-preset-selection: rgba(15, 91, 216, 0.16);
+  --ys-md-preset-table-header-bg: #eef4ff;
+  --ys-md-preset-mark-bg: #fff3a3;
+  --ys-md-preset-radius-sm: 4px;
+  --ys-md-preset-radius-md: 6px;
+  --ys-md-preset-radius-lg: 8px;
+  --ys-md-preset-radius-xl: 10px;
+  --ys-md-preset-blockquote-border-width: 4px;
+  --ys-md-preset-blockquote-border-color: rgba(15, 91, 216, 0.1);
+  --ys-md-preset-blockquote-radius: 0 var(--ys-md-preset-radius-lg) var(--ys-md-preset-radius-lg) 0;
+  --ys-md-preset-blockquote-shadow: 0 1px 2px rgba(15, 91, 216, 0.04);
+  --ys-md-preset-table-wrap-border: 1px solid var(--ys-md-preset-border);
+  --ys-md-preset-table-wrap-radius: var(--ys-md-preset-radius-lg);
+  --ys-md-preset-table-cell-border-width: 0 0 1px;
+  --ys-md-preset-heading-border-width: 1px;
+  --ys-md-preset-heading-padding-block-end: 0.28em;
+}
+
+.ys-markdown-body.markdown-appearance-blue.ys-markdown-dark {
+  --ys-md-preset-text: #e5eaf3;
+  --ys-md-preset-muted: #a7b0c0;
+  --ys-md-preset-border: #313a49;
+  --ys-md-preset-bg: #0f141d;
+  --ys-md-preset-soft-bg: #18202d;
+  --ys-md-preset-code-bg: #090d14;
+  --ys-md-preset-code-text: #dbeafe;
+  --ys-md-preset-link: #7db4ff;
+  --ys-md-preset-quote: #b8c0ce;
+  --ys-md-preset-quote-bg: rgba(15, 91, 216, 0.1);
+  --ys-md-preset-selection: rgba(125, 180, 255, 0.2);
+  --ys-md-preset-table-header-bg: #172235;
+  --ys-md-preset-blockquote-border-color: rgba(125, 180, 255, 0.14);
+  --ys-md-preset-blockquote-shadow: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ys-markdown-body.markdown-appearance-blue:not(.ys-markdown-light) {
+    --ys-md-preset-text: #e5eaf3;
+    --ys-md-preset-muted: #a7b0c0;
+    --ys-md-preset-border: #313a49;
+    --ys-md-preset-bg: #0f141d;
+    --ys-md-preset-soft-bg: #18202d;
+    --ys-md-preset-code-bg: #090d14;
+    --ys-md-preset-code-text: #dbeafe;
+    --ys-md-preset-link: #7db4ff;
+    --ys-md-preset-quote: #b8c0ce;
+    --ys-md-preset-quote-bg: rgba(15, 91, 216, 0.1);
+    --ys-md-preset-selection: rgba(125, 180, 255, 0.2);
+    --ys-md-preset-table-header-bg: #172235;
+    --ys-md-preset-blockquote-border-color: rgba(125, 180, 255, 0.14);
+    --ys-md-preset-blockquote-shadow: none;
+  }
+}

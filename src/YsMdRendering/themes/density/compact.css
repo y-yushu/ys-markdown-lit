@@ -1,0 +1,30 @@
+.ys-markdown-body.markdown-density-compact {
+  --ys-md-preset-content-width: 100%;
+  --ys-md-preset-line-height: 1.55;
+  --ys-md-preset-stack-gap: 0.42em;
+  --ys-md-preset-heading-margin: var(--ys-md-preset-stack-gap) 0 var(--ys-md-preset-stack-gap);
+  --ys-md-preset-block-margin: var(--ys-md-preset-stack-gap) 0;
+  --ys-md-preset-list-padding: 1.15em;
+  --ys-md-preset-list-item-margin: 0.12em 0;
+  --ys-md-preset-panel-padding: 0.45em 0.6em;
+  --ys-md-preset-code-padding: 0.55em 0.65em;
+  --ys-md-preset-table-cell-padding: 0.34em 0.42em;
+  --ys-md-preset-container-padding: 0;
+  --ys-md-preset-table-min-width: 32em;
+  --ys-md-preset-code-header-display: none;
+  --ys-md-preset-h1-size: 1.28em;
+  --ys-md-preset-h2-size: 1.14em;
+  --ys-md-preset-h3-size: 1.04em;
+  --ys-md-preset-h4-size: 1em;
+  --ys-md-preset-small-heading-size: 0.95em;
+  --ys-md-preset-heading-border-width: 0;
+  --ys-md-preset-heading-padding-block-end: 0;
+  --ys-md-preset-hr-margin: var(--ys-md-preset-stack-gap) 0;
+  --ys-md-preset-img-margin: var(--ys-md-preset-stack-gap) auto;
+  --ys-md-preset-code-font-size: 0.88em;
+  --ys-md-preset-table-font-size: 0.9em;
+  --ys-md-preset-nested-list-margin: 0.14em 0;
+  --ys-md-preset-blockquote-inner-gap: 0.28em;
+  --ys-md-preset-footnotes-margin-top: var(--ys-md-preset-stack-gap);
+  --ys-md-preset-dd-margin-left: 1.15em;
+}

@@ -5,12 +5,14 @@ import { fn } from 'storybook/test'
 
 import './index'
 
-type MarkdownTheme = 'pc' | 'tablet' | 'h5'
+type MarkdownDensity = 'streaming' | 'compact'
+type MarkdownAppearance = 'blue' | 'red' | 'green'
 type MarkdownMode = '' | 'light' | 'dark'
 
 interface YsMdRenderingArgs {
   content: string
-  theme: MarkdownTheme
+  density: MarkdownDensity
+  appearance: MarkdownAppearance
   size: number
   mode: MarkdownMode
   breaks: boolean
@@ -102,7 +104,8 @@ const markdownShowcaseContent = [
   '```json',
   '{',
   '  "name": "ys-md-rendering",',
-  '  "style": "pc-tablet-h5",',
+  '  "density": "streaming",',
+  '  "appearance": "blue",',
   '  "storybook": true',
   '}',
   '```',
@@ -122,11 +125,7 @@ const markdownShowcaseContent = [
   '<dl>',
   '<dt>定义标题</dt>',
   '<dd>定义描述内容，用于观察 dt / dd 的缩进和粗细。</dd>',
-  '</dl>',
-  '',
-  '<section class="footnotes">',
-  '<p>脚注区域示例：这里用于检查 .footnotes 的边框、字号和辅助文本颜色。</p>',
-  '</section>'
+  '</dl>'
 ].join('\n')
 
 const customCss = `
@@ -144,7 +143,8 @@ const renderComponent = (args: YsMdRenderingArgs) =>
     `${args.html}-${args.linkify}`,
     html`<ys-md-rendering
       .content=${args.content}
-      .theme=${args.theme}
+      .density=${args.density}
+      .appearance=${args.appearance}
       .size=${args.size}
       .mode=${args.mode}
       .breaks=${args.breaks}
@@ -158,7 +158,11 @@ const renderComponent = (args: YsMdRenderingArgs) =>
 
 const renderStory = (args: YsMdRenderingArgs) => html` <div style="max-width: 820px; padding: 16px;">${renderComponent(args)}</div> `
 
-const renderMobileStory = (args: YsMdRenderingArgs) => html`
+const renderTokenOverrideStory = (args: YsMdRenderingArgs) => html`
+  <div style="max-width: 820px; padding: 16px; --ys-md-link: #00aa00;">${renderComponent(args)}</div>
+`
+
+const renderCompactStory = (args: YsMdRenderingArgs) => html`
   <div style="max-width: 390px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 12px;">${renderComponent(args)}</div>
 `
 
@@ -170,7 +174,7 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Markdown 流式输出渲染组件，重点预览 PC、平板、H5 三种设备阅读尺寸。'
+        component: 'Markdown 流式输出渲染组件，支持 density（排版密度）与 appearance（外观色板）两维主题。'
       }
     }
   },
@@ -179,10 +183,15 @@ const meta = {
       control: 'text',
       description: 'Markdown 内容'
     },
-    theme: {
+    density: {
       control: { type: 'select' },
-      options: ['pc', 'tablet', 'h5'],
-      description: '设备渲染尺寸'
+      options: ['streaming', 'compact'],
+      description: '排版密度：streaming 流式阅读 / compact 紧凑均匀'
+    },
+    appearance: {
+      control: { type: 'select' },
+      options: ['blue', 'red', 'green'],
+      description: '外观色板'
     },
     mode: {
       control: { type: 'inline-radio' },
@@ -220,7 +229,8 @@ const meta = {
   },
   args: {
     content: markdownShowcaseContent,
-    theme: 'pc',
+    density: 'streaming',
+    appearance: 'blue',
     size: 16,
     mode: '',
     breaks: true,
@@ -237,23 +247,51 @@ type Story = StoryObj<YsMdRenderingArgs>
 
 export const Playground: Story = {}
 
+export const StreamingBlue: Story = {
+  args: {
+    density: 'streaming',
+    appearance: 'blue'
+  }
+}
+
+export const CompactBlue: Story = {
+  render: renderCompactStory,
+  args: {
+    density: 'compact',
+    appearance: 'blue',
+    size: 15
+  }
+}
+
+export const AppearanceRed: Story = {
+  args: {
+    appearance: 'red'
+  }
+}
+
+export const AppearanceGreen: Story = {
+  args: {
+    appearance: 'green'
+  }
+}
+
 export const DarkMode: Story = {
   args: {
     mode: 'dark'
   }
 }
 
-export const TabletPreview: Story = {
+export const TokenOverride: Story = {
+  render: renderTokenOverrideStory,
   args: {
-    theme: 'tablet'
-  }
-}
-
-export const H5MobilePreview: Story = {
-  render: renderMobileStory,
-  args: {
-    theme: 'h5',
-    size: 15
+    appearance: 'blue'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '宿主 CSS 设置 `--ys-md-link: #00aa00` 覆盖 blue 主题的 preset 链接色。'
+      }
+    }
   }
 }
 

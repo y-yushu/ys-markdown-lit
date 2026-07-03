@@ -1,0 +1,187 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks'
+import * as YsMdRenderingStories from '../../src/YsMdRendering/YsMdRendering.stories'
+
+<Meta title="介绍/项目概览" />
+
+# YS MD Rendering
+
+[![npm 版本](https://badge.fury.io/js/ys-md-rendering.svg)](https://www.npmjs.com/package/ys-md-rendering)
+
+一套可定制的 **Web Components** 集合，用于自定义 Markdown 渲染，支持插件扩展。
+
+- **解析**：基于 [markdown-it](https://github.com/markdown-it/markdown-it)
+- **渲染**：基于 [Lit](https://lit.dev/) 3
+- **集成**：可在 Vue、React 或任意支持 Web Components 的框架中使用
+
+---
+
+## 安装
+
+```bash
+npm install ys-md-rendering
+```
+
+或使用 pnpm：
+
+```bash
+pnpm add ys-md-rendering
+```
+
+部分插件（代码高亮、KaTeX、ECharts、Mermaid 等）为 **optional peerDependencies**，按需安装对应依赖即可。
+
+---
+
+## 快速上手
+
+在 Vue 中导入主组件：
+
+```vue
+<script setup lang="ts">
+import 'ys-md-rendering'
+import { ref } from 'vue'
+
+const content = ref('# 你好世界\n\n这里是 Markdown 内容')
+</script>
+
+<template>
+  <ys-md-rendering :content="content" />
+</template>
+```
+
+需要插件时，额外导入对应插件模块（例如 `ys-md-rendering/plugin/ys-code-highlight`），并在模板中作为 `<ys-md-rendering>` 的子元素挂载。
+
+---
+
+## 主组件预览
+
+<Canvas of={YsMdRenderingStories.Playground} />
+
+---
+
+## 组件与 Story 导航
+
+### Components / YsMdRendering
+
+主组件 `<ys-md-rendering>`，负责 Markdown 流式渲染与主题适配：
+
+<table>
+  <thead>
+    <tr>
+      <th>能力</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>排版密度</td>
+      <td>
+        <code>density="streaming"</code> 流式阅读 / <code>density="compact"</code> 紧凑均匀
+      </td>
+    </tr>
+    <tr>
+      <td>外观色板</td>
+      <td>
+        <code>appearance="blue"</code> / <code>red</code> / <code>green</code>
+      </td>
+    </tr>
+    <tr>
+      <td>明暗模式</td>
+      <td>
+        <code>mode="light"</code> / <code>mode="dark"</code>，空值跟随系统
+      </td>
+    </tr>
+    <tr>
+      <td>样式定制</td>
+      <td>
+        见 sidebar <strong>介绍 → 样式定制指南</strong>（CSS 变量 → <code>::part()</code> → <code>custom-styles</code> → <code>custom-css</code>）
+      </td>
+    </tr>
+    <tr>
+      <td>Markdown 选项</td>
+      <td>
+        <code>breaks</code>、<code>html</code>、<code>linkify</code> 等
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+侧边栏 **Components → YsMdRendering** 可查看 Playground、StreamingBlue、CompactBlue、AppearanceRed、AppearanceGreen、DarkMode 等示例。
+
+### Plugins
+
+以下插件以 Lit 自定义元素形式挂载，按需启用：
+
+<table>
+  <thead>
+    <tr>
+      <th>插件</th>
+      <th>元素</th>
+      <th>用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CodeHighlight</td>
+      <td>
+        <code>&lt;ys-code-highlight&gt;</code>
+      </td>
+      <td>代码块语法高亮与复制</td>
+    </tr>
+    <tr>
+      <td>Katex</td>
+      <td>
+        <code>&lt;ys-katex&gt;</code>
+      </td>
+      <td>数学公式（LaTeX）渲染</td>
+    </tr>
+    <tr>
+      <td>Echarts</td>
+      <td>
+        <code>&lt;ys-echarts&gt;</code>
+      </td>
+      <td>图表（ECharts 配置块）渲染</td>
+    </tr>
+    <tr>
+      <td>Mermaid</td>
+      <td>
+        <code>&lt;ys-mermaid&gt;</code>
+      </td>
+      <td>流程图、时序图等 Mermaid 图表</td>
+    </tr>
+    <tr>
+      <td>Svg</td>
+      <td>
+        <code>&lt;ys-svg&gt;</code>
+      </td>
+      <td>SVG 图形渲染与交互</td>
+    </tr>
+    <tr>
+      <td>Think</td>
+      <td>
+        <code>&lt;ys-think&gt;</code>
+      </td>
+      <td>AI 思考过程折叠展示</td>
+    </tr>
+  </tbody>
+</table>
+
+各插件详细示例见侧边栏 **Plugins** 分组。
+
+---
+
+## 相关链接
+
+- [GitHub 仓库](https://github.com/y-yushu/ys-markdown-lit)
+- [npm 包 ys-md-rendering](https://www.npmjs.com/package/ys-md-rendering)
+
+---
+
+## 版本记录（节选）
+
+**0.3.0**
+
+- 升级 Vite 8
+- 移除 Tailwind CSS
+- 通过 Storybook 重构组件开发与文档
+
+更多历史版本见仓库 [README](https://github.com/y-yushu/ys-markdown-lit#更新记录)。

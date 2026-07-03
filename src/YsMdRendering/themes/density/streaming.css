@@ -1,0 +1,27 @@
+.ys-markdown-body.markdown-density-streaming {
+  --ys-md-preset-content-width: 720px;
+  --ys-md-preset-line-height: 1.7;
+  --ys-md-preset-stack-gap: 0.75em;
+  --ys-md-preset-heading-margin: 1.25em 0 0.5em;
+  --ys-md-preset-block-margin: var(--ys-md-preset-stack-gap) 0;
+  --ys-md-preset-list-padding: 1.5em;
+  --ys-md-preset-list-item-margin: 0.35em 0;
+  --ys-md-preset-panel-padding: 0.85em 1em;
+  --ys-md-preset-code-padding: 1em 1.15em;
+  --ys-md-preset-table-cell-padding: 0.65em 0.85em;
+  --ys-md-preset-container-padding: 0;
+  --ys-md-preset-table-min-width: 36em;
+  --ys-md-preset-code-header-display: flex;
+  --ys-md-preset-h1-size: 1.75em;
+  --ys-md-preset-h2-size: 1.45em;
+  --ys-md-preset-h3-size: 1.2em;
+  --ys-md-preset-h4-size: 1.05em;
+  --ys-md-preset-small-heading-size: 0.95em;
+  --ys-md-preset-hr-margin: 1.25em 0;
+  --ys-md-preset-img-margin: 0.85em auto;
+  --ys-md-preset-code-font-size: 0.92em;
+  --ys-md-preset-table-font-size: 0.94em;
+  --ys-md-preset-nested-list-margin: 0.2em 0;
+  --ys-md-preset-footnotes-margin-top: 1.25em;
+  --ys-md-preset-blockquote-inner-gap: 0.4em;
+}

@@ -18,26 +18,36 @@ import { getBlockRule, getInlineRule } from '../utils/getRule'
 import type { RuleOptions } from '../utils/getRule'
 import type { AstToken, RuleItem, YsRenderUpdateDetail } from '../types'
 
-type MarkdownTheme = 'pc' | 'tablet' | 'h5'
+type MarkdownDensity = 'streaming' | 'compact'
+type MarkdownAppearance = 'blue' | 'red' | 'green'
 
 type ThemeStyleModule = {
   default: string
 }
 
-const themeStyleLoaders: Record<MarkdownTheme, () => Promise<ThemeStyleModule>> = {
-  pc: () => import('./themes/pc.css?inline'),
-  tablet: () => import('./themes/tablet.css?inline'),
-  h5: () => import('./themes/h5.css?inline')
+const densityStyleLoaders: Record<MarkdownDensity, () => Promise<ThemeStyleModule>> = {
+  streaming: () => import('./themes/density/streaming.css?inline'),
+  compact: () => import('./themes/density/compact.css?inline')
 }
 
-const themeStyleCache: Partial<Record<MarkdownTheme, string>> = {}
+const appearanceStyleLoaders: Record<MarkdownAppearance, () => Promise<ThemeStyleModule>> = {
+  blue: () => import('./themes/appearance/blue.css?inline'),
+  red: () => import('./themes/appearance/red.css?inline'),
+  green: () => import('./themes/appearance/green.css?inline')
+}
+
+const densityStyleCache: Partial<Record<MarkdownDensity, string>> = {}
+const appearanceStyleCache: Partial<Record<MarkdownAppearance, string>> = {}
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
   @property({ type: String }) content = ''
 
-  // Markdown 主题风格
-  @property({ type: String }) theme: MarkdownTheme = 'pc'
+  // 排版密度：streaming 流式阅读 / compact 紧凑均匀
+  @property({ type: String }) density: MarkdownDensity = 'streaming'
+
+  // 外观色板：blue / red / green
+  @property({ type: String }) appearance: MarkdownAppearance = 'blue'
 
   // 基础字号大小，默认 16 表示 16px
   @property({ type: Number }) size = 16
@@ -101,7 +111,8 @@ export default class YsMdRendering extends LitElement {
   private autoKey = new Map<string, string>()
   // 缓存 clone 元素
   private cloneMap = new Map<string, HTMLElement>()
-  private themeStyleRequestId = 0
+  private densityStyleRequestId = 0
+  private appearanceStyleRequestId = 0
 
   @state()
   private isReady = false
@@ -310,8 +321,12 @@ export default class YsMdRendering extends LitElement {
     root.appendChild(styleElement)
   }
 
-  private get resolvedTheme(): MarkdownTheme {
-    return this.theme === 'tablet' || this.theme === 'h5' ? this.theme : 'pc'
+  private get resolvedDensity(): MarkdownDensity {
+    return this.density === 'compact' ? 'compact' : 'streaming'
+  }
+
+  private get resolvedAppearance(): MarkdownAppearance {
+    return this.appearance === 'red' || this.appearance === 'green' ? this.appearance : 'blue'
   }
 
   private get resolvedMode(): ThemeData['mode'] {
@@ -345,13 +360,13 @@ export default class YsMdRendering extends LitElement {
     }
   }
 
-  private async syncThemeStyle() {
+  private async syncDensityStyle() {
     const root = this.shadowRoot
     if (!root) return
 
-    const theme = this.resolvedTheme
-    const requestId = ++this.themeStyleRequestId
-    const styleId = 'ys-md-rendering-theme'
+    const density = this.resolvedDensity
+    const requestId = ++this.densityStyleRequestId
+    const styleId = 'ys-md-rendering-density'
     let styleElement = root.querySelector<HTMLStyleElement>(`#${styleId}`)
 
     if (!styleElement) {
@@ -359,18 +374,50 @@ export default class YsMdRendering extends LitElement {
       styleElement.id = styleId
     }
 
-    let themeStyle = themeStyleCache[theme]
-    if (!themeStyle) {
-      const module = await themeStyleLoaders[theme]()
-      themeStyle = module.default
-      themeStyleCache[theme] = themeStyle
+    let densityStyle = densityStyleCache[density]
+    if (!densityStyle) {
+      const module = await densityStyleLoaders[density]()
+      densityStyle = module.default
+      densityStyleCache[density] = densityStyle
     }
 
-    if (requestId !== this.themeStyleRequestId || theme !== this.resolvedTheme || !this.shadowRoot) return
+    if (requestId !== this.densityStyleRequestId || density !== this.resolvedDensity || !this.shadowRoot) return
 
-    styleElement.textContent = themeStyle
+    styleElement.textContent = densityStyle
+    root.appendChild(styleElement)
+  }
+
+  private async syncAppearanceStyle() {
+    const root = this.shadowRoot
+    if (!root) return
+
+    const appearance = this.resolvedAppearance
+    const requestId = ++this.appearanceStyleRequestId
+    const styleId = 'ys-md-rendering-appearance'
+    let styleElement = root.querySelector<HTMLStyleElement>(`#${styleId}`)
+
+    if (!styleElement) {
+      styleElement = document.createElement('style')
+      styleElement.id = styleId
+    }
+
+    let appearanceStyle = appearanceStyleCache[appearance]
+    if (!appearanceStyle) {
+      const module = await appearanceStyleLoaders[appearance]()
+      appearanceStyle = module.default
+      appearanceStyleCache[appearance] = appearanceStyle
+    }
+
+    if (requestId !== this.appearanceStyleRequestId || appearance !== this.resolvedAppearance || !this.shadowRoot) return
+
+    styleElement.textContent = appearanceStyle
     root.appendChild(styleElement)
     this.syncCustomCssStyle()
+  }
+
+  private syncThemeStyle() {
+    void this.syncDensityStyle()
+    void this.syncAppearanceStyle()
   }
 
   /**
@@ -623,7 +670,8 @@ export default class YsMdRendering extends LitElement {
       'ys-markdown-body': true,
       'ys-markdown-dark': this.mode === 'dark',
       'ys-markdown-light': this.mode === 'light',
-      [`markdown-${this.resolvedTheme}`]: true
+      [`markdown-density-${this.resolvedDensity}`]: true,
+      [`markdown-appearance-${this.resolvedAppearance}`]: true
     }
     const inlineStyles = this.getSizeStyles()
 

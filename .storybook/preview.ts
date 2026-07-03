@@ -2,6 +2,11 @@ import type { Preview } from '@storybook/web-components-vite'
 
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: {
+        order: ['介绍', ['项目概览', '样式定制指南'], 'Components', 'Plugins'],
+      },
+    },
     controls: {
       matchers: {
        color: /(background|color)$/i,

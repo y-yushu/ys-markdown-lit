@@ -34,9 +34,19 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 </script>
 
 <template>
-  <ys-md-rendering :content="content"></ys-md-rendering>
+  <ys-md-rendering
+    :content="content"
+    density="streaming"
+    appearance="blue"
+    mode="light"
+    :size="16"
+  />
 </template>
 ```
+
+## 示例文档
+
+[示例文档](https://y-yushu.github.io/ys-markdown-lit/)
 
 ## 更新记录
 
