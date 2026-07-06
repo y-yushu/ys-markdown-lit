@@ -101,10 +101,18 @@ const renderS = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateR
   return html`<s class="ys-md-s" part="strikethrough" style=${ifDefined(styleValue)}>${chil}</s>`
 }
 
+const isTaskList = (ask: AstToken) => {
+  const listItems = ask.children.filter(child => child.node.type === 'list_item_open')
+  return listItems.length > 0 && listItems.every(child => child.node.meta?.taskList === true)
+}
+
 // 注册有序列表渲染
 const renderOrderedList = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
   // 寻找起始数字
   const token: Token = _ask.node
+  const taskList = isTaskList(_ask)
+  const className = taskList ? 'ys-md-ol ys-md-task-list' : 'ys-md-ol'
+  const part = taskList ? 'list ordered-list task-list' : 'list ordered-list'
   const attrs = token.attrs || []
   let startNumber = 1
   for (let i = 0; i < attrs.length; i++) {
@@ -120,31 +128,38 @@ const renderOrderedList = (_ask: AstToken, chil: TemplateResult[], option: any):
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<ol class="ys-md-ol" part="list ordered-list" start="${startNumber}" style=${ifDefined(styleValue)}>
+  return html`<ol class=${className} part=${part} start="${startNumber}" style=${ifDefined(styleValue)}>
     ${chil}
   </ol>`
 }
 
 const renderBulletList = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
+  const taskList = isTaskList(_ask)
+  const className = taskList ? 'ys-md-ul ys-md-task-list' : 'ys-md-ul'
+  const part = taskList ? 'list unordered-list task-list' : 'list unordered-list'
   let style = ''
   if (option?.style?.ul) {
     style = jsonToStyle(option.style.ul)
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<ul class="ys-md-ul" part="list unordered-list" style=${ifDefined(styleValue)}>
+  return html`<ul class=${className} part=${part} style=${ifDefined(styleValue)}>
     ${chil}
   </ul>`
 }
 
 const renderListItem = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
+  const token: Token = _ask.node
+  const isTaskListItem = token.meta?.taskList === true
+  const className = isTaskListItem ? 'ys-md-li ys-md-task-list-item' : 'ys-md-li'
+  const part = isTaskListItem ? 'list-item task-list-item' : 'list-item'
   let style = ''
   if (option?.style?.li) {
     style = jsonToStyle(option.style.li)
   }
   const styleValue = style.trim() ? style : undefined
 
-  return html`<li class="ys-md-li" part="list-item" style=${ifDefined(styleValue)}>${chil}</li>`
+  return html`<li class=${className} part=${part} style=${ifDefined(styleValue)}>${chil}</li>`
 }
 
 const renderTable = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
@@ -354,6 +369,14 @@ const renderCodeInline = (ask: AstToken, _chil: TemplateResult[], option: any): 
   return html`<code class="ys-md-code-inline" part="code-inline" style=${ifDefined(styleValue)}>${token.content}</code>`
 }
 
+const renderTaskCheckbox = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
+  const checked = ask.node.meta?.checked === true
+  const className = checked ? 'ys-md-task-checkbox ys-md-task-checkbox-checked' : 'ys-md-task-checkbox ys-md-task-checkbox-unchecked'
+  const part = checked ? 'task-checkbox task-checkbox-checked' : 'task-checkbox task-checkbox-unchecked'
+
+  return html`<input class=${className} part=${part} type="checkbox" ?checked=${checked} disabled />`
+}
+
 const renderHr = (_ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
   let style = ''
   if (option?.style?.hr) {
@@ -468,6 +491,7 @@ export const renderMethods: RenderMethods = {
   fence: renderFence,
   code_block: renderCodeBlock,
   code_inline: renderCodeInline,
+  task_checkbox: renderTaskCheckbox,
   hr: renderHr,
   softbreak: renderSoftbreak,
   hardbreak: renderHardbreak,

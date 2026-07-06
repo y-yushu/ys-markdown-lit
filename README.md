@@ -44,6 +44,29 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 </template>
 ```
 
+### `content` 传值建议
+
+`content` 同时支持 HTML attribute 和 JavaScript property 两种方式：
+
+```html
+<!-- 仅适合短内容或简单 demo -->
+<ys-md-rendering content="# 你好世界"></ys-md-rendering>
+```
+
+```ts
+// 推荐：适合真实 Markdown 内容、长文档和流式更新
+const renderer = document.querySelector('ys-md-rendering')
+renderer.content = markdown
+```
+
+在 Vue 等框架中，推荐使用 property 绑定：
+
+```vue
+<ys-md-rendering :content="markdown" />
+```
+
+Markdown 内容通常包含换行、代码块、HTML 片段和特殊字符；大段内容不建议写进 `content="..."` attribute，避免转义复杂、DOM attribute 过长和调试困难。
+
 ## 示例文档
 
 [示例文档](https://y-yushu.github.io/ys-markdown-lit/)
@@ -55,6 +78,9 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 - refact: 升级vite8
 - refact: 移除tailwind
 - refact: 通过storybook重构
+- refact: 重构样式重定义方式，支持CSS 变量、`part`、`custom-styles`、`custom-css`四种方式
+- feat: 增加Hex色值支持，如`#3B82F6`
+- feat: 增加 GFM Task List 支持，如 `- [x] 已完成`
 
 #### 0.2.5
 

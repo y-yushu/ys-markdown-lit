@@ -2,7 +2,6 @@ import { LitElement, ReactiveElement, css, html, unsafeCSS } from 'lit'
 import type { PropertyValues, TemplateResult } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
-import { styleMap } from 'lit/directives/style-map.js'
 import { provide } from '@lit/context'
 import MarkdownIt from 'markdown-it'
 import { mark } from '@mdit/plugin-mark'
@@ -19,7 +18,7 @@ import type { RuleOptions } from '../utils/getRule'
 import type { AstToken, RuleItem, YsRenderUpdateDetail } from '../types'
 
 type MarkdownDensity = 'streaming' | 'compact'
-type MarkdownAppearance = 'blue' | 'red' | 'green'
+type MarkdownAppearance = 'blue'
 
 type ThemeStyleModule = {
   default: string
@@ -31,9 +30,7 @@ const densityStyleLoaders: Record<MarkdownDensity, () => Promise<ThemeStyleModul
 }
 
 const appearanceStyleLoaders: Record<MarkdownAppearance, () => Promise<ThemeStyleModule>> = {
-  blue: () => import('./themes/appearance/blue.css?inline'),
-  red: () => import('./themes/appearance/red.css?inline'),
-  green: () => import('./themes/appearance/green.css?inline')
+  blue: () => import('./themes/appearance/blue.css?inline')
 }
 
 const densityStyleCache: Partial<Record<MarkdownDensity, string>> = {}
@@ -46,7 +43,7 @@ export default class YsMdRendering extends LitElement {
   // 排版密度：streaming 流式阅读 / compact 紧凑均匀
   @property({ type: String }) density: MarkdownDensity = 'streaming'
 
-  // 外观色板：blue / red / green
+  // 外观色板：当前仅保留 blue
   @property({ type: String }) appearance: MarkdownAppearance = 'blue'
 
   // 基础字号大小，默认 16 表示 16px
@@ -160,6 +157,7 @@ export default class YsMdRendering extends LitElement {
   }
 
   protected updated() {
+    this.syncSizeStyle()
     this.syncThemeStyle()
     this.syncCustomCssStyle()
   }
@@ -278,6 +276,54 @@ export default class YsMdRendering extends LitElement {
       state.pos += color.length
       return true
     })
+
+    const taskMarkerPattern = /^\[(x|X| |)\](?:[ \t]+|$)/
+    this.md.core.ruler.after('inline', 'task_list', state => {
+      let activeListItem: Token | null = null
+      let shouldCheckInline = false
+
+      for (const token of state.tokens) {
+        if (token.type === 'list_item_open') {
+          activeListItem = token
+          shouldCheckInline = true
+          continue
+        }
+
+        if (token.type === 'list_item_close') {
+          activeListItem = null
+          shouldCheckInline = false
+          continue
+        }
+
+        if (!activeListItem || !shouldCheckInline || token.type !== 'inline' || !token.children?.length) {
+          continue
+        }
+
+        shouldCheckInline = false
+        const firstChild = token.children[0]
+        if (firstChild.type !== 'text') continue
+
+        const match = firstChild.content.match(taskMarkerPattern)
+        if (!match) continue
+
+        const checked = match[1].toLowerCase() === 'x'
+        const checkbox = new Token('task_checkbox', 'input', 0)
+        checkbox.meta = { checked }
+
+        firstChild.content = firstChild.content.slice(match[0].length)
+        if (firstChild.content) {
+          token.children.unshift(checkbox)
+        } else {
+          token.children.splice(0, 1, checkbox)
+        }
+
+        activeListItem.meta = {
+          ...activeListItem.meta,
+          taskList: true,
+          checked
+        }
+      }
+    })
   }
 
   // 自定义渲染规则
@@ -326,38 +372,55 @@ export default class YsMdRendering extends LitElement {
   }
 
   private get resolvedAppearance(): MarkdownAppearance {
-    return this.appearance === 'red' || this.appearance === 'green' ? this.appearance : 'blue'
+    return 'blue'
   }
 
   private get resolvedMode(): ThemeData['mode'] {
-    return this.mode === 'dark' || this.mode === 'light' ? this.mode : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    if (this.mode === 'dark' || this.mode === 'light') return this.mode
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   }
 
   private get resolvedSize() {
     return Number.isFinite(this.size) && this.size > 0 ? this.size : 16
   }
 
-  private getSizeStyles(): Record<string, string> {
+  private getSizeCss() {
     const size = this.resolvedSize
     const unit = size / 4
-    return {
-      '--ys-md-unit': `${unit}px`,
-      '--rem-size': `${size}px`,
-      '--ys-md-space-0-5': `${unit * 0.5}px`,
-      '--ys-md-space-1': `${unit}px`,
-      '--ys-md-space-1-5': `${unit * 1.5}px`,
-      '--ys-md-space-2': `${unit * 2}px`,
-      '--ys-md-space-3': `${unit * 3}px`,
-      '--ys-md-space-4': `${unit * 4}px`,
-      '--ys-md-space-5': `${unit * 5}px`,
-      '--ys-md-space-6': `${unit * 6}px`,
-      '--ys-md-space-8': `${unit * 8}px`,
-      '--ys-md-radius-sm': `${unit}px`,
-      '--ys-md-radius-md': `${unit * 1.5}px`,
-      '--ys-md-radius-lg': `${unit * 2}px`,
-      '--ys-md-radius-xl': `${unit * 2.5}px`,
-      '--ys-md-scrollbar-size': `${unit * 2}px`
+    return `.ys-md-content {
+      --ys-md-unit: ${unit}px;
+      --rem-size: ${size}px;
+      --ys-md-space-0-5: ${unit * 0.5}px;
+      --ys-md-space-1: ${unit}px;
+      --ys-md-space-1-5: ${unit * 1.5}px;
+      --ys-md-space-2: ${unit * 2}px;
+      --ys-md-space-3: ${unit * 3}px;
+      --ys-md-space-4: ${unit * 4}px;
+      --ys-md-space-5: ${unit * 5}px;
+      --ys-md-space-6: ${unit * 6}px;
+      --ys-md-space-8: ${unit * 8}px;
+      --ys-md-radius-sm: ${unit}px;
+      --ys-md-radius-md: ${unit * 1.5}px;
+      --ys-md-radius-lg: ${unit * 2}px;
+      --ys-md-radius-xl: ${unit * 2.5}px;
+      --ys-md-scrollbar-size: ${unit * 2}px;
+    }`
+  }
+
+  private syncSizeStyle() {
+    const root = this.shadowRoot
+    if (!root) return
+
+    const styleId = 'ys-md-rendering-size'
+    let styleElement = root.querySelector<HTMLStyleElement>(`#${styleId}`)
+
+    if (!styleElement) {
+      styleElement = document.createElement('style')
+      styleElement.id = styleId
     }
+
+    styleElement.textContent = this.getSizeCss()
+    root.appendChild(styleElement)
   }
 
   private async syncDensityStyle() {
@@ -673,10 +736,9 @@ export default class YsMdRendering extends LitElement {
       [`markdown-density-${this.resolvedDensity}`]: true,
       [`markdown-appearance-${this.resolvedAppearance}`]: true
     }
-    const inlineStyles = this.getSizeStyles()
 
     return html`
-      <div class=${classMap(cssMap)} part="container" style=${styleMap(inlineStyles)}>${this._getAST()}</div>
+      <div class=${classMap(cssMap)} part="container">${this._getAST()}</div>
       <slot></slot>
     `
   }

@@ -48,6 +48,19 @@ const content = ref('# 你好世界\n\n这里是 Markdown 内容')
 </template>
 ```
 
+`content` 同时支持 HTML attribute 和 JavaScript property。真实 Markdown 内容通常较长，并且会包含换行、代码块、HTML 片段和特殊字符，推荐使用 property 绑定或 JS 赋值：
+
+```ts
+const renderer = document.querySelector('ys-md-rendering')
+renderer.content = markdown
+```
+
+attribute 写法只建议用于短内容或简单 demo：
+
+```html
+<ys-md-rendering content="# 你好世界"></ys-md-rendering>
+```
+
 需要插件时，额外导入对应插件模块（例如 `ys-md-rendering/plugin/ys-code-highlight`），并在模板中作为 `<ys-md-rendering>` 的子元素挂载。
 
 ---
@@ -81,7 +94,7 @@ const content = ref('# 你好世界\n\n这里是 Markdown 内容')
     <tr>
       <td>外观色板</td>
       <td>
-        <code>appearance="blue"</code> / <code>red</code> / <code>green</code>
+        <code>appearance="blue"</code>
       </td>
     </tr>
     <tr>
@@ -99,13 +112,69 @@ const content = ref('# 你好世界\n\n这里是 Markdown 内容')
     <tr>
       <td>Markdown 选项</td>
       <td>
-        <code>breaks</code>、<code>html</code>、<code>linkify</code> 等
+        <code>breaks</code> 以及 <code>md-html</code>、<code>md-linkify</code> 等 <code>markdown-it</code> 透传选项
       </td>
     </tr>
   </tbody>
 </table>
 
-侧边栏 **Components → YsMdRendering** 可查看 Playground、StreamingBlue、CompactBlue、AppearanceRed、AppearanceGreen、DarkMode 等示例。
+`breaks` 是组件自身属性，用于控制软换行是否渲染为 `<br>`。
+
+`md-*` 是传给 `markdown-it` 的配置入口，不是组件单独声明的属性；`md-` 后面的名称会作为 `markdown-it` 配置键使用。下面用 `md-html` 和 `md-linkify` 举例：
+
+```html
+<ys-md-rendering md-html="true" md-linkify="false"></ys-md-rendering>
+```
+
+- `md-html` 对应 `markdown-it` 的 `html` 选项，控制 Markdown 中的 HTML 片段是否参与解析；组件默认值为 `true`。
+- `md-linkify` 对应 `markdown-it` 的 `linkify` 选项，只用于把 `https://example.com` 这类裸 URL 自动识别为链接；`[文本](https://example.com)` 这种标准 Markdown 链接不依赖它；组件默认值为 `false`。
+- 当前 `md-*` 配置在组件初始化时读取；如果运行时切换这些配置，建议重新创建组件实例。
+
+### 内置 Markdown 扩展
+
+主组件在 `markdown-it` 基础上内置了少量常用扩展：
+
+<table>
+  <thead>
+    <tr>
+      <th>语法</th>
+      <th>示例</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>HEX 色值</td>
+      <td>
+        <code>#3B82F6</code>
+      </td>
+      <td>渲染为带色块的行内颜色标记</td>
+    </tr>
+    <tr>
+      <td>GFM Task List</td>
+      <td>
+        <code>- [x] 已完成</code>
+        <br />
+        <code>- [ ] 未完成</code>
+      </td>
+      <td>
+        仅识别列表项开头的 <code>[x]</code>、<code>[X]</code>、<code>[ ]</code>、<code>[]</code>，渲染为禁用态 checkbox
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Task List 示例：
+
+```markdown
+- [x] 西红柿
+- [ ] 鸡蛋
+- [] 食用盐
+```
+
+如果同一个列表中混有普通列表项，普通项仍会保留无序列表语义；纯 Task List 会使用专门的 <code>task-list</code> part，方便单独调整缩进和 checkbox 样式。
+
+侧边栏 **Components → YsMdRendering** 可查看 Playground、StreamingBlue、CompactBlue、DarkMode 等示例。
 
 ### Plugins
 

@@ -117,7 +117,7 @@ import { Meta } from '@storybook/addon-docs/blocks'
         <code>appearance</code>
       </td>
       <td>
-        <code>blue</code> / <code>red</code> / <code>green</code>
+        <code>blue</code>
       </td>
       <td>外观色板（颜色、圆角、阴影、引用/表格装饰 token）</td>
     </tr>
@@ -148,42 +148,7 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 ## 1. CSS 变量（主题 Token）
 
-组件通过 **双层 token** 控制样式：
-
-<table>
-  <thead>
-    <tr>
-      <th>层级</th>
-      <th>命名</th>
-      <th>谁赋值</th>
-      <th>用途</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>公开</td>
-      <td>
-        <code>--ys-md-link</code>、<code>--ys-md-h1-size</code> 等
-      </td>
-      <td>宿主 / <code>::part(container)</code> / <code>size</code> 属性</td>
-      <td>业务覆盖入口，优先级最高</td>
-    </tr>
-    <tr>
-      <td>预设</td>
-      <td>
-        <code>--ys-md-preset-link</code> 等
-      </td>
-      <td>
-        <code>density</code> / <code>appearance</code> 主题文件
-      </td>
-      <td>主题默认值；无公开覆盖时生效</td>
-    </tr>
-  </tbody>
-</table>
-
-结构层消费模式：`var(--ys-md-link, var(--ys-md-preset-link))` — 先读公开变量，未设置则用 preset。
-
-在**业务项目的样式表**中设置公开 token 即可覆盖主题：
+组件支持通过公开 CSS 变量 `--ys-md-*` 覆盖样式。通常把变量写在 `<ys-md-rendering>` 宿主元素上；如果只想影响内部 Markdown 根容器，也可以写在 `::part(container)` 上。
 
 ```css
 /* global.css */
@@ -201,94 +166,120 @@ ys-md-rendering::part(container) {
 }
 ```
 
-### 常用 Token（公开名）
+### 支持的 Token（公开名）
 
-<table>
-  <thead>
-    <tr>
-      <th>变量</th>
-      <th>用途</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <code>--ys-md-text</code>
-      </td>
-      <td>正文颜色</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-muted</code>
-      </td>
-      <td>次要文字</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-link</code>
-      </td>
-      <td>链接颜色</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-border</code>
-      </td>
-      <td>边框颜色</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-bg</code>
-      </td>
-      <td>容器背景</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-soft-bg</code>
-      </td>
-      <td>引用块、行内代码等浅底背景</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-quote</code>
-      </td>
-      <td>引用块文字色</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-code-bg</code> / <code>--ys-md-code-text</code>
-      </td>
-      <td>代码块</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-line-height</code>
-      </td>
-      <td>行高</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-block-margin</code>
-      </td>
-      <td>段落、列表等块级间距</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-panel-padding</code>
-      </td>
-      <td>引用块内边距</td>
-    </tr>
-    <tr>
-      <td>
-        <code>--ys-md-h1-size</code> ~ <code>--ys-md-h4-size</code>
-      </td>
-      <td>标题字号</td>
-    </tr>
-  </tbody>
-</table>
+以下是当前组件支持外部设置的公开变量。
 
-各 `density` / `appearance` 预设通过 `--ys-md-preset-*` 赋值；**公开** `--ys-md-*` 在宿主或 `::part(container)` 上设置时，会覆盖对应 preset。
+#### 布局与基础颜色
 
-`size` 属性还会动态注入公开 `--ys-md-space-*`、`--ys-md-radius-*` 等尺寸变量；与 `density` 叠加使用，例如 `size=18` + `density=compact` 表示「紧凑排版 + 稍大基准字号」。
+| 变量 | 用途 |
+| --- | --- |
+| `--ys-md-content-width` | Markdown 根容器最大宽度；默认填满外层容器 |
+| `--ys-md-container-padding` | Markdown 根容器内边距；默认不增加左右留白 |
+| `--ys-md-bg` | Markdown 根容器背景 |
+| `--ys-md-text` | 正文与主要文字颜色 |
+| `--ys-md-muted` | 次要文字颜色，影响小标题、颜色标记等 |
+| `--ys-md-link` | 链接颜色 |
+| `--ys-md-border` | 通用边框颜色 |
+| `--ys-md-soft-bg` | 行内代码、kbd、部分弱背景 |
+| `--ys-md-selection` | 文本选中背景 |
+
+#### 字体与段落节奏
+
+| 变量 | 用途 |
+| --- | --- |
+| `--ys-md-line-height` | Markdown 根容器行高 |
+| `--ys-md-heading-weight` | 标题字重 |
+| `--ys-md-strong-weight` | 加粗文本与定义标题字重 |
+| `--ys-md-heading-margin` | 标题外边距 |
+| `--ys-md-heading-padding-block-end` | h1 / h2 底部内边距 |
+| `--ys-md-heading-border-width` | h1 / h2 底部分割线宽度 |
+| `--ys-md-h1-size` | h1 字号 |
+| `--ys-md-h2-size` | h2 字号 |
+| `--ys-md-h3-size` | h3 字号 |
+| `--ys-md-h4-size` | h4 字号 |
+| `--ys-md-small-heading-size` | h5 / h6 字号 |
+| `--ys-md-block-margin` | 段落、列表、引用、代码块、表格等块级元素外边距 |
+| `--ys-md-hr-margin` | 分割线外边距 |
+| `--ys-md-img-margin` | 图片外边距 |
+| `--ys-md-dd-margin-left` | 定义列表 dd 左边距 |
+
+#### 列表与面板
+
+| 变量 | 用途 |
+| --- | --- |
+| `--ys-md-list-padding` | ul / ol 左侧内边距 |
+| `--ys-md-list-item-margin` | li 外边距 |
+| `--ys-md-nested-list-margin` | 嵌套列表外边距 |
+| `--ys-md-panel-padding` | blockquote / details 内边距 |
+
+#### 引用块
+
+| 变量 | 用途 |
+| --- | --- |
+| `--ys-md-quote` | 引用块文字颜色 |
+| `--ys-md-quote-bg` | 引用块背景 |
+| `--ys-md-quote-accent` | 引用块左侧强调色 |
+| `--ys-md-blockquote-border-color` | 引用块边框颜色 |
+| `--ys-md-blockquote-border-width` | 引用块左侧边框宽度 |
+| `--ys-md-blockquote-radius` | 引用块圆角 |
+| `--ys-md-blockquote-shadow` | 引用块阴影 |
+| `--ys-md-blockquote-inner-gap` | 引用块内部连续段落间距 |
+
+#### 代码
+
+| 变量 | 用途 |
+| --- | --- |
+| `--ys-md-code-bg` | 代码块背景 |
+| `--ys-md-code-text` | 代码块文字颜色 |
+| `--ys-md-code-padding` | 代码块内容内边距 |
+| `--ys-md-code-font-size` | 代码块字号 |
+| `--ys-md-code-block-radius` | 代码块圆角 |
+| `--ys-md-inline-code-radius` | 行内代码 / kbd 圆角 |
+| `--ys-md-code-header-display` | 代码块头部显示方式，例如 `flex` / `none` |
+
+#### 表格
+
+| 变量 | 用途 |
+| --- | --- |
+| `--ys-md-table-wrap-border` | 表格外层边框 |
+| `--ys-md-table-wrap-radius` | 表格外层圆角 |
+| `--ys-md-table-min-width` | 表格最小宽度 |
+| `--ys-md-table-font-size` | 表格字号 |
+| `--ys-md-table-cell-padding` | th / td 内边距 |
+| `--ys-md-table-cell-border-width` | th / td 边框宽度 |
+| `--ys-md-table-header-bg` | 表头背景 |
+
+#### 标记
+
+| 变量 | 用途 |
+| --- | --- |
+| `--ys-md-mark-bg` | `==mark==` 高亮背景 |
+
+组件自身默认横向填满外层容器，`streaming` 与 `compact` 不再内置内容宽度限制；页面左右留白、阅读宽度应由外层布局或 `--ys-md-content-width` / `--ys-md-container-padding` 控制。
+
+### `size` 派生尺寸
+
+`size` 属性会在组件内部容器上动态注入一组派生尺寸变量，例如 `--rem-size`、`--ys-md-unit`、`--ys-md-space-*`、`--ys-md-radius-*`、`--ys-md-scrollbar-size`。
+
+这些变量用于组件内部排版计算，不作为推荐的外部覆盖 API。需要整体缩放时，优先使用 `size`：
+
+```html
+<ys-md-rendering size="18" content="..."></ys-md-rendering>
+```
+
+需要精细调整某类节点时，优先使用语义化 CSS 变量或 `::part()`，例如：
+
+```css
+ys-md-rendering {
+  --ys-md-list-padding: 1.25em;
+  --ys-md-code-block-radius: 8px;
+}
+
+ys-md-rendering::part(code-block-header) {
+  min-height: 2.25em;
+}
+```
 
 ---
 
@@ -311,6 +302,15 @@ ys-md-rendering::part(table-row):hover {
 /* 引用块 */
 ys-md-rendering::part(blockquote) {
   border-left-color: var(--ys-md-link);
+}
+
+/* Task List */
+ys-md-rendering::part(task-checkbox) {
+  accent-color: #0f5bd8;
+}
+
+ys-md-rendering::part(task-list-item) {
+  margin-block: 0.25em;
 }
 ```
 
@@ -374,6 +374,24 @@ ys-md-rendering::part(blockquote) {
     </tr>
     <tr>
       <td>
+        <code>task-list</code>
+      </td>
+      <td>纯 Task List 的列表容器</td>
+    </tr>
+    <tr>
+      <td>
+        <code>task-list-item</code>
+      </td>
+      <td>Task List 列表项</td>
+    </tr>
+    <tr>
+      <td>
+        <code>task-checkbox</code> / <code>task-checkbox-checked</code> / <code>task-checkbox-unchecked</code>
+      </td>
+      <td>Task List checkbox 及选中 / 未选中状态</td>
+    </tr>
+    <tr>
+      <td>
         <code>table-wrap</code> / <code>table</code> / <code>table-head</code> / <code>table-body</code>
       </td>
       <td>表格</td>
@@ -386,9 +404,15 @@ ys-md-rendering::part(blockquote) {
     </tr>
     <tr>
       <td>
-        <code>code-block</code> / <code>code-pre</code> / <code>code-content</code> / <code>code-inline</code>
+        <code>code-block</code> / <code>code-block-header</code> / <code>code-block-title</code> / <code>code-pre</code> / <code>code-content</code> / <code>code-inline</code>
       </td>
       <td>代码</td>
+    </tr>
+    <tr>
+      <td>
+        <code>line-break</code>
+      </td>
+      <td>换行</td>
     </tr>
     <tr>
       <td>
@@ -408,8 +432,30 @@ ys-md-rendering::part(blockquote) {
       </td>
       <td>高亮标记</td>
     </tr>
+    <tr>
+      <td>
+        <code>inline-color</code> / <code>color-swatch</code>
+      </td>
+      <td>HEX 颜色标记</td>
+    </tr>
   </tbody>
 </table>
+
+Task List 只会在列表项开头识别 <code>[x]</code>、<code>[X]</code>、<code>[ ]</code>、<code>[]</code>。纯 Task List 的父级列表会额外暴露 <code>task-list</code>，用于单独控制缩进；混合普通列表项时，父级仍按普通列表处理。
+
+```css
+ys-md-rendering::part(task-list) {
+  padding-left: 0;
+}
+
+ys-md-rendering::part(task-checkbox-checked) {
+  accent-color: #16a34a;
+}
+
+ys-md-rendering::part(task-checkbox-unchecked) {
+  accent-color: #94a3b8;
+}
+```
 
 **限制：**
 
@@ -514,9 +560,9 @@ Vue 示例：
       </td>
     </tr>
     <tr>
-      <td>换色板</td>
+      <td>默认色板</td>
       <td>
-        <code>appearance="blue|red|green"</code>
+        <code>appearance="blue"</code>
       </td>
     </tr>
     <tr>
