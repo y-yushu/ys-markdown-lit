@@ -18,7 +18,6 @@ interface YsMdRenderingArgs {
   breaks: boolean
   html: boolean
   linkify: boolean
-  customStyles: Record<string, Record<string, string>>
   customCss: string
   onLinkClick?: (event: CustomEvent) => void
 }
@@ -222,7 +221,6 @@ const renderComponent = (args: YsMdRenderingArgs) =>
       .size=${args.size}
       .mode=${args.mode}
       .breaks=${args.breaks}
-      .customStyles=${args.customStyles}
       .customCss=${args.customCss}
       md-html=${String(args.html)}
       md-linkify=${String(args.linkify)}
@@ -294,10 +292,6 @@ const meta = {
       control: 'text',
       description: '注入 Shadow Root 的 CSS'
     },
-    customStyles: {
-      control: false,
-      table: { disable: true }
-    },
     onLinkClick: {
       control: false,
       table: { disable: true }
@@ -312,7 +306,6 @@ const meta = {
     breaks: true,
     html: true,
     linkify: false,
-    customStyles: {},
     customCss: '',
     onLinkClick: fn()
   }

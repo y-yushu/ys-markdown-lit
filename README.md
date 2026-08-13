@@ -23,7 +23,7 @@ pnpm add ys-md-rendering
 
 ### 基础用法
 
-在 Vue 组件中导入主组件和所需的插件：
+在 Vue 组件中导入主组件，并传入 Markdown 内容：
 
 ```vue
 <script setup lang="ts">
@@ -34,13 +34,7 @@ const content = ref('# 你好世界\n\n这里是Markdown内容')
 </script>
 
 <template>
-  <ys-md-rendering
-    :content="content"
-    density="streaming"
-    appearance="blue"
-    mode="light"
-    :size="16"
-  />
+  <ys-md-rendering :content="content" />
 </template>
 ```
 
@@ -73,12 +67,16 @@ Markdown 内容通常包含换行、代码块、HTML 片段和特殊字符；大
 
 ## 更新记录
 
+#### 更新
+
+- remove: 移除`custom-styles`属性支持
+
 #### 0.3.0
 
 - refact: 升级vite8
 - refact: 移除tailwind
 - refact: 通过storybook重构
-- refact: 重构样式重定义方式，支持CSS 变量、`part`、`custom-styles`、`custom-css`四种方式
+- refact: 重构样式重定义方式，支持 CSS 变量、`part`、`custom-css` 三种方式
 - feat: 增加Hex色值支持，如`#3B82F6`
 - feat: 增加 GFM Task List 支持，如 `- [x] 已完成`
 

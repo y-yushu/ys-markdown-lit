@@ -10,7 +10,7 @@ import componentStyles from './index.css?inline'
 import { renderMethods } from './registerAllCustomRenderers'
 import type { RenderFunction } from './registerAllCustomRenderers'
 import { generateUUID } from '../utils'
-import { BooleanConverter, ObjectConverter } from '../utils/converter'
+import { BooleanConverter } from '../utils/converter'
 import { themeContext } from '../utils/context'
 import type { ThemeData } from '../utils/context'
 import { getBlockRule, getInlineRule } from '../utils/getRule'
@@ -51,17 +51,6 @@ export default class YsMdRendering extends LitElement {
 
   // 固定深色模式还是浅色模式
   @property({ type: String }) mode = ''
-
-  // 自定义样式属性，支持 CSS 变量覆盖
-  @property({
-    type: Object,
-    attribute: 'custom-styles',
-    converter: ObjectConverter,
-    hasChanged: (newVal: any, oldVal: any) => {
-      return JSON.stringify(newVal) !== JSON.stringify(oldVal)
-    }
-  })
-  customStyles: Record<string, any> = {}
 
   // 自定义 CSS 文本，注入当前组件的 Shadow Root
   @property({ type: String, attribute: 'custom-css' })
@@ -686,7 +675,6 @@ export default class YsMdRendering extends LitElement {
         const renderMethod = renderMethods[token.type]
         if (renderMethod) {
           return renderMethod(ast, this._renderAst5(ast.children), {
-            style: this.customStyles,
             breaks: this.breaks
           })
         }

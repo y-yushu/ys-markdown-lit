@@ -50,16 +50,7 @@ import { Meta } from '@storybook/addon-docs/blocks'
     </tr>
     <tr>
       <td>
-        <strong>3. custom-styles</strong>
-      </td>
-      <td>
-        属性 <code>custom-styles</code>（JSON）
-      </td>
-      <td>运行时按配置给单个标签写 inline style</td>
-    </tr>
-    <tr>
-      <td>
-        <strong>4. custom-css</strong>
+        <strong>3. custom-css</strong>
       </td>
       <td>
         属性 <code>custom-css</code>（CSS 字符串）
@@ -75,7 +66,6 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 - 改整站主色、链接色、引用背景 → 优先 **CSS 变量**，不要给每个元素写一条 `::part()`
 - 表格行 hover、链接 hover → 用 **`::part():hover`**
-- 接口返回「某段引用要红色边框」→ 用 **`custom-styles`**
 - 长 CSS 字符串塞进 HTML 属性 → 尽量避免，改用外部 `.css` 文件
 
 ---
@@ -464,43 +454,7 @@ ys-md-rendering::part(task-checkbox-unchecked) {
 
 ---
 
-## 3. `custom-styles`（运行时 inline）
-
-`custom-styles` 是一个 JSON 对象，按 **HTML 标签名** 为对应节点生成 **inline `style`**：
-
-```html
-<ys-md-rendering
-  .customStyles=${{
-    blockquote: { borderLeftColor: '#0f5bd8', padding: '1em' },
-    a: { fontWeight: '600' },
-  }}
-  content="..."
-></ys-md-rendering>
-```
-
-Vue 示例：
-
-```vue
-<ys-md-rendering
-  :custom-styles="{
-    blockquote: { borderLeftColor: '#0f5bd8' }
-  }"
-  :content="content"
-/>
-```
-
-支持的 key 与渲染器一致，例如：`h1`~`h6`、`p`、`blockquote`、`a`、`ul`、`ol`、`li`、`table`、`tr`、`th`、`td`、`strong`、`em`、`code`、`img` 等。
-
-**适用：** 后端 / 配置驱动的单节点样式。
-
-**不适用：**
-
-- `:hover`、媒体查询、伪元素（请用 `::part()` 或 CSS 变量）
-- 整站主题（请用 CSS 变量）
-
----
-
-## 4. `custom-css`（兜底）
+## 3. `custom-css`（兜底）
 
 向 Shadow Root 注入一段完整 CSS 文本：
 
@@ -548,9 +502,9 @@ Vue 示例：
       </td>
     </tr>
     <tr>
-      <td>接口动态改某段样式</td>
+      <td>调整某类 Markdown 节点样式</td>
       <td>
-        <code>custom-styles</code>
+        <code>::part(...)</code> 或 CSS 变量
       </td>
     </tr>
     <tr>

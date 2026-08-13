@@ -1,9 +1,7 @@
 import { html, render } from 'lit'
 import type { TemplateResult } from 'lit'
-import { ifDefined } from 'lit/directives/if-defined.js'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import Token from 'markdown-it/lib/token.mjs'
-import { jsonToStyle } from '../utils'
 import type { AstToken } from '../types'
 
 export type RenderFunction = (ask: AstToken, chil: TemplateResult[], option?: any) => TemplateResult
@@ -15,90 +13,56 @@ const rederInline = (_ask: AstToken, chil: TemplateResult[], _option: any): Temp
 }
 
 // 注册`H标题`渲染
-const renderHeading = (ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
+const renderHeading = (ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = ask.node
-  let style = ''
-  if (option?.style?.[token.tag]) {
-    style = jsonToStyle(option.style[token.tag])
-  }
-  const styleValue = style.trim() ? style : undefined
 
   switch (token.tag) {
     case 'h1':
-      return html`<h1 class="ys-md-heading ys-md-h1" part="heading heading-1" style=${ifDefined(styleValue)}>${chil}</h1>`
+      return html`<h1 class="ys-md-heading ys-md-h1" part="heading heading-1">${chil}</h1>`
     case 'h2':
-      return html`<h2 class="ys-md-heading ys-md-h2" part="heading heading-2" style=${ifDefined(styleValue)}>${chil}</h2>`
+      return html`<h2 class="ys-md-heading ys-md-h2" part="heading heading-2">${chil}</h2>`
     case 'h3':
-      return html`<h3 class="ys-md-heading ys-md-h3" part="heading heading-3" style=${ifDefined(styleValue)}>${chil}</h3>`
+      return html`<h3 class="ys-md-heading ys-md-h3" part="heading heading-3">${chil}</h3>`
     case 'h4':
-      return html`<h4 class="ys-md-heading ys-md-h4" part="heading heading-4" style=${ifDefined(styleValue)}>${chil}</h4>`
+      return html`<h4 class="ys-md-heading ys-md-h4" part="heading heading-4">${chil}</h4>`
     case 'h5':
-      return html`<h5 class="ys-md-heading ys-md-h5" part="heading heading-5" style=${ifDefined(styleValue)}>${chil}</h5>`
+      return html`<h5 class="ys-md-heading ys-md-h5" part="heading heading-5">${chil}</h5>`
     case 'h6':
-      return html`<h6 class="ys-md-heading ys-md-h6" part="heading heading-6" style=${ifDefined(styleValue)}>${chil}</h6>`
+      return html`<h6 class="ys-md-heading ys-md-h6" part="heading heading-6">${chil}</h6>`
   }
   console.error('[heading标签解析异常]', token)
   return html`<p>${chil}</p>`
 }
 
 // 注册`p`标签渲染
-const renderParagraph = (ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
+const renderParagraph = (ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = ask.node
-  let style = ''
-  if (option?.style?.p) {
-    style = jsonToStyle(option.style.p)
-  }
-  const styleValue = style.trim() ? style : undefined
 
   if (token.hidden) {
     return html`${chil}`
   } else {
-    return html`<p class="ys-md-p" part="paragraph" style=${ifDefined(styleValue)}>${chil}</p>`
+    return html`<p class="ys-md-p" part="paragraph">${chil}</p>`
   }
 }
 
 // 注册`blockquote`渲染
-const renderBlockquote = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.blockquote) {
-    style = jsonToStyle(option.style.blockquote)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<blockquote class="ys-md-blockquote" part="blockquote" style=${ifDefined(styleValue)}>${chil}</blockquote>`
+const renderBlockquote = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<blockquote class="ys-md-blockquote" part="blockquote">${chil}</blockquote>`
 }
 
 // 注册 strong 渲染
-const renderStrong = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.strong) {
-    style = jsonToStyle(option.style.strong)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<strong class="ys-md-strong" part="strong" style=${ifDefined(styleValue)}>${chil}</strong>`
+const renderStrong = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<strong class="ys-md-strong" part="strong">${chil}</strong>`
 }
 
 // 注册 em 渲染
-const renderEm = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.em) {
-    style = jsonToStyle(option.style.em)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<em class="ys-md-em" part="emphasis" style=${ifDefined(styleValue)}>${chil}</em>`
+const renderEm = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<em class="ys-md-em" part="emphasis">${chil}</em>`
 }
 
 // 注册 s 渲染
-const renderS = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.s) {
-    style = jsonToStyle(option.style.s)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<s class="ys-md-s" part="strikethrough" style=${ifDefined(styleValue)}>${chil}</s>`
+const renderS = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<s class="ys-md-s" part="strikethrough">${chil}</s>`
 }
 
 const isTaskList = (ask: AstToken) => {
@@ -107,7 +71,7 @@ const isTaskList = (ask: AstToken) => {
 }
 
 // 注册有序列表渲染
-const renderOrderedList = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
+const renderOrderedList = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
   // 寻找起始数字
   const token: Token = _ask.node
   const taskList = isTaskList(_ask)
@@ -122,114 +86,60 @@ const renderOrderedList = (_ask: AstToken, chil: TemplateResult[], option: any):
     }
   }
 
-  let style = ''
-  if (option?.style?.ol) {
-    style = jsonToStyle(option.style.ol)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<ol class=${className} part=${part} start="${startNumber}" style=${ifDefined(styleValue)}>
+  return html`<ol class=${className} part=${part} start="${startNumber}">
     ${chil}
   </ol>`
 }
 
-const renderBulletList = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
+const renderBulletList = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
   const taskList = isTaskList(_ask)
   const className = taskList ? 'ys-md-ul ys-md-task-list' : 'ys-md-ul'
   const part = taskList ? 'list unordered-list task-list' : 'list unordered-list'
-  let style = ''
-  if (option?.style?.ul) {
-    style = jsonToStyle(option.style.ul)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<ul class=${className} part=${part} style=${ifDefined(styleValue)}>
+  return html`<ul class=${className} part=${part}>
     ${chil}
   </ul>`
 }
 
-const renderListItem = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
+const renderListItem = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = _ask.node
   const isTaskListItem = token.meta?.taskList === true
   const className = isTaskListItem ? 'ys-md-li ys-md-task-list-item' : 'ys-md-li'
   const part = isTaskListItem ? 'list-item task-list-item' : 'list-item'
-  let style = ''
-  if (option?.style?.li) {
-    style = jsonToStyle(option.style.li)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<li class=${className} part=${part} style=${ifDefined(styleValue)}>${chil}</li>`
+  return html`<li class=${className} part=${part}>${chil}</li>`
 }
 
-const renderTable = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.table) {
-    style = jsonToStyle(option.style.table)
-  }
-  const styleValue = style.trim() ? style : undefined
-
+const renderTable = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
   return html`<div class="ys-table-wrap ys-md-table-wrap" part="table-wrap">
-    <table class="ys-md-table" part="table" style=${ifDefined(styleValue)}>
+    <table class="ys-md-table" part="table">
       ${chil}
     </table>
   </div> `
 }
 
-const renderThead = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.thead) {
-    style = jsonToStyle(option.style.thead)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<thead class="ys-md-thead" part="table-head" style=${ifDefined(styleValue)}>
+const renderThead = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<thead class="ys-md-thead" part="table-head">
     ${chil}
   </thead>`
 }
 
-const renderTbody = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.tbody) {
-    style = jsonToStyle(option.style.tbody)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<tbody class="ys-md-tbody" part="table-body" style=${ifDefined(styleValue)}>
+const renderTbody = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<tbody class="ys-md-tbody" part="table-body">
     ${chil}
   </tbody>`
 }
 
-const renderTr = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.tr) {
-    style = jsonToStyle(option.style.tr)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<tr class="ys-md-tr" part="table-row" style=${ifDefined(styleValue)}>
+const renderTr = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<tr class="ys-md-tr" part="table-row">
     ${chil}
   </tr>`
 }
 
-const renderTh = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.th) {
-    style = jsonToStyle(option.style.th)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<th class="ys-md-th" part="table-header-cell" style=${ifDefined(styleValue)}>${chil}</th>`
+const renderTh = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<th class="ys-md-th" part="table-header-cell">${chil}</th>`
 }
 
-const renderTd = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.td) {
-    style = jsonToStyle(option.style.td)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<td class="ys-md-td" part="table-cell" style=${ifDefined(styleValue)}>${chil}</td>`
+const renderTd = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<td class="ys-md-td" part="table-cell">${chil}</td>`
 }
 type LinkClickDetail = {
   text: string
@@ -240,14 +150,10 @@ type LinkClickDetail = {
 
 const isModifiedClick = (e: MouseEvent) => e.button === 1 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey
 
-const renderLink = (ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
+const renderLink = (ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = ask.node
   const attrs: Array<[string, string]> | null = token.attrs || []
   const href = attrs!.find(attr => attr[0] === 'href')?.[1] || ''
-
-  let style = ''
-  if (option?.style?.a) style = jsonToStyle(option.style.a)
-  const styleValue = style.trim() ? style : undefined
 
   const handleClick = (e: MouseEvent) => {
     const anchorEl = e.currentTarget as HTMLAnchorElement
@@ -316,57 +222,40 @@ const renderLink = (ask: AstToken, chil: TemplateResult[], option: any): Templat
     href="${href}"
     target="_blank"
     rel="noreferrer noopener nofollow"
-    style=${ifDefined(styleValue)}
     @click=${handleClick}
     >${chil}</a
   >`
 }
 
-const renderFence = (ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
+const renderFence = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = ask.node
-  let style = ''
-  if (option?.style?.pre) {
-    style = jsonToStyle(option.style.pre)
-  }
-  const styleValue = style.trim() ? style : undefined
 
   return html`
     <div class="ys-code-block ys-md-code-block" part="code-block">
       <div class="ys-code-block-header ys-md-code-block-header" part="code-block-header">
         <span class="ys-code-block-title ys-md-code-block-title" part="code-block-title">${token.info}</span>
       </div>
-      <pre class="ys-md-code-pre" part="code-pre" style=${ifDefined(styleValue)}><code class="ys-md-code-content" part="code-content">${token.content}</code></pre>
+      <pre class="ys-md-code-pre" part="code-pre"><code class="ys-md-code-content" part="code-content">${token.content}</code></pre>
     </div>
   `
 }
 
-const renderCodeBlock = (ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
+const renderCodeBlock = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = ask.node
-  let style = ''
-  if (option?.style?.pre) {
-    style = jsonToStyle(option.style.pre)
-  }
-  const styleValue = style.trim() ? style : undefined
 
   return html`
     <div class="ys-code-block ys-md-code-block" part="code-block">
       <div class="ys-code-block-header ys-md-code-block-header" part="code-block-header">
         <span class="ys-code-block-title ys-md-code-block-title" part="code-block-title">代码</span>
       </div>
-      <pre class="ys-md-code-pre" part="code-pre" style=${ifDefined(styleValue)}><code class="ys-md-code-content" part="code-content">${token.content}</code></pre>
+      <pre class="ys-md-code-pre" part="code-pre"><code class="ys-md-code-content" part="code-content">${token.content}</code></pre>
     </div>
   `
 }
 
-const renderCodeInline = (ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
+const renderCodeInline = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = ask.node
-  let style = ''
-  if (option?.style?.code) {
-    style = jsonToStyle(option.style.code)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<code class="ys-md-code-inline" part="code-inline" style=${ifDefined(styleValue)}>${token.content}</code>`
+  return html`<code class="ys-md-code-inline" part="code-inline">${token.content}</code>`
 }
 
 const renderTaskCheckbox = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
@@ -377,55 +266,32 @@ const renderTaskCheckbox = (ask: AstToken, _chil: TemplateResult[], _option: any
   return html`<input class=${className} part=${part} type="checkbox" ?checked=${checked} disabled />`
 }
 
-const renderHr = (_ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.hr) {
-    style = jsonToStyle(option.style.hr)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<hr class="ys-md-hr" part="divider" style=${ifDefined(styleValue)} />`
+const renderHr = (_ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<hr class="ys-md-hr" part="divider" />`
 }
 
 const renderSoftbreak = (_ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
   if (option?.breaks) {
     // 软换行也算作换行
-    let style = ''
-    if (option?.style?.br) {
-      style = jsonToStyle(option.style.br)
-    }
-    const styleValue = style.trim() ? style : undefined
-    return html`<br class="ys-md-br" part="line-break" style=${ifDefined(styleValue)} />`
+    return html`<br class="ys-md-br" part="line-break" />`
   } else {
     return html`${' '}`
   }
 }
 
-const renderHardbreak = (_ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.br) {
-    style = jsonToStyle(option.style.br)
-  }
-  const styleValue = style.trim() ? style : undefined
-
-  return html`<br class="ys-md-br" part="line-break" style=${ifDefined(styleValue)} />`
+const renderHardbreak = (_ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<br class="ys-md-br" part="line-break" />`
 }
 
-const renderImage = (ask: AstToken, _chil: TemplateResult[], option: any): TemplateResult => {
+const renderImage = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
   const token: Token = ask.node
   const attrs: Array<[string, string]> | null = token.attrs || []
   const src = attrs.find(attr => attr[0] === 'src')?.[1] || ''
   const alt = attrs.find(attr => attr[0] === 'alt')?.[1] || ''
   const title = attrs.find(attr => attr[0] === 'title')?.[1] || ''
 
-  let style = ''
-  if (option?.style?.img) {
-    style = jsonToStyle(option.style.img)
-  }
-  const styleValue = style.trim() ? style : undefined
-
   // 返回图片的 HTML 模板
-  return html`<img class="ys-md-img" part="image" src="${src}" alt="${alt}" title="${title}" style=${ifDefined(styleValue)} />`
+  return html`<img class="ys-md-img" part="image" src="${src}" alt="${alt}" title="${title}" />`
 }
 
 const renderText = (ask: AstToken, _chil: TemplateResult[], _option: any): TemplateResult => {
@@ -460,13 +326,8 @@ const renderColor = (ask: AstToken, _chil: TemplateResult[], _option: any): Temp
   </div>`
 }
 
-const renderMark = (_ask: AstToken, chil: TemplateResult[], option: any): TemplateResult => {
-  let style = ''
-  if (option?.style?.mark) {
-    style = jsonToStyle(option.style.mark)
-  }
-  const styleValue = style.trim() ? style : undefined
-  return html`<mark class="ys-md-mark" part="mark" style=${ifDefined(styleValue)}>${chil}</mark>`
+const renderMark = (_ask: AstToken, chil: TemplateResult[], _option: any): TemplateResult => {
+  return html`<mark class="ys-md-mark" part="mark">${chil}</mark>`
 }
 
 // 定义渲染方法的类型

@@ -89,7 +89,6 @@ Vite 构建中会 externalize 这些可选依赖，避免把大型插件依赖�
 - `appearance`：色板，当前仅支持 `blue`。
 - `mode`：主题模式，支持 `light`、`dark`；为空时跟随系统偏好。
 - `size`：基础字号，默认 `16`。
-- `custom-styles`：对象形式的元素样式覆盖。
 - `custom-css`：直接注入当前组件 Shadow Root 的 CSS 文本。
 - `breaks`：是否把软换行渲染为 `<br>`。
 
@@ -108,7 +107,7 @@ Vite 构建中会 externalize 这些可选依赖，避免把大型插件依赖�
 
 - 主组件使用 Shadow DOM，基础样式在 `src/YsMdRendering/index.css`。
 - 密度和外观主题按需动态加载并缓存。
-- 对外样式定制优先使用 CSS 变量、`part`、`custom-styles`、`custom-css`。
+- 对外样式定制优先使用 CSS 变量、`part`，必要时使用 `custom-css`。
 - 新增默认渲染节点时，应补充稳定的 class 和 `part`，方便外部覆盖样式。
 - 项目已经移除 Tailwind CSS，不要重新引入 Tailwind 类名作为核心样式方案。
 

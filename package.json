@@ -120,7 +120,11 @@
     "remark-gfm": "^4.0.1",
     "storybook": "^10.4.6",
     "typescript": "~6.0.2",
-    "vite": "^8.1.1",
+    "vite": "^8.2.1",
     "vitest": "^4.1.9"
-  }
+  },
+  "volta": {
+    "node": "24.18.0"
+  },
+  "packageManager": "pnpm@10.34.5"
 }
