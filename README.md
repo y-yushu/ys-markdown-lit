@@ -70,6 +70,7 @@ Markdown 内容通常包含换行、代码块、HTML 片段和特殊字符；大
 #### 更新
 
 - remove: 移除`custom-styles`属性支持
+- remove: 移除appearance属性
 
 #### 0.3.0
 

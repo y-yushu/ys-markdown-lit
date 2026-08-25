@@ -24,9 +24,9 @@ import { Meta } from '@storybook/addon-docs/blocks'
         <strong>0. 基线</strong>
       </td>
       <td>
-        <code>density</code> / <code>appearance</code> / <code>mode</code> / <code>size</code>
+        <code>density</code> / <code>mode</code> / <code>size</code>
       </td>
-      <td>选择排版密度、外观色板、明暗模式、基准字号</td>
+      <td>选择排版密度、明暗模式、基准字号</td>
     </tr>
     <tr>
       <td>
@@ -70,12 +70,11 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 ---
 
-## 0. 基线：`density` / `appearance` / `mode` / `size`
+## 0. 基线：`density` / `mode` / `size`
 
 ```html
 <ys-md-rendering
   density="streaming"
-  appearance="blue"
   mode="light"
   size="16"
   content="..."
@@ -101,15 +100,6 @@ import { Meta } from '@storybook/addon-docs/blocks'
       <td>
         排版密度：<code>streaming</code> 适合长文流式阅读；<code>compact</code> 垂直节奏均匀、标题与段落间距接近
       </td>
-    </tr>
-    <tr>
-      <td>
-        <code>appearance</code>
-      </td>
-      <td>
-        <code>blue</code>
-      </td>
-      <td>外观色板（颜色、圆角、阴影、引用/表格装饰 token）</td>
     </tr>
     <tr>
       <td>
@@ -514,12 +504,6 @@ ys-md-rendering::part(task-checkbox-unchecked) {
       </td>
     </tr>
     <tr>
-      <td>默认色板</td>
-      <td>
-        <code>appearance="blue"</code>
-      </td>
-    </tr>
-    <tr>
       <td>未暴露 part 的内部规则</td>
       <td>
         少量 <code>custom-css</code>
@@ -550,7 +534,7 @@ ys-md-rendering::part(table-row):hover {
 ```
 
 ```vue
-<ys-md-rendering density="streaming" appearance="blue" mode="light" :size="16" :content="markdown" />
+<ys-md-rendering density="streaming" mode="light" :size="16" :content="markdown" />
 ```
 
 无需再传入大段 `custom-css`，除非有 Shadow 内部的特殊需求。

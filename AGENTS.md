@@ -39,7 +39,6 @@ pnpm run build:storybook
 - `src/YsMdRendering/`：主组件实现、默认渲染器、主题样式。
 - `src/YsMdRendering/registerAllCustomRenderers.ts`：Markdown token 到 Lit 模板的默认渲染映射。
 - `src/YsMdRendering/themes/density/`：排版密度主题，目前有 `streaming`、`compact`。
-- `src/YsMdRendering/themes/appearance/`：外观色板主题，目前仅保留 `blue`。
 - `src/plugin/`：可选插件入口，包含 `code-highlight`、`echarts`、`katex`、`mermaid`、`svg`、`think`。
 - `src/types/`：对外和内部共用的类型定义。
 - `src/utils/`：规则注册、转换器、上下文、内容写入等工具。
@@ -86,7 +85,6 @@ Vite 构建中会 externalize 这些可选依赖，避免把大型插件依赖�
 
 - `content`：Markdown 内容。
 - `density`：排版密度，支持 `streaming`、`compact`。
-- `appearance`：色板，当前仅支持 `blue`。
 - `mode`：主题模式，支持 `light`、`dark`；为空时跟随系统偏好。
 - `size`：基础字号，默认 `16`。
 - `custom-css`：直接注入当前组件 Shadow Root 的 CSS 文本。
@@ -106,7 +104,7 @@ Vite 构建中会 externalize 这些可选依赖，避免把大型插件依赖�
 ## 样式约定
 
 - 主组件使用 Shadow DOM，基础样式在 `src/YsMdRendering/index.css`。
-- 密度和外观主题按需动态加载并缓存。
+- 密度主题按需动态加载并缓存。
 - 对外样式定制优先使用 CSS 变量、`part`，必要时使用 `custom-css`。
 - 新增默认渲染节点时，应补充稳定的 class 和 `part`，方便外部覆盖样式。
 - 项目已经移除 Tailwind CSS，不要重新引入 Tailwind 类名作为核心样式方案。
@@ -122,7 +120,7 @@ Vite 构建中会 externalize 这些可选依赖，避免把大型插件依赖�
 ## 开发注意事项
 
 - 修改 Markdown 默认渲染时，优先在 `registerAllCustomRenderers.ts` 内保持 token 映射清晰，避免把大量逻辑塞进主组件。
-- 修改主题时，同时检查 `density`、`appearance`、`mode`、`size` 和 `custom-css` 的组合效果。
+- 修改主题时，同时检查 `density`、`mode`、`size` 和 `custom-css` 的组合效果。
 - 插件依赖是可选的，插件入口可以依赖对应 peer，但主入口不应强依赖这些库。
 - `html_block` 和 `html_inline` 使用 `unsafeHTML`，改动相关逻辑时要明确安全边界。
 - 链接点击会派发 `link-click` 自定义事件，并在未被取消时执行默认跳转逻辑；修改时要保留 Shadow DOM 穿透事件语义。
@@ -142,4 +140,4 @@ pnpm run build
 pnpm run dev
 ```
 
-并重点检查主组件 story、相关插件 story、深浅色模式、不同 density/appearance、流式未闭合代码块等场景。
+并重点检查主组件 story、相关插件 story、深浅色模式、不同 density、流式未闭合代码块等场景。

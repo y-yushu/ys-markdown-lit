@@ -18,7 +18,6 @@ import type { RuleOptions } from '../utils/getRule'
 import type { AstToken, RuleItem, YsRenderUpdateDetail } from '../types'
 
 type MarkdownDensity = 'streaming' | 'compact'
-type MarkdownAppearance = 'blue'
 
 type ThemeStyleModule = {
   default: string
@@ -29,12 +28,7 @@ const densityStyleLoaders: Record<MarkdownDensity, () => Promise<ThemeStyleModul
   compact: () => import('./themes/density/compact.css?inline')
 }
 
-const appearanceStyleLoaders: Record<MarkdownAppearance, () => Promise<ThemeStyleModule>> = {
-  blue: () => import('./themes/appearance/blue.css?inline')
-}
-
 const densityStyleCache: Partial<Record<MarkdownDensity, string>> = {}
-const appearanceStyleCache: Partial<Record<MarkdownAppearance, string>> = {}
 
 @customElement('ys-md-rendering')
 export default class YsMdRendering extends LitElement {
@@ -42,9 +36,6 @@ export default class YsMdRendering extends LitElement {
 
   // 排版密度：streaming 流式阅读 / compact 紧凑均匀
   @property({ type: String }) density: MarkdownDensity = 'streaming'
-
-  // 外观色板：当前仅保留 blue
-  @property({ type: String }) appearance: MarkdownAppearance = 'blue'
 
   // 基础字号大小，默认 16 表示 16px
   @property({ type: Number }) size = 16
@@ -98,7 +89,6 @@ export default class YsMdRendering extends LitElement {
   // 缓存 clone 元素
   private cloneMap = new Map<string, HTMLElement>()
   private densityStyleRequestId = 0
-  private appearanceStyleRequestId = 0
 
   @state()
   private isReady = false
@@ -360,10 +350,6 @@ export default class YsMdRendering extends LitElement {
     return this.density === 'compact' ? 'compact' : 'streaming'
   }
 
-  private get resolvedAppearance(): MarkdownAppearance {
-    return 'blue'
-  }
-
   private get resolvedMode(): ThemeData['mode'] {
     if (this.mode === 'dark' || this.mode === 'light') return this.mode
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -439,37 +425,8 @@ export default class YsMdRendering extends LitElement {
     root.appendChild(styleElement)
   }
 
-  private async syncAppearanceStyle() {
-    const root = this.shadowRoot
-    if (!root) return
-
-    const appearance = this.resolvedAppearance
-    const requestId = ++this.appearanceStyleRequestId
-    const styleId = 'ys-md-rendering-appearance'
-    let styleElement = root.querySelector<HTMLStyleElement>(`#${styleId}`)
-
-    if (!styleElement) {
-      styleElement = document.createElement('style')
-      styleElement.id = styleId
-    }
-
-    let appearanceStyle = appearanceStyleCache[appearance]
-    if (!appearanceStyle) {
-      const module = await appearanceStyleLoaders[appearance]()
-      appearanceStyle = module.default
-      appearanceStyleCache[appearance] = appearanceStyle
-    }
-
-    if (requestId !== this.appearanceStyleRequestId || appearance !== this.resolvedAppearance || !this.shadowRoot) return
-
-    styleElement.textContent = appearanceStyle
-    root.appendChild(styleElement)
-    this.syncCustomCssStyle()
-  }
-
   private syncThemeStyle() {
     void this.syncDensityStyle()
-    void this.syncAppearanceStyle()
   }
 
   /**
@@ -721,8 +678,7 @@ export default class YsMdRendering extends LitElement {
       'ys-markdown-body': true,
       'ys-markdown-dark': this.mode === 'dark',
       'ys-markdown-light': this.mode === 'light',
-      [`markdown-density-${this.resolvedDensity}`]: true,
-      [`markdown-appearance-${this.resolvedAppearance}`]: true
+      [`markdown-density-${this.resolvedDensity}`]: true
     }
 
     return html`

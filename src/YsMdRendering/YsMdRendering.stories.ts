@@ -6,13 +6,11 @@ import { fn } from 'storybook/test'
 import './index'
 
 type MarkdownDensity = 'streaming' | 'compact'
-type MarkdownAppearance = 'blue'
 type MarkdownMode = '' | 'light' | 'dark'
 
 interface YsMdRenderingArgs {
   content: string
   density: MarkdownDensity
-  appearance: MarkdownAppearance
   size: number
   mode: MarkdownMode
   breaks: boolean
@@ -108,7 +106,6 @@ const markdownShowcaseContent = [
   '{',
   '  "name": "ys-md-rendering",',
   '  "density": "streaming",',
-  '  "appearance": "blue",',
   '  "storybook": true',
   '}',
   '```',
@@ -172,7 +169,7 @@ const darkModeContent = [
   '```json',
   '{',
   '  "mode": "dark",',
-  '  "appearance": "blue"',
+  '  "storybook": true',
   '}',
   '```'
 ].join('\n')
@@ -180,7 +177,7 @@ const darkModeContent = [
 const tokenOverrideContent = [
   '## Token 覆盖',
   '',
-  '宿主容器设置 `--ys-md-link: #00aa00` 后，链接颜色会覆盖 blue 主题预设。',
+  '宿主容器设置 `--ys-md-link: #00aa00` 后，链接颜色会覆盖默认主题预设。',
   '',
   '[查看项目仓库](https://github.com/y-yushu/ys-markdown-lit)',
   '',
@@ -217,7 +214,6 @@ const renderComponent = (args: YsMdRenderingArgs) =>
     html`<ys-md-rendering
       .content=${args.content}
       .density=${args.density}
-      .appearance=${args.appearance}
       .size=${args.size}
       .mode=${args.mode}
       .breaks=${args.breaks}
@@ -246,7 +242,7 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Markdown 流式输出渲染组件，支持 density（排版密度）、blue 外观、明暗模式与字号调整。'
+        component: 'Markdown 流式输出渲染组件，支持 density（排版密度）、明暗模式与字号调整。'
       }
     }
   },
@@ -259,11 +255,6 @@ const meta = {
       control: { type: 'select' },
       options: ['streaming', 'compact'],
       description: '排版密度：streaming 流式阅读 / compact 紧凑均匀'
-    },
-    appearance: {
-      control: { type: 'select' },
-      options: ['blue'],
-      description: '外观色板，当前仅保留 blue'
     },
     mode: {
       control: { type: 'inline-radio' },
@@ -300,7 +291,6 @@ const meta = {
   args: {
     content: markdownShowcaseContent,
     density: 'streaming',
-    appearance: 'blue',
     size: 16,
     mode: '',
     breaks: true,
@@ -316,20 +306,18 @@ type Story = StoryObj<YsMdRenderingArgs>
 
 export const Playground: Story = {}
 
-export const StreamingBlue: Story = {
+export const Streaming: Story = {
   args: {
     content: streamingContent,
-    density: 'streaming',
-    appearance: 'blue'
+    density: 'streaming'
   }
 }
 
-export const CompactBlue: Story = {
+export const Compact: Story = {
   render: renderCompactStory,
   args: {
     content: compactContent,
     density: 'compact',
-    appearance: 'blue',
     size: 15
   }
 }
@@ -344,13 +332,12 @@ export const DarkMode: Story = {
 export const TokenOverride: Story = {
   render: renderTokenOverrideStory,
   args: {
-    content: tokenOverrideContent,
-    appearance: 'blue'
+    content: tokenOverrideContent
   },
   parameters: {
     docs: {
       description: {
-        story: '宿主 CSS 设置 `--ys-md-link: #00aa00` 覆盖 blue 主题的 preset 链接色。'
+        story: '宿主 CSS 设置 `--ys-md-link: #00aa00` 覆盖默认主题的 preset 链接色。'
       }
     }
   }
